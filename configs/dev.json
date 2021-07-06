@@ -1,0 +1,6 @@
+{
+    "id": "board-stack-dev",
+    "name": "Stack Board DEV",
+    "public": false,
+    "baseUri": "https://localhost:3000"    
+}

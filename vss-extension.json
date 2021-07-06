@@ -3,8 +3,8 @@
     "id": "board-stack",
     "publisher": "elevenlabs",
     "version": "1.0.0",
-    "name": "Board Stack Extension",
-    "description": "Board stack in Azure DevOps",
+    "name": "Stack Board",
+    "description": "Stack board extension for Azure DevOps",
     "public": false,
     "categories": ["Azure Repos"],
     "targets": [
@@ -12,28 +12,52 @@
             "id": "Microsoft.VisualStudio.Services"
         }
     ],
+    "icons": {
+        "default": "marketplace/icon-light.png",
+        "branding": "marketplace/icon-light.png"
+    },
+    "content": {
+        "details": {
+            "path": "marketplace/overview.md"
+        },
+        "license": {
+            "path": "marketplace/license.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/eleven-financial/board-stack-extension"
+    },
+    "links": {
+        "support": {
+            "url": "mailto:luiz.lima@elevenfinancial.com"
+        }
+    },
     "contributions": [
         {
-            "id": "my-hub",
+            "id": "board-stack-hub",
             "type": "ms.vss-web.hub",
             "targets": [
                 "ms.vss-code-web.code-hub-group"
             ],
             "properties": {
-                "name": "My Hub",
-                "uri": "index.html"
+                "name": "Stack Board",
+                "uri": "build/index.html",
+                "icon": {
+                    "light": "marketplace/icon-light.png",
+                    "dark": "marketplace/icon-dark.png"
+                }
             }
         }
     ],
     "files": [
         {
-            "path": "index.html",
+            "path": "marketplace",
             "addressable": true
         },
         {
-            "path": "node_modules/vss-web-extension-sdk/lib",
-            "addressable": true,
-            "packagePath": "lib"
+            "path": "build",
+            "addressable": true
         }
     ]
 }
