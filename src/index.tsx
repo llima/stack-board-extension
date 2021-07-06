@@ -1,17 +1,12 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+
+import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 
 ReactDOM.render(
-  <React.StrictMode>
+  <SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
     <App />
-  </React.StrictMode>,
+  </SurfaceContext.Provider>,
   document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

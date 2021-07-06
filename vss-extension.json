@@ -1,12 +1,14 @@
 {
     "manifestVersion": 1,
-    "id": "board-stack",
+    "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
-    "public": false,
-    "categories": ["Azure Repos"],
+    "public": true,
+    "categories": [
+        "Azure Boards"
+    ],
     "targets": [
         {
             "id": "Microsoft.VisualStudio.Services"
@@ -26,19 +28,28 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/eleven-financial/board-stack-extension"
+        "url": "https://github.com/eleven-financial/stack-board-extension"
     },
     "links": {
         "support": {
             "url": "mailto:luiz.lima@elevenfinancial.com"
         }
     },
+    "scopes": [
+        "vso.project",
+        "vso.work",
+        "vso.work_write"
+    ],
+    "tags": [
+        "Stack",
+        "Template"
+    ],
     "contributions": [
         {
-            "id": "board-stack-hub",
+            "id": "stack-board-hub",
             "type": "ms.vss-web.hub",
             "targets": [
-                "ms.vss-code-web.code-hub-group"
+                "ms.vss-work-web.work-hub-group"
             ],
             "properties": {
                 "name": "Stack Board",
@@ -57,6 +68,10 @@
         },
         {
             "path": "build",
+            "addressable": true
+        },
+        {
+            "path": "node_modules/vss-web-extension-sdk/lib",
             "addressable": true
         }
     ]

@@ -1,5 +1,5 @@
 {
-    "id": "board-stack-dev",
+    "id": "stack-board-dev",
     "name": "Stack Board DEV",
     "public": false,
     "baseUri": "https://localhost:3000"    

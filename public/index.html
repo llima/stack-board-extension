@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
     
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+
+    <script src="../node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js"></script>
     
     <title>Stack Board</title>
   </head>
@@ -14,6 +15,18 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
-    <div id="root" class="absolute-fill flex-column"></div>
+
+    <script type="text/javascript">
+      VSS.init({
+        applyTheme: true,
+        explicitNotifyLoaded: true,
+        setupModuleLoader: true
+      });
+      VSS.ready(function () {
+          VSS.notifyLoadSucceeded();
+      });
+    </script>
+    
+    <div id="root"></div>
   </body>
 </html>
