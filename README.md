@@ -1,1 +1,1 @@
-# board-stack-extension
+# stack-board-extension
