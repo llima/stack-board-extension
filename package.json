@@ -1,0 +1,23 @@
+{
+  "name": "TechRadar",
+  "version": "1.0.0",
+  "description": "Radar technology extension for azure devOps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llima/azure-devops-tech-radar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/llima/azure-devops-tech-radar/issues"
+  },
+  "homepage": "https://github.com/llima/azure-devops-tech-radar#readme",
+  "dependencies": {
+    "vss-web-extension-sdk": "^5.141.0"
+  }
+}
