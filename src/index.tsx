@@ -1,12 +1,10 @@
+import React from 'react'
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
 
-import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
-
 ReactDOM.render(
-  <SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
+  <React.StrictMode>
     <App />
-  </SurfaceContext.Provider>,
+  </React.StrictMode>,
   document.getElementById('root')
 );
