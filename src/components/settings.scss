@@ -1,0 +1,46 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+.list-example-row {
+    padding: 0px 12px;
+}
+
+.create-panel {
+  &--content {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+
+      // Reserve space for focus
+      padding: 4px 0;
+  }
+
+  &--footer {
+      display: flex;
+      justify-content: flex-end;
+  }
+
+  &--footer-button {
+      margin-left: 8px;
+  }
+
+  &--group {
+      margin-bottom: 20px;
+
+      &-label {
+          display: block;
+          padding: 5px 0;
+          font-size: $fontSizeML;
+          font-weight: $fontWeightSemiBold;
+      }
+  }
+
+  &--add-button {
+    text-align: right;
+  }
+
+}
+
+
+
+
+

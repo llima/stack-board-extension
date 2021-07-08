@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './app.scss';
 
 import {
   CustomHeader,
@@ -12,9 +12,10 @@ import {
 
 import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
-import { Panel } from "azure-devops-ui/Panel";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
+import Settings from './components/settings';
+
 
 interface IAppState {
   settingsExpanded: boolean;
@@ -61,41 +62,7 @@ class App extends React.Component<{}, IAppState>  {
           <Card>Page content</Card>
         </div>
 
-        {this.state.createExpanded && (
-          <Panel
-            onDismiss={() => this.setState({ createExpanded: false })}
-            titleProps={{ text: "Sample Panel Title" }}
-            description={
-              "A description of the header. It can expand to multiple lines. Consumers should try to limit this to a maximum of three lines."
-            }
-            footerButtonProps={[
-              { text: "Cancel", onClick: () => this.setState({ createExpanded: false }) },
-              { text: "Save", primary: true }
-            ]}>
-
-            <div style={{ height: "1200px" }}>
-              Panel Content
-            </div>
-          </Panel>
-        )}
-
-        {this.state.settingsExpanded && (
-          <Panel
-            onDismiss={() => this.setState({ settingsExpanded: false })}
-            titleProps={{ text: "Sample Panel Title" }}
-            description={
-              "A description of the header. It can expand to multiple lines. Consumers should try to limit this to a maximum of three lines."
-            }
-            footerButtonProps={[
-              { text: "Cancel", onClick: () => this.setState({ settingsExpanded: false }) },
-              { text: "Save", primary: true }
-            ]}>
-
-            <div style={{ height: "1200px" }}>
-              Panel Content
-            </div>
-          </Panel>
-        )}
+        <Settings show={this.state.settingsExpanded} onDismiss={() => this.setState({ settingsExpanded: false })} />
 
       </Page>
     );
