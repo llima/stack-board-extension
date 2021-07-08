@@ -15,6 +15,7 @@ import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import Settings from './components/settings';
+import Template from './components/template';
 
 
 interface IAppState {
@@ -57,12 +58,15 @@ class App extends React.Component<{}, IAppState>  {
         </CustomHeader>
 
         <div className="page-content page-content-top">
+          
           <Card>Page content</Card>
           <Card>Page content</Card>
           <Card>Page content</Card>
         </div>
 
         <Settings show={this.state.settingsExpanded} onDismiss={() => this.setState({ settingsExpanded: false })} />
+
+        <Template show={this.state.createExpanded} onDismiss={() => this.setState({ createExpanded: false })} />
 
       </Page>
     );

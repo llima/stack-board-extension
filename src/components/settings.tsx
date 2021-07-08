@@ -16,8 +16,6 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 
 import { Toggle } from "azure-devops-ui/Toggle";
 import { Button } from "azure-devops-ui/Button";
-import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-
 
 export interface ISettingsProps {
   show: boolean;
@@ -32,23 +30,27 @@ export interface ITaskItem {
   description: string;
   iconName: string;
   name: string;
+  url: string;
 }
 
 export const tasks: ITaskItem[] = [
   {
-    description: "https://developer.microsoft.com/en-us/azure-devops/components/list",
+    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
     iconName: "Code",
-    name: "API (.NET)"
+    name: "ASP.NET Microservice",
+    description: "Create a microservice with this template built by members of the community"
   },
   {
-    description: "https://developer.microsoft.com/en-us/azure-devops/components/list",
+    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
     iconName: "Code",
-    name: "React JS"
+    name: "SSR Template",
+    description: "Create a website powered with Next.js"
   },
   {
-    description: "https://developer.microsoft.com/en-us/azure-devops/components/list",
+    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
     iconName: "Code",
-    name: "Application"
+    name: "React App Template",
+    description: "create a new CRA website project"
   }
 ];
 
@@ -56,7 +58,6 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
 
   selection = new ListSelection(true);
   tasks = new ArrayItemProvider(tasks);
-
 
   constructor(props: ISettingsProps) {
     super(props);
@@ -83,22 +84,34 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
             { text: "Save", primary: true }
           ]}>
 
-          <div className="create-panel--content">
-            <div className="create-panel--group">
+          <div className="settings--content">
+            <div className="settings--group">
+              <label className="settings--group-label">
+                Template *
+              </label>
               <TextField
-                label="Name *"
                 required={true}
-                placeholder="Name your project"
+                placeholder="Name your template"
               />
             </div>
-            <div className="create-panel--group">
+            <div className="settings--group">
               <TextField
-                label="Repository *"
+                required={true}
+                multiline={true}
+                rows={4}
+                placeholder="Template description"
+              />
+            </div>
+            <div className="settings--group">
+            <label className="settings--group-label">
+            Repository *
+              </label>
+              <TextField
                 required={true}
                 placeholder="e.g. https://github.com/Microsoft/vscode.git"
               />
             </div>
-            <div className="create-panel--group">
+            <div className="settings--group">
               <Toggle
                 offText={"Requires authentication"}
                 onText={"Requires authentication"}
@@ -107,13 +120,13 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
               />
             </div>
             {this.state.showAuthentication && <>
-              <div className="create-panel--group">
+              <div className="settings--group">
                 <TextField
                   required={true}
                   placeholder="Username *"
                 />
               </div>
-              <div className="create-panel--group">
+              <div className="settings--group">
                 <TextField
                   inputType={"password"}
                   required={true}
@@ -122,7 +135,7 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
               </div>
             </>}
 
-            <div className="create-panel--group create-panel--add-button">
+            <div className="settings--group settings--add-button">
               <Button
                 text="Add"
                 primary={true}
@@ -156,7 +169,7 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
   ): JSX.Element => {
     return (
       <ListItem key={key || "list-item" + index} index={index} details={details}>
-        <div className="list-example-row flex-row h-scroll-hidden">
+        <div className="settings--list-row flex-row h-scroll-hidden">
           <Icon iconName={item.iconName} size={IconSize.medium} />
           <div
             style={{ marginLeft: "10px", padding: "10px 0px" }}
@@ -165,6 +178,9 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
             <span className="text-ellipsis">{item.name}</span>
             <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
               {item.description}
+            </span>
+            <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
+              {item.url}
             </span>
           </div>
         </div>

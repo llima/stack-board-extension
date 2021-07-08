@@ -1,10 +1,6 @@
 @import "azure-devops-ui/Core/_platformCommon.scss";
 
-.list-example-row {
-    padding: 0px 12px;
-}
-
-.create-panel {
+.settings {
   &--content {
       display: flex;
       flex-grow: 1;
@@ -12,15 +8,6 @@
 
       // Reserve space for focus
       padding: 4px 0;
-  }
-
-  &--footer {
-      display: flex;
-      justify-content: flex-end;
-  }
-
-  &--footer-button {
-      margin-left: 8px;
   }
 
   &--group {
@@ -36,6 +23,11 @@
 
   &--add-button {
     text-align: right;
+  }
+
+  &--list-row
+  {
+    padding: 0px 12px;
   }
 
 }
