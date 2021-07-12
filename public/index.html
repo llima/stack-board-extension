@@ -6,27 +6,13 @@
     <meta name="theme-color" content="#000000">
     
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
-
-    <script src="../node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js"></script>
-    
     <title>Stack Board</title>
   </head>
   <body>
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
-
-    <script type="text/javascript">
-      VSS.init({
-        applyTheme: true,
-        explicitNotifyLoaded: true,
-        setupModuleLoader: true
-      });
-      VSS.ready(function () {
-          VSS.notifyLoadSucceeded();
-      });
-    </script>
-    
     <div id="root"></div>
+
   </body>
 </html>

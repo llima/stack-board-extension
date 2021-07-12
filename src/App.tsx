@@ -17,8 +17,6 @@ import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import Settings from './components/settings';
 import Template from './components/template';
 
-
-
 import {
   renderNameColumn,
   renderLastRunColumn,
@@ -41,6 +39,8 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 
+import * as SDK from "azure-devops-extension-sdk";
+
 
 interface IAppState {
   settingsExpanded: boolean;
@@ -57,6 +57,10 @@ class App extends React.Component<{}, IAppState>  {
     };
   }
 
+  componentWillMount() {
+    SDK.init();
+  }
+
   render() {
     return (
       <Page>
@@ -64,7 +68,7 @@ class App extends React.Component<{}, IAppState>  {
           <HeaderTitleArea>
             <HeaderTitleRow>
               <HeaderTitle className="text-ellipsis" titleSize={TitleSize.Large}>
-                Stack board
+                Stack board Reatc
               </HeaderTitle>
             </HeaderTitleRow>
           </HeaderTitleArea>
