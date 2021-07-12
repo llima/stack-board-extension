@@ -2,200 +2,33 @@ import * as React from "react";
 
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { ISimpleListCell } from "azure-devops-ui/List";
-import { MenuItemType } from "azure-devops-ui/Menu";
 import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 import {
-    ColumnMore,
-    ColumnSelect,
     ISimpleTableCell,
-    renderSimpleCell,
-    TableColumnLayout,
-} from "azure-devops-ui/Table";
+    ITableColumn,
+    SimpleTableCell,
+    TwoLineTableCell,
+  } from "azure-devops-ui/Table";
+
 import { css } from "azure-devops-ui/Util";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
+
+import { Icon, IIconProps } from "azure-devops-ui/Icon";
+import { Link } from "azure-devops-ui/Link";
+
+import { Ago } from "azure-devops-ui/Ago";
+import { Duration } from "azure-devops-ui/Duration";
+import { Tooltip } from "azure-devops-ui/TooltipEx";
+
+import { Pill, PillSize, PillVariant } from "azure-devops-ui/Pill";
+import { PillGroup } from "azure-devops-ui/PillGroup";
+
 
 export interface ITableItem extends ISimpleTableCell {
     name: ISimpleListCell;
     age: number;
     gender: string;
 }
-
-export interface ILocationTableItem extends ISimpleTableCell {
-    city: string;
-    continent: ISimpleListCell;
-    country: string;
-    name: string;
-    server: string;
-    state: string;
-}
-
-export const fixedColumns = [
-    {
-        columnLayout: TableColumnLayout.singleLinePrefix,
-        id: "name",
-        name: "Name",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        id: "age",
-        name: "Age",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        columnLayout: TableColumnLayout.none,
-        id: "gender",
-        name: "Gender",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-40),
-    },
-];
-
-export const checkboxColumns = [
-    new ColumnSelect(),
-    {
-        id: "name",
-        name: "Name",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        id: "age",
-        name: "Age",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        id: "gender",
-        name: "Gender",
-        readonly: true,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-40),
-    },
-];
-
-export function onSizeMore(event: MouseEvent, index: number, width: number) {
-}
-
-export const moreColumns = [
-    {
-        id: "name",
-        minWidth: 50,
-        name: "Name",
-        onSize: onSizeMore,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        id: "age",
-        maxWidth: 300,
-        name: "Age",
-        onSize: onSizeMore,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-30),
-    },
-    {
-        id: "gender",
-        name: "Gender",
-        onSize: onSizeMore,
-        renderCell: renderSimpleCell,
-        width: new ObservableValue(-40),
-    },
-    new ColumnMore(() => {
-        return {
-            id: "sub-menu",
-            items: [
-                { id: "submenu-one", text: "SubMenuItem 1" },
-                { id: "submenu-two", text: "SubMenuItem 2" },
-                { id: "divider", itemType: MenuItemType.Divider },
-                { id: "submenu-three", checked: true, readonly: true, text: "SubMenuItem 3" },
-                { id: "submenu-four", disabled: true, text: "SubMenuItem 4" },
-            ],
-        };
-    }),
-];
-
-export const renderStatus = (className?: string) => {
-    return (
-        <Status
-            {...Statuses.Success}
-            ariaLabel="Success"
-            className={css(className, "bolt-table-status-icon")}
-            size={StatusSize.s}
-        />
-    );
-};
-
-export const rawTableItems: ITableItem[] = [
-    {
-        age: 50,
-        gender: "M",
-        name: { iconProps: { render: renderStatus }, text: "Rory Boisvert" },
-    },
-    {
-        age: 49,
-        gender: "F",
-        name: { iconProps: { iconName: "Home", ariaLabel: "Home" }, text: "Sharon Monroe" },
-    },
-    {
-        age: 18,
-        gender: "F",
-        name: { iconProps: { iconName: "Home", ariaLabel: "Home" }, text: "Lucy Booth" },
-    },
-];
-
-export const tableItems = new ArrayItemProvider<ITableItem>(rawTableItems);
-export const tableItemsNoIcons = new ArrayItemProvider<ITableItem>(
-    rawTableItems.map((item: ITableItem) => {
-        const newItem = Object.assign({}, item);
-        newItem.name = { text: newItem.name.text };
-        return newItem;
-    })
-);
-
-export const locationTableItems: ILocationTableItem[] = [
-    {
-        city: "San Francisco",
-        continent: { text: "North America" },
-        country: "United States",
-        name: "Mission District",
-        server: "West US",
-        state: "California",
-    },
-    {
-        city: "Paris",
-        continent: { text: "Europe" },
-        country: "France",
-        name: "Batignolles-Monceau",
-        server: "West Europe",
-        state: "Ile-de-France",
-    },
-    {
-        city: "Seoul",
-        continent: { iconProps: { iconName: "Home", ariaLabel: "Home" }, text: "Asia" },
-        country: "South Korea",
-        name: "Gangnam",
-        server: "East Asia",
-        state: "Gyeonggi",
-    },
-    {
-        city: "Manaus",
-        continent: {
-            iconProps: { iconName: "Home", ariaLabel: "Home" },
-            text: "South America",
-        },
-        country: "Brazil",
-        name: "Monterrey",
-        server: "Brazil South",
-        state: "Amazonas",
-    },
-];
 
 enum PipelineStatus {
     Running = "running",
@@ -361,3 +194,181 @@ export function ReleaseTypeText(props: { releaseType: ReleaseType }) {
             return "Release new-features";
     }
 }
+
+
+export function renderNameColumn(
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IPipelineItem>,
+    tableItem: IPipelineItem
+  ): JSX.Element {
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        key={"col-" + columnIndex}
+        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        <Status
+          {...getStatusIndicatorData(tableItem.status).statusProps}
+          className="icon-large-margin"
+          size={StatusSize.l}
+        />
+        <div className="flex-row scroll-hidden">
+          <Tooltip overflowOnly={true}>
+            <span className="text-ellipsis">{tableItem.name}</span>
+          </Tooltip>
+        </div>
+      </SimpleTableCell>
+    );
+  }
+  
+  export function renderLastRunColumn(
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IPipelineItem>,
+    tableItem: IPipelineItem
+  ): JSX.Element {
+    const { prName, prId, releaseType, branchName } = tableItem.lastRunData;
+    const text = "#" + prId + " \u00b7 " + prName;
+    const releaseTypeText = ReleaseTypeText({ releaseType: releaseType });
+    const tooltip = `${releaseTypeText} from ${branchName} branch`;
+    return (
+      <TwoLineTableCell
+        className="bolt-table-cell-content-with-inline-link no-v-padding"
+        key={"col-" + columnIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        line1={
+          <span className="flex-row scroll-hidden">
+            <Tooltip text={text} overflowOnly>
+              <Link
+                className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+                excludeTabStop
+                href="#pr"
+              >
+                {text}
+              </Link>
+            </Tooltip>
+          </span>
+        }
+        line2={
+          <Tooltip text={tooltip} overflowOnly>
+            <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
+              {ReleaseTypeIcon({ releaseType: releaseType })}
+              <span className="text-ellipsis" key="release-type-text" style={{ flexShrink: 10000 }}>
+                {releaseTypeText}
+              </span>
+              <Link
+                className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
+                excludeTabStop
+                href="#branch"
+              >
+                {Icon({
+                  className: "icon-margin",
+                  iconName: "OpenSource",
+                  key: "branch-name",
+                })}
+                <span className="text-ellipsis">
+                  {branchName}
+                </span>
+              </Link>
+            </span>
+          </Tooltip>
+        }
+      />
+    );
+  }
+  
+  export function renderDateColumn(
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IPipelineItem>,
+    tableItem: IPipelineItem
+  ): JSX.Element {
+    return (
+      <TwoLineTableCell
+        key={"col-" + columnIndex}
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        line1={WithIcon({
+          className: "fontSize font-size",
+          iconProps: { iconName: "Calendar" },
+          children: (
+            <Ago date={tableItem.lastRunData.startTime} /*format={AgoFormat.Extended}*/ />
+          ),
+        })}
+        line2={WithIcon({
+          className: "fontSize font-size bolt-table-two-line-cell-item",
+          iconProps: { iconName: "Clock" },
+          children: (
+            <Duration
+              startDate={tableItem.lastRunData.startTime}
+              endDate={tableItem.lastRunData.endTime}
+            />
+          ),
+        })}
+      />
+    );
+  }
+  
+  export function renderType(
+    rowIndex: number,
+    columnIndex: number,
+    tableColumn: ITableColumn<IPipelineItem>,
+    tableItem: IPipelineItem
+  ): JSX.Element {
+    return (
+      <SimpleTableCell
+        columnIndex={columnIndex}
+        tableColumn={tableColumn}
+        key={"col-" + columnIndex}
+        contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
+      >
+        <PillGroup className="flex-row">
+          <Pill size={PillSize.compact}>C#</Pill>
+          <Pill size={PillSize.compact} variant={PillVariant.outlined}>
+            TypeScript
+          </Pill>
+          <Pill
+            color={this.lightColor}
+            size={PillSize.compact}
+            variant={PillVariant.colored}
+            onClick={() => alert("MSSQL pill clicked!")}
+          >
+            MSSQL
+          </Pill>
+        </PillGroup>
+      </SimpleTableCell>
+    );
+  }
+  
+  function WithIcon(props: {
+    className?: string;
+    iconProps: IIconProps;
+    children?: React.ReactNode;
+  }) {
+    return (
+      <div className={css(props.className, "flex-row flex-center")}>
+        {Icon({ ...props.iconProps, className: "icon-margin" })}
+        {props.children}
+      </div>
+    );
+  }
+  
+  function ReleaseTypeIcon(props: { releaseType: ReleaseType }) {
+    let iconName: string = "";
+    switch (props.releaseType) {
+      case ReleaseType.PrAutomated:
+        iconName = "BranchPullRequest";
+        break;
+      default:
+        iconName = "Tag";
+    }
+  
+    return Icon({
+      className: "bolt-table-inline-link-left-padding icon-margin",
+      iconName: iconName,
+      key: "release-type",
+    });
+  }
