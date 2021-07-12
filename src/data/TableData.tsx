@@ -213,7 +213,7 @@ export enum ReleaseType {
 
 function modifyNow(days: number, hours: number, minutes: number, seconds: number): Date {
     const now = new Date();
-    const newDate = new Date(now as any);
+    const newDate = new Date(now);
     newDate.setDate(now.getDate() + days);
     newDate.setHours(now.getHours() + hours);
     newDate.setMinutes(now.getMinutes() + minutes);

@@ -97,7 +97,7 @@ class App extends React.Component<{}, IAppState>  {
           >
             <Observer itemProvider={this.itemProvider}>
               {(observableProps: { itemProvider: ArrayItemProvider<IPipelineItem> }) => (
-                <Table<Partial<IPipelineItem>>
+                <Table
                   ariaLabel="Advanced table"
                   behaviors={[this.sortingBehavior]}
                   className="table-example"
@@ -121,7 +121,7 @@ class App extends React.Component<{}, IAppState>  {
     );
   }
 
-  private columns: ITableColumn<IPipelineItem>[] = [
+  columns: ITableColumn<IPipelineItem>[] = [
     {
       id: "name",
       name: "Pipeline",
@@ -158,11 +158,11 @@ class App extends React.Component<{}, IAppState>  {
     }),
   ];
 
-  private itemProvider = new ObservableValue<ArrayItemProvider<IPipelineItem>>(
+  itemProvider = new ObservableValue<ArrayItemProvider<IPipelineItem>>(
     new ArrayItemProvider(pipelineItems)
   );
 
-  private sortingBehavior = new ColumnSorting<Partial<IPipelineItem>>(
+  sortingBehavior = new ColumnSorting<Partial<IPipelineItem>>(
     (columnIndex: number, proposedSortOrder: SortOrder) => {
       this.itemProvider.value = new ArrayItemProvider(
         sortItems(
@@ -176,10 +176,10 @@ class App extends React.Component<{}, IAppState>  {
     }
   );
 
-  private sortFunctions = [
+  sortFunctions = [
     // Sort on Name column
     (item1: IPipelineItem, item2: IPipelineItem) => {
-      return item1.name.localeCompare(item2.name!);
+      return item1.name.localeCompare(item2.name);
     },
   ];
 
@@ -285,7 +285,7 @@ function renderDateColumn(
         className: "fontSize font-size",
         iconProps: { iconName: "Calendar" },
         children: (
-          <Ago date={tableItem.lastRunData.startTime!} /*format={AgoFormat.Extended}*/ />
+          <Ago date={tableItem.lastRunData.startTime} /*format={AgoFormat.Extended}*/ />
         ),
       })}
       line2={WithIcon({
@@ -293,7 +293,7 @@ function renderDateColumn(
         iconProps: { iconName: "Clock" },
         children: (
           <Duration
-            startDate={tableItem.lastRunData.startTime!}
+            startDate={tableItem.lastRunData.startTime}
             endDate={tableItem.lastRunData.endTime}
           />
         ),
@@ -318,7 +318,7 @@ function WithIcon(props: {
 function ReleaseTypeIcon(props: { releaseType: ReleaseType }) {
   let iconName: string = "";
   switch (props.releaseType) {
-    case ReleaseType.prAutomated:
+    case ReleaseType.PrAutomated:
       iconName = "BranchPullRequest";
       break;
     default:
