@@ -10,7 +10,7 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Checkbox } from "azure-devops-ui/Checkbox";
 
 
-export interface ITemplateProps {
+export interface ITemplatePanelProps {
   show: boolean;
   onDismiss: any;
 }
@@ -33,13 +33,13 @@ const options: IChoiceGroupOption[] = [
   },
 ];
 
-interface ITemplateState {
+interface ITemplatePanelState {
 
 }
 
-class Template extends React.Component<ITemplateProps, ITemplateState>  {
+class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelState>  {
 
-  constructor(props: ITemplateProps) {
+  constructor(props: ITemplatePanelProps) {
     super(props);
     this.state = {
 
@@ -128,15 +128,6 @@ class Template extends React.Component<ITemplateProps, ITemplateState>  {
               </div>
             </div>
 
-
-
-
-
-
-
-
-
-
           </div>
 
         </Panel>
@@ -148,4 +139,4 @@ class Template extends React.Component<ITemplateProps, ITemplateState>  {
 
 
 
-export default Template;
+export default TemplatePanel;

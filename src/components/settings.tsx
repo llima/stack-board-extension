@@ -17,13 +17,19 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { Toggle } from "azure-devops-ui/Toggle";
 import { Button } from "azure-devops-ui/Button";
 
-export interface ISettingsProps {
+import { Services } from "../services/services";
+import { ISettingsService, SettingsServiceId } from "../services/settings";
+import { ISettings } from '../model/settings';
+
+
+export interface ISettingsPanelProps {
   show: boolean;
   onDismiss: any;
 }
 
-interface ISettingsState {
+interface ISettingsPanelState {
   showAuthentication: boolean;
+  currentSettings: ISettings;
 }
 
 export interface ITaskItem {
@@ -54,15 +60,16 @@ export const tasks: ITaskItem[] = [
   }
 ];
 
-class Settings extends React.Component<ISettingsProps, ISettingsState>  {
+class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelState>  {
 
   selection = new ListSelection(true);
   tasks = new ArrayItemProvider(tasks);
 
-  constructor(props: ISettingsProps) {
+  constructor(props: ISettingsPanelProps) {
     super(props);
     this.state = {
-      showAuthentication: false
+      showAuthentication: false,
+      currentSettings: {}
     };
   }
 
@@ -139,7 +146,12 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
               <Button
                 text="Add"
                 primary={true}
-                onClick={() => alert("Primary button clicked!")}
+                onClick={() => {
+                  const sessionService = Services.getService<ISettingsService>(
+                    SettingsServiceId
+                  );
+                  sessionService.saveSettings(this.state.currentSettings);
+                }}
               />
             </div>
 
@@ -191,4 +203,4 @@ class Settings extends React.Component<ISettingsProps, ISettingsState>  {
 
 
 
-export default Settings;
+export default SettingsPanel;

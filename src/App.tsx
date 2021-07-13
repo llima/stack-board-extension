@@ -3,7 +3,6 @@ import './app.scss';
 
 import {
   CustomHeader,
-  HeaderDescription,
   HeaderTitle,
   HeaderTitleArea,
   HeaderTitleRow,
@@ -14,8 +13,10 @@ import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import Settings from './components/settings';
-import Template from './components/template';
+import SettingsPanel from './components/settings';
+import TemplatePanel from './components/template';
+
+import * as DevOps from "azure-devops-extension-sdk";
 
 import {
   renderNameColumn,
@@ -39,7 +40,7 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 
-import * as SDK from "azure-devops-extension-sdk";
+import {getStorageManager} from "./services/storage";
 
 
 interface IAppState {
@@ -57,8 +58,10 @@ class App extends React.Component<{}, IAppState>  {
     };
   }
 
-  componentWillMount() {
-    SDK.init();
+  async componentWillMount() {
+    DevOps.init();
+    var oi = await getStorageManager();
+    console.log(oi);
   }
 
   render() {
@@ -68,7 +71,7 @@ class App extends React.Component<{}, IAppState>  {
           <HeaderTitleArea>
             <HeaderTitleRow>
               <HeaderTitle className="text-ellipsis" titleSize={TitleSize.Large}>
-                Stack board Reatc
+                Stack board
               </HeaderTitle>
             </HeaderTitleRow>
           </HeaderTitleArea>
@@ -107,8 +110,8 @@ class App extends React.Component<{}, IAppState>  {
           </Card>
         </div>
 
-        <Settings show={this.state.settingsExpanded} onDismiss={() => this.setState({ settingsExpanded: false })} />
-        <Template show={this.state.createExpanded} onDismiss={() => this.setState({ createExpanded: false })} />
+        <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => this.setState({ settingsExpanded: false })} />
+        <TemplatePanel show={this.state.createExpanded} onDismiss={() => this.setState({ createExpanded: false })} />
 
       </Page>
     );
