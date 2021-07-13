@@ -8,19 +8,18 @@ import {
   ListItem
 } from "azure-devops-ui/List";
 
+import { Guid } from "guid-typescript";
 import { Panel } from "azure-devops-ui/Panel";
 import { TextField } from "azure-devops-ui/TextField";
 import { Card } from 'azure-devops-ui/Card';
-import { Icon, IconSize } from "azure-devops-ui/Icon";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 
 import { Toggle } from "azure-devops-ui/Toggle";
 import { Button } from "azure-devops-ui/Button";
 
 import { Services } from "../services/services";
-import { ISettingsService, SettingsServiceId } from "../services/settings";
 import { ISettings } from '../model/settings';
-
+import { ISettingsService, SettingsServiceId } from "../services/settings";
 
 export interface ISettingsPanelProps {
   show: boolean;
@@ -30,53 +29,44 @@ export interface ISettingsPanelProps {
 interface ISettingsPanelState {
   showAuthentication: boolean;
   currentSettings: ISettings;
+  settings: ISettings[]
 }
-
-export interface ITaskItem {
-  description: string;
-  iconName: string;
-  name: string;
-  url: string;
-}
-
-export const tasks: ITaskItem[] = [
-  {
-    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
-    iconName: "Code",
-    name: "ASP.NET Microservice",
-    description: "Create a microservice with this template built by members of the community"
-  },
-  {
-    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
-    iconName: "Code",
-    name: "SSR Template",
-    description: "Create a website powered with Next.js"
-  },
-  {
-    url: "https://developer.microsoft.com/en-us/azure-devops/components/list",
-    iconName: "Code",
-    name: "React App Template",
-    description: "create a new CRA website project"
-  }
-];
 
 class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelState>  {
 
   selection = new ListSelection(true);
-  tasks = new ArrayItemProvider(tasks);
+  tasks = new ArrayItemProvider([]);
 
   constructor(props: ISettingsPanelProps) {
     super(props);
     this.state = {
       showAuthentication: false,
-      currentSettings: {}
+      currentSettings: {
+        id: Guid.create().toString(),
+        name: "",
+        description: "",
+        gitUrl: "",
+        user: "",
+        pass: ""
+      },
+      settings: []
     };
+  }
+
+  onInputChange(event: React.ChangeEvent, value: string, that: this) {
+
+    //Cat
+    var prop = event.target.id.replace("__bolt-", "");
+    that.state.currentSettings[prop] = value;
+
+    this.setState({
+      currentSettings: that.state.currentSettings
+    });
   }
 
   render() {
 
-    const { showAuthentication } = this.state;
-
+    const { showAuthentication, currentSettings } = this.state;
 
     if (this.props.show) {
       return (
@@ -97,12 +87,17 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 Template *
               </label>
               <TextField
-                required={true}
+                inputId="name"
+                value={currentSettings.name}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
                 placeholder="Name your template"
               />
             </div>
             <div className="settings--group">
               <TextField
+                inputId="description"
+                value={currentSettings.description}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
                 required={true}
                 multiline={true}
                 rows={4}
@@ -110,10 +105,13 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               />
             </div>
             <div className="settings--group">
-            <label className="settings--group-label">
-            Repository *
+              <label className="settings--group-label">
+                Repository *
               </label>
               <TextField
+                inputId="gitUrl"
+                value={currentSettings.gitUrl}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
                 required={true}
                 placeholder="e.g. https://github.com/Microsoft/vscode.git"
               />
@@ -129,12 +127,17 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             {this.state.showAuthentication && <>
               <div className="settings--group">
                 <TextField
-                  required={true}
+                  inputId="user"
+                  value={currentSettings.user}
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
                   placeholder="Username *"
                 />
               </div>
               <div className="settings--group">
                 <TextField
+                  inputId="user"
+                  value={currentSettings.pass}
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
                   inputType={"password"}
                   required={true}
                   placeholder="Password / PAT *"
@@ -147,10 +150,17 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 text="Add"
                 primary={true}
                 onClick={() => {
-                  const sessionService = Services.getService<ISettingsService>(
+                  console.log("Click");
+                  const service = Services.getService<ISettingsService>(
                     SettingsServiceId
                   );
-                  sessionService.saveSettings(this.state.currentSettings);
+
+                  service.saveSettings(this.state.currentSettings).then(items2 => {
+                    service.getSettings().then(items => {
+                      console.log(items);
+                    });
+                  });
+
                 }}
               />
             </div>
@@ -175,14 +185,13 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
 
   renderRow = (
     index: number,
-    item: ITaskItem,
-    details: IListItemDetails<ITaskItem>,
+    item: ISettings,
+    details: IListItemDetails<ISettings>,
     key?: string
   ): JSX.Element => {
     return (
       <ListItem key={key || "list-item" + index} index={index} details={details}>
         <div className="settings--list-row flex-row h-scroll-hidden">
-          <Icon iconName={item.iconName} size={IconSize.medium} />
           <div
             style={{ marginLeft: "10px", padding: "10px 0px" }}
             className="flex-column h-scroll-hidden"
@@ -192,7 +201,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               {item.description}
             </span>
             <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
-              {item.url}
+              {item.gitUrl}
             </span>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import App from './app';
+import "./services/registration";
 
 import { SurfaceBackground, SurfaceContext } from "azure-devops-ui/Surface";
 

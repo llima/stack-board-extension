@@ -11,7 +11,6 @@ import {
   } from "azure-devops-ui/Table";
 
 import { css } from "azure-devops-ui/Util";
-import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 import { Link } from "azure-devops-ui/Link";

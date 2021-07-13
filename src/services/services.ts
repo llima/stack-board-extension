@@ -1,13 +1,10 @@
-// tslint:disable-next-line:no-empty-interface
 export interface IService {}
 
-// tslint:disable-next-line:no-empty-interface
 export interface IServiceRegistry {
     registerService(id: string, service: IService): void;
     getService<TService extends IService>(id: string): TService;
 }
 
-// tslint:disable-next-line:no-empty-interface
 class ServiceRegistry implements IServiceRegistry {
     private services: { [id: string]: new () => IService } = {};
     private servicesInstances: { [id: string]: IService } = {};
