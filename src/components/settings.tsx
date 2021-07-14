@@ -5,7 +5,8 @@ import {
   ScrollableList,
   IListItemDetails,
   ListSelection,
-  ListItem
+  ListItem,
+  IListRow
 } from "azure-devops-ui/List";
 
 import { Guid } from "guid-typescript";
@@ -22,6 +23,7 @@ import { ISettings } from '../model/settings';
 import { ISettingsService, SettingsServiceId } from "../services/settings";
 import { Observer } from 'azure-devops-ui/Observer';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
+import { ButtonGroup } from 'azure-devops-ui/ButtonGroup';
 
 export interface ISettingsPanelProps {
   show: boolean;
@@ -54,7 +56,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
 
   getStartValue(): ISettings {
     return {
-      id: Guid.create().toString(),
+      id: "",
       name: "",
       description: "",
       gitUrl: "",
@@ -69,18 +71,6 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
 
     this.setState({
       currentSettings: that.state.currentSettings
-    });
-  }
-
-  saveSettings(that: this) {
-    that.service.saveSettings(that.state.currentSettings).then(item => {
-      that.service.getSettings().then(items => {
-        console.log(items);
-        that.setState({
-          currentSettings: this.getStartValue(),
-          settings: items
-        })
-      });
     });
   }
 
@@ -138,8 +128,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             </div>
             <div className="settings--group">
               <Toggle
-                offText={"Requires authentication"}
-                onText={"Requires authentication"}
+                text={"Requires authentication"}
                 checked={showAuthentication}
                 onChange={(event, value) => (this.setState({ showAuthentication: value }))}
               />
@@ -166,13 +155,48 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             </>}
 
             <div className="settings--group settings--add-button">
-              <Button
+              {!this.state.currentSettings.id && <Button
                 text="Add"
                 primary={true}
                 onClick={() => {
-                  this.saveSettings(this);
+                  this.state.currentSettings.id = Guid.create().toString();
+                  this.state.settings.push(this.state.currentSettings);
+                  this.setState({
+                    currentSettings: this.getStartValue(),
+                    settings: this.state.settings
+                  })
                 }}
-              />
+              />}
+              {this.state.currentSettings.id && <ButtonGroup className="settings--add-button">
+                <Button
+                  text="Cancel"
+                  subtle={true}
+                  onClick={() =>
+                    this.setState({
+                      currentSettings: this.getStartValue()
+                    })
+                  }
+                />
+                <Button
+                  text="Delete"
+                  danger={true}
+                  onClick={() => alert("Danger button clicked!")}
+                />
+                <Button
+                  text="Save"
+                  primary={true}
+                  onClick={() => {
+                    let items = this.state.settings.filter(d => d.id == this.state.currentSettings.id);
+                    if (items.length > 0) {
+                      items[0] = this.state.currentSettings;
+                      this.setState({
+                        currentSettings: this.getStartValue(),
+                        settings: this.state.settings
+                      })
+                    }
+                  }}
+                />
+              </ButtonGroup>}
             </div>
 
             <Card>
@@ -186,8 +210,13 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                       itemProvider={observableProps.itemProvider}
                       renderRow={this.renderRow}
                       selection={this.selection}
+                      onSelect={(event: React.SyntheticEvent<HTMLElement>, listRow: IListRow<ISettings>) => {
+                        this.setState({
+                          currentSettings: { ...listRow.data },
+                        })
+                      }}
                       width="100%"
-                    />                  )}
+                    />)}
                 </Observer>
 
               </div>
@@ -211,8 +240,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
         <div className="settings--list-row flex-row h-scroll-hidden">
           <div
             style={{ marginLeft: "10px", padding: "10px 0px" }}
-            className="flex-column h-scroll-hidden"
-          >
+            className="flex-column h-scroll-hidden">
             <span className="text-ellipsis">{item.name}</span>
             <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
               {item.description}
