@@ -39,9 +39,8 @@ import {
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
-
-import {getStorageManager} from "./services/storage";
-
+import { Services } from './services/services';
+import { ISettingsService, SettingsServiceId } from './services/settings';
 
 interface IAppState {
   settingsExpanded: boolean;
@@ -60,8 +59,12 @@ class App extends React.Component<{}, IAppState>  {
 
   async componentWillMount() {
     DevOps.init();
-    var oi = await getStorageManager();
-    console.log(oi);
+    const service = Services.getService<ISettingsService>(
+      SettingsServiceId
+    );
+    service.getSettings().then(items => {
+      console.log(items);
+    });
   }
 
   render() {
@@ -150,7 +153,7 @@ class App extends React.Component<{}, IAppState>  {
       renderCell: renderDateColumn,
       width: -33,
     },
-    
+
     new ColumnMore(() => {
       return {
         id: "sub-menu",

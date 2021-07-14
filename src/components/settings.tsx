@@ -20,6 +20,8 @@ import { Button } from "azure-devops-ui/Button";
 import { Services } from "../services/services";
 import { ISettings } from '../model/settings';
 import { ISettingsService, SettingsServiceId } from "../services/settings";
+import { Observer } from 'azure-devops-ui/Observer';
+import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 
 export interface ISettingsPanelProps {
   show: boolean;
@@ -28,39 +30,57 @@ export interface ISettingsPanelProps {
 
 interface ISettingsPanelState {
   showAuthentication: boolean;
-  currentSettings: ISettings;
+  currentSettings?: ISettings;
   settings: ISettings[]
 }
 
 class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelState>  {
 
   selection = new ListSelection(true);
-  tasks = new ArrayItemProvider([]);
+  service = Services.getService<ISettingsService>(
+    SettingsServiceId
+  );
 
   constructor(props: ISettingsPanelProps) {
     super(props);
+
     this.state = {
       showAuthentication: false,
-      currentSettings: {
-        id: Guid.create().toString(),
-        name: "",
-        description: "",
-        gitUrl: "",
-        user: "",
-        pass: ""
-      },
+      currentSettings: this.getStartValue(),
       settings: []
+    };
+
+  }
+
+  getStartValue(): ISettings {
+    return {
+      id: Guid.create().toString(),
+      name: "",
+      description: "",
+      gitUrl: "",
+      user: "",
+      pass: ""
     };
   }
 
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
-
-    //Cat
     var prop = event.target.id.replace("__bolt-", "");
     that.state.currentSettings[prop] = value;
 
     this.setState({
       currentSettings: that.state.currentSettings
+    });
+  }
+
+  saveSettings(that: this) {
+    that.service.saveSettings(that.state.currentSettings).then(item => {
+      that.service.getSettings().then(items => {
+        console.log(items);
+        that.setState({
+          currentSettings: this.getStartValue(),
+          settings: items
+        })
+      });
     });
   }
 
@@ -150,29 +170,26 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 text="Add"
                 primary={true}
                 onClick={() => {
-                  console.log("Click");
-                  const service = Services.getService<ISettingsService>(
-                    SettingsServiceId
-                  );
-
-                  service.saveSettings(this.state.currentSettings).then(items2 => {
-                    service.getSettings().then(items => {
-                      console.log(items);
-                    });
-                  });
-
+                  this.saveSettings(this);
                 }}
               />
             </div>
 
             <Card>
               <div style={{ display: "flex" }}>
-                <ScrollableList
-                  itemProvider={this.tasks}
-                  renderRow={this.renderRow}
-                  selection={this.selection}
-                  width="100%"
-                />
+
+                <Observer itemProvider={new ObservableValue<ArrayItemProvider<ISettings>>(
+                  new ArrayItemProvider(this.state.settings)
+                )}>
+                  {(observableProps: { itemProvider: ArrayItemProvider<ISettings> }) => (
+                    <ScrollableList
+                      itemProvider={observableProps.itemProvider}
+                      renderRow={this.renderRow}
+                      selection={this.selection}
+                      width="100%"
+                    />                  )}
+                </Observer>
+
               </div>
             </Card>
           </div>
@@ -208,8 +225,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       </ListItem>
     );
   };
+
 }
-
-
 
 export default SettingsPanel;

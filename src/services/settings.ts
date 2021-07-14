@@ -31,9 +31,9 @@ export class SettingsService implements ISettingsService {
 
         try {
             // Try legacy and current collection
-            const sessions: ISettings[][] = await Promise.all(
+            const settings: ISettings[][] = await Promise.all(
                 [
-                    manager.getDocuments("sessions", {
+                    manager.getDocuments("SourceSettings", {
                         defaultValue: []
                     }),
                     manager.getDocuments(await this._getCollection(), {
@@ -42,7 +42,7 @@ export class SettingsService implements ISettingsService {
                 ].map(p => p.catch(() => []))
             );
 
-            return sessions.flat();
+            return settings.flat();
         } catch {
             return [];
         }
@@ -61,7 +61,7 @@ export class SettingsService implements ISettingsService {
             await manager.deleteDocument(await this._getCollection(), id);
         } catch {
             try {
-                await manager.deleteDocument("sessions", id);
+                await manager.deleteDocument("SourceSettings", id);
             } catch {
                 // Ignore
             }
@@ -77,7 +77,7 @@ export class SettingsService implements ISettingsService {
     }
 
     async _getCollection(): Promise<string> {
-        const SettingsCollection = "sessions";
+        const SettingsCollection = "SourceSettings";
         const projectPageService = await DevOps.getService<IProjectPageService>(
             "ms.vss-tfs-web.tfs-page-data-service"
         );
