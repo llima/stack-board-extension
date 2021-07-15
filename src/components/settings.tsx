@@ -52,6 +52,10 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       settings: []
     };
 
+    this.service.getSettings().then(items => {
+      this.setState({ settings: items })
+    });
+
   }
 
   getStartValue(): ISettings {
@@ -74,6 +78,26 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
     });
   }
 
+  isValid(): boolean {
+    const { currentSettings, showAuthentication } = this.state;
+
+    return (
+      !!currentSettings.name && currentSettings.name.trim() !== "" &&
+      !!currentSettings.description && currentSettings.description.trim() !== "" &&
+      !!currentSettings.gitUrl && currentSettings.gitUrl.trim() !== "" &&
+      (!showAuthentication ||
+        currentSettings.user && currentSettings.user.trim() !== "" &&
+        currentSettings.pass && currentSettings.pass.trim() !== ""
+      )
+    );
+  }
+
+  save(that: this) {
+    that.service.saveSettings(that.state.currentSettings).then(item => {
+      that.props.onDismiss();
+    });
+  }
+
   render() {
 
     const { showAuthentication, currentSettings } = this.state;
@@ -88,7 +112,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss },
-            { text: "Save", primary: true }
+            { text: "Save", primary: true, onClick: () => { this.save(this) } }
           ]}>
 
           <div className="settings--content">
@@ -130,7 +154,16 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               <Toggle
                 text={"Requires authentication"}
                 checked={showAuthentication}
-                onChange={(event, value) => (this.setState({ showAuthentication: value }))}
+                onChange={(event, value) => {
+
+                  this.state.currentSettings.user = "";
+                  this.state.currentSettings.pass = "";
+
+                  this.setState({
+                    showAuthentication: value,
+                    currentSettings: this.state.currentSettings
+                  });
+                }}
               />
             </div>
             {this.state.showAuthentication && <>
@@ -144,7 +177,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               </div>
               <div className="settings--group">
                 <TextField
-                  inputId="user"
+                  inputId="pass"
                   value={currentSettings.pass}
                   onChange={(event, value) => this.onInputChange(event, value, this)}
                   inputType={"password"}
@@ -158,12 +191,14 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               {!this.state.currentSettings.id && <Button
                 text="Add"
                 primary={true}
+                disabled={!this.isValid()}
                 onClick={() => {
                   this.state.currentSettings.id = Guid.create().toString();
                   this.state.settings.push(this.state.currentSettings);
                   this.setState({
+                    showAuthentication: false,
                     currentSettings: this.getStartValue(),
-                    settings: this.state.settings
+                    settings: this.state.settings.sortByProp("name")
                   })
                 }}
               />}
@@ -171,27 +206,41 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 <Button
                   text="Cancel"
                   subtle={true}
-                  onClick={() =>
+                  onClick={() => {
+                    this.selection.clear()
                     this.setState({
+                      showAuthentication: false,
                       currentSettings: this.getStartValue()
                     })
-                  }
+                  }}
                 />
                 <Button
                   text="Delete"
                   danger={true}
-                  onClick={() => alert("Danger button clicked!")}
+                  onClick={() => {
+                    this.selection.clear();
+                    let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
+                    this.setState({
+                      showAuthentication: false,
+                      currentSettings: this.getStartValue(),
+                      settings: items.sortByProp("name")
+                    })
+
+                  }}
                 />
                 <Button
                   text="Save"
                   primary={true}
+                  disabled={!this.isValid()}
                   onClick={() => {
-                    let items = this.state.settings.filter(d => d.id == this.state.currentSettings.id);
+                    this.selection.clear();
+                    let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
+                    items.push(this.state.currentSettings);
                     if (items.length > 0) {
-                      items[0] = this.state.currentSettings;
                       this.setState({
+                        showAuthentication: false,
                         currentSettings: this.getStartValue(),
-                        settings: this.state.settings
+                        settings: items.sortByProp("name")
                       })
                     }
                   }}
@@ -212,6 +261,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                       selection={this.selection}
                       onSelect={(event: React.SyntheticEvent<HTMLElement>, listRow: IListRow<ISettings>) => {
                         this.setState({
+                          showAuthentication: listRow.data.pass !== "",
                           currentSettings: { ...listRow.data },
                         })
                       }}
