@@ -9,6 +9,9 @@ import { TestImages } from '@fluentui/example-data';
 import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Checkbox } from "azure-devops-ui/Checkbox";
 
+import { CreateRepositoryAsync } from '../services/repository';
+import { CreateBuildDefinitionAsync } from '../services/build';
+
 
 export interface ITemplatePanelProps {
   show: boolean;
@@ -46,6 +49,20 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     };
   }
 
+  async createNewProject() : Promise<any> {
+    try {
+      const repository = await CreateRepositoryAsync("Company.Service.StackBoard");
+      console.log("Repository created");
+
+      const buildDef = await CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git");
+      console.log("Pipeline created");
+
+      return buildDef;
+    } catch (ex) {
+      console.error(ex);
+    }    
+  }
+
   render() {
 
     if (this.props.show) {
@@ -58,7 +75,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss },
-            { text: "Save", primary: true }
+            { text: "Save", primary: true, onClick: this.createNewProject }
           ]}>
 
           <div className="template--content">

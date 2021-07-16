@@ -1,0 +1,33 @@
+{
+  "id": "4C770A38-2B38-4144-AAE5-32D81B7A5C0C",
+  "name": "stack-board-repos",
+  "friendlyName": "Stack Board Repos",
+  "description": "Stack Board Repos Extension for Azure DevOps",
+  "author": "11Labs - Eleven Financial",
+  "helpUrl": "https://github.com/eleven-financial/stack-board-extension",
+  "helpMarkDown": "[Learn more about this task](https://github.com/eleven-financial/stack-board-extension/blob/develop/README.md)",
+  "category": "Utility",
+  "visibility": ["Build"],
+  "demands": [],
+  "version": {
+    "Major": "0",
+    "Minor": "0",
+    "Patch": "1"
+  },
+  "minimumAgentVersion": "0.0.1",
+  "instanceNameFormat": "Stack Board Repos",
+  "inputs": [
+    {
+      "name": "sourceRepository",
+      "type": "string",
+      "label": "Source Repository",      
+      "helpMarkDown": "Type source repository. e.g. https://github.com/Microsoft/vscode.git",
+      "defaultValue": ""
+    }
+  ],
+  "execution": {
+    "PowerShell3": {
+      "target": "stackboardrepos.ps1"
+    }
+  }
+}

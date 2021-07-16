@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.24",
+    "version": "1.0.30",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -39,7 +39,9 @@
     "scopes": [
         "vso.project",
         "vso.work",
-        "vso.work_write"
+        "vso.work_write",
+        "vso.code_manage",
+        "vso.build_execute"
     ],
     "tags": [
         "Stack",
@@ -60,6 +62,16 @@
                     "dark": "marketplace/icon-dark.png"
                 }
             }
+        },
+        {
+            "id": "stack-board-repos",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "tasks/stack-board-repos"
+            }
         }
     ],
     "files": [
@@ -74,6 +86,9 @@
         {
             "path": "node_modules/vss-web-extension-sdk/lib",
             "addressable": true
+        },        
+        {
+            "path": "tasks/stack-board-repos"
         }
     ]
 }
