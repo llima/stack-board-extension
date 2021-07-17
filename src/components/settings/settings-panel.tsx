@@ -1,5 +1,5 @@
 import React from 'react';
-import './settings.scss';
+import './settings-panel.scss';
 
 import {
   ScrollableList,
@@ -18,12 +18,17 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { Toggle } from "azure-devops-ui/Toggle";
 import { Button } from "azure-devops-ui/Button";
 
-import { Services } from "../services/services";
-import { ISettings } from '../model/settings';
-import { ISettingsService, SettingsServiceId } from "../services/settings";
+import { Services } from "../../services/services";
+import { ISettings } from '../../model/settings';
+import { ISettingsService, SettingsServiceId } from "../../services/settings";
 import { Observer } from 'azure-devops-ui/Observer';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 import { ButtonGroup } from 'azure-devops-ui/ButtonGroup';
+import { IStack, StackValues } from '../../model/stacks';
+import { TagPicker } from "azure-devops-ui/TagPicker";
+import { ISuggestionItemProps } from "azure-devops-ui/SuggestionsList";
+import { PillGroup } from 'azure-devops-ui/PillGroup';
+import { Pill, PillSize } from 'azure-devops-ui/Pill';
 
 export interface ISettingsPanelProps {
   show: boolean;
@@ -33,12 +38,14 @@ export interface ISettingsPanelProps {
 interface ISettingsPanelState {
   showAuthentication: boolean;
   currentSettings?: ISettings;
-  settings: ISettings[]
+  settings: ISettings[];
+  tagSuggestions: IStack[]
 }
 
 class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelState>  {
 
   selection = new ListSelection(true);
+
   service = Services.getService<ISettingsService>(
     SettingsServiceId
   );
@@ -49,7 +56,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
     this.state = {
       showAuthentication: false,
       currentSettings: this.getStartValue(),
-      settings: []
+      tagSuggestions: StackValues,
+      settings: [],
     };
 
     this.service.getSettings().then(items => {
@@ -65,7 +73,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       description: "",
       gitUrl: "",
       user: "",
-      pass: ""
+      pass: "",
+      tags: []
     };
   }
 
@@ -86,16 +95,9 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       !!currentSettings.description && currentSettings.description.trim() !== "" &&
       !!currentSettings.gitUrl && currentSettings.gitUrl.trim() !== "" &&
       (!showAuthentication ||
-        currentSettings.user && currentSettings.user.trim() !== "" &&
         currentSettings.pass && currentSettings.pass.trim() !== ""
       )
     );
-  }
-
-  save(that: this) {
-    that.service.saveSettings(that.state.currentSettings).then(item => {
-      that.props.onDismiss();
-    });
   }
 
   render() {
@@ -112,7 +114,13 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss },
-            { text: "Save", primary: true, onClick: () => { this.save(this) } }
+            {
+              text: "Save", primary: true, onClick: () => {
+                this.service.saveSettings(this.state.currentSettings).then(item => {
+                  this.props.onDismiss();
+                });
+              }
+            }
           ]}>
 
           <div className="settings--content">
@@ -151,14 +159,64 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               />
             </div>
             <div className="settings--group">
+              <label className="settings--group-label">
+                Tags *
+              </label>
+
+              <div className="flex-column">
+                <TagPicker
+                  noResultsFoundText={"No results found"}
+                  areTagsEqual={(a: IStack, b: IStack) => {
+                    return a.id === b.id;
+                  }}
+                  convertItemToPill={(tag: IStack) => {
+                    return {
+                      content: tag.text
+                    };
+                  }}
+                  onSearchChanged={(searchValue: string) => {
+                    var items =
+                      StackValues.filter(item =>
+                        this.state.currentSettings.tags.findIndex(d => d.id === item.id) === -1
+                      ).filter(
+                        testItem => testItem.text.toLowerCase().indexOf(searchValue.toLowerCase()) > -1
+                      )
+                    this.setState({ tagSuggestions: items });
+                  }}
+                  onTagAdded={(tag: IStack) => {
+                    this.state.currentSettings.tags.push(tag);
+                    this.setState({
+                      currentSettings: this.state.currentSettings, tagSuggestions: StackValues.filter(item =>
+                        this.state.currentSettings.tags.findIndex(d => d.id === item.id) === -1
+                      )
+                    });
+                  }}
+                  onTagRemoved={(tag: IStack) => {
+                    var items = this.state.currentSettings.tags.filter(x => x.id !== tag.id)
+                    this.state.currentSettings.tags = items;
+                    this.setState({
+                      currentSettings: this.state.currentSettings, tagSuggestions: StackValues.filter(item =>
+                        items.findIndex(d => d.id === item.id) === -1
+                      )
+                    });
+                  }}
+                  renderSuggestionItem={(tag: ISuggestionItemProps<IStack>) => {
+                    return <div className="body-m">{tag.item.text}</div>;
+                  }}
+                  selectedTags={this.state.currentSettings.tags}
+                  suggestions={this.state.tagSuggestions}
+                  suggestionsLoading={false}
+                />
+              </div>
+
+            </div>
+            <div className="settings--group">
               <Toggle
                 text={"Requires authentication"}
                 checked={showAuthentication}
                 onChange={(event, value) => {
-
                   this.state.currentSettings.user = "";
                   this.state.currentSettings.pass = "";
-
                   this.setState({
                     showAuthentication: value,
                     currentSettings: this.state.currentSettings
@@ -172,7 +230,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                   inputId="user"
                   value={currentSettings.user}
                   onChange={(event, value) => this.onInputChange(event, value, this)}
-                  placeholder="Username *"
+                  placeholder="Username"
                 />
               </div>
               <div className="settings--group">
@@ -298,6 +356,11 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
               {item.gitUrl}
             </span>
+            <PillGroup className="flex-row">
+              {item.tags.map(tag => (
+                <Pill size={PillSize.compact}>{tag.text}</Pill>
+              ))}
+            </PillGroup>
           </div>
         </div>
       </ListItem>

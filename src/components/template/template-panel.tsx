@@ -1,5 +1,5 @@
 import React from 'react';
-import './template.scss';
+import './template-panel.scss';
 
 import { Panel } from "azure-devops-ui/Panel";
 import { TextField } from "azure-devops-ui/TextField";
@@ -9,9 +9,8 @@ import { TestImages } from '@fluentui/example-data';
 import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Checkbox } from "azure-devops-ui/Checkbox";
 
-import { CreateRepositoryAsync } from '../services/repository';
-import { CreateBuildDefinitionAsync } from '../services/build';
-
+import { CreateRepositoryAsync } from '../../services/repository';
+import { CreateBuildDefinitionAsync } from '../../services/build';
 
 export interface ITemplatePanelProps {
   show: boolean;

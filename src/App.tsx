@@ -13,8 +13,8 @@ import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import SettingsPanel from './components/settings';
-import TemplatePanel from './components/template';
+import SettingsPanel from './components/settings/settings-panel';
+import TemplatePanel from './components/template/template-panel';
 
 import * as DevOps from "azure-devops-extension-sdk";
 
