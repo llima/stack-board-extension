@@ -3,17 +3,22 @@ import { IProjectPageService } from "azure-devops-extension-api";
 
 import { getClient } from "azure-devops-extension-api";
 import {
+  AgentPoolQueue,
   AgentSpecification,
+  Build,
   BuildDefinition,
   BuildDefinitionStep,
+  BuildDefinitionVariable,
   BuildRepository,
   BuildRestClient,
   DefinitionType,
   DesignerProcess,
   DesignerProcessTarget,
-  Phase,  
+  Phase,
+  TaskAgentPoolReference,
   TaskDefinitionReference,
 } from "azure-devops-extension-api/Build";
+import { IBuildOptions } from "../model/buildOptions";
 
 const client: BuildRestClient = getClient(BuildRestClient);
 
@@ -28,9 +33,7 @@ export interface PhaseTargetScript {
 }
 
 export async function CreateBuildDefinitionAsync(
-  name: string,
-  repositoryId: string,
-  templateUrl: string
+  options: IBuildOptions
 ): Promise<BuildDefinition> {
   await DevOps.ready();
   const projectService = await DevOps.getService<IProjectPageService>(
@@ -40,7 +43,8 @@ export async function CreateBuildDefinitionAsync(
 
   const repository = {} as BuildRepository;
   repository.type = "TfsGit";
-  repository.id = repositoryId;
+  repository.id = options.repositoryId;
+  repository.defaultBranch = "refs/heads/develop";
 
   const agent = {} as AgentSpecification;
   agent.identifier = "ubuntu-20.04";
@@ -60,7 +64,8 @@ export async function CreateBuildDefinitionAsync(
   const step = {} as BuildDefinitionStep;
   step.task = task;
   step.displayName = "Stack Board Repos";
-  step.inputs = { sourceRepository: templateUrl };
+  step.enabled = true;
+  step.inputs = { sourceRepository: options.repositoryUrl };
 
   const phase = {} as Phase;
   phase.name = "Agent job 1";
@@ -75,11 +80,50 @@ export async function CreateBuildDefinitionAsync(
   designerProcess.target = target;
   designerProcess.phases = [phase];
 
+  const taskAgentPoolReference = {} as TaskAgentPoolReference;
+  taskAgentPoolReference.isHosted = true;
+  taskAgentPoolReference.name = "Azure Pipelines";
+
+  const agentPoolQueue = {} as AgentPoolQueue;
+  agentPoolQueue.pool = taskAgentPoolReference;
+  agentPoolQueue.name = "Azure Pipelines";
+
   const definition = {} as BuildDefinition;
-  definition.name = name;
+  definition.name = `STACKBOARD-REPOS-${options.name.toUpperCase()}`;
   definition.type = DefinitionType.Build;
   definition.repository = repository;
   definition.process = designerProcess;
+  definition.queue = agentPoolQueue;
+
+  const PAT = {} as BuildDefinitionVariable;
+  PAT.isSecret = true;
+  PAT.value = options.pass;
+
+  const userName = {} as BuildDefinitionVariable;
+  userName.isSecret = true;
+  userName.value = options.user;
+
+  definition.variables = { PAT: PAT, UserName: userName };
 
   return await client.createDefinition(definition, currentProject.name);
+}
+
+export async function RunBuild(buildDefinitionId: number): Promise<Build> {
+  await DevOps.ready();
+  const projectService = await DevOps.getService<IProjectPageService>(
+    "ms.vss-tfs-web.tfs-page-data-service"
+  );
+  const currentProject = await projectService.getProject();
+
+  const build = {} as Build;
+  build.definition = await client.getDefinition(
+    currentProject.name,
+    buildDefinitionId
+  );
+
+  if (build.definition) {
+    return await client.queueBuild(build, currentProject.name);
+  }
+
+  throw new Error(`Can't find build definition with id ${buildDefinitionId}`);
 }

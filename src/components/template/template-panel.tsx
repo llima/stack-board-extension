@@ -10,7 +10,9 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { Checkbox } from "azure-devops-ui/Checkbox";
 
 import { CreateRepositoryAsync } from '../../services/repository';
-import { CreateBuildDefinitionAsync } from '../../services/build';
+import { CreateBuildDefinitionAsync, RunBuild } from '../../services/build';
+import { IBuildOptions } from '../../model/buildOptions';
+
 
 export interface ITemplatePanelProps {
   show: boolean;
@@ -50,13 +52,25 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
 
   async createNewProject() : Promise<any> {
     try {
-      const repository = await CreateRepositoryAsync("Company.Service.StackBoard");
+      const repository = await CreateRepositoryAsync("Company.Service.News");
       console.log("Repository created");
 
-      const buildDef = await CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git");
+      const buildOptions : IBuildOptions = {    
+        name: "News",
+        repositoryId: repository.id,
+        repositoryUrl: "https://github.com/company/empty.git",
+        replaceKey: "ServiceName",
+        user: "",
+        pass: ""
+      };      
+
+      const buildDef = await CreateBuildDefinitionAsync(buildOptions);
       console.log("Pipeline created");
 
-      return buildDef;
+      const queueBuild = await RunBuild(buildDef.id);
+      console.log("Run build");
+
+      return queueBuild;
     } catch (ex) {
       console.error(ex);
     }    
