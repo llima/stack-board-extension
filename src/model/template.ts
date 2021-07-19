@@ -6,9 +6,10 @@ export interface ITemplate {
     typeId: string;
     repoName: string;
     status: string;
+    settings?: ISettings;
+
     repoUrl?: string;
     buildDefinitionId?: number;
-    settings?: ISettings;
     startTime?: Date;
     endTime?: Date;
 }

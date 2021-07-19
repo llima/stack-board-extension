@@ -65,7 +65,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
 
     this.service.getSettings().then(items => {
       this.setState({
-        settings: items.sortByProp("name")
+        settings: items.sortByProp("text")
       });
     });
   }
@@ -114,7 +114,6 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       return (
         <Panel
           onDismiss={this.props.onDismiss}
-          titleProps={{ text: "Source settings" }}
           description={
             "Base repository configuration for template generation."
           }
@@ -278,7 +277,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                     this.setState({
                       showAuthentication: false,
                       currentSettings: this.getStartValue(),
-                      settings: this.state.settings.sortByProp("name"),
+                      settings: this.state.settings.sortByProp("text"),
                       tagSuggestions: StackValues
                     })
                   }} />
@@ -306,7 +305,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                       this.setState({
                         showAuthentication: false,
                         currentSettings: this.getStartValue(),
-                        settings: items.sortByProp("name"),
+                        settings: items.sortByProp("text"),
                         tagSuggestions: StackValues
                       })
                     }} />
@@ -323,7 +322,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                         this.setState({
                           showAuthentication: false,
                           currentSettings: this.getStartValue(),
-                          settings: items.sortByProp("name"),
+                          settings: items.sortByProp("text"),
                           tagSuggestions: StackValues
                         })
                       }

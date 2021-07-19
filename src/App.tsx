@@ -42,34 +42,48 @@ import { Observer } from "azure-devops-ui/Observer";
 import { Services } from './services/services';
 import { ISettingsService, SettingsServiceId } from './services/settings';
 import { ISettings } from './model/settings';
+import { ITemplateService, TemplateServiceId } from './services/template';
+import { ITemplate } from './model/template';
 
 interface IAppState {
   settingsExpanded: boolean;
-  createExpanded: boolean;
+  templateExpanded: boolean;
   settings: ISettings[];
+  templates: ITemplate[];
 }
 
 class App extends React.Component<{}, IAppState>  {
 
-  service = Services.getService<ISettingsService>(
+  settingsService = Services.getService<ISettingsService>(
     SettingsServiceId
+  );
+
+  templateService = Services.getService<ITemplateService>(
+    TemplateServiceId
   );
 
   constructor(props: {}) {
     super(props);
     this.state = {
       settingsExpanded: false,
-      createExpanded: false,
-      settings: []
+      templateExpanded: false,
+      settings: [],
+      templates: []
     };
 
     DevOps.init();
     this.loadSettings();
+    this.loadTemplates();
   }
 
   loadSettings() {
-    this.service.getSettings().then(items => {
+    this.settingsService.getSettings().then(items => {
       this.setState({ settings: items });
+    });
+  }
+  loadTemplates() {
+    this.templateService.getTemplate().then(items => {
+      this.setState({ templates: items });
     });
   }
 
@@ -86,7 +100,7 @@ class App extends React.Component<{}, IAppState>  {
           </HeaderTitleArea>
           <ButtonGroup>
             <Button text="Create" iconProps={{ iconName: "Add" }} primary={true}
-              onClick={() => this.setState({ createExpanded: true })}
+              onClick={() => this.setState({ templateExpanded: true })}
             />
             <Button ariaLabel="Add" iconProps={{ iconName: "Settings" }}
               onClick={() => this.setState({ settingsExpanded: true })}
@@ -120,7 +134,7 @@ class App extends React.Component<{}, IAppState>  {
         </div>
 
         <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false }); this.loadSettings() }} />
-        <TemplatePanel settings={this.state.settings} show={this.state.createExpanded} onDismiss={() => this.setState({ createExpanded: false })} />
+        <TemplatePanel settings={this.state.settings} show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadSettings() }} />
 
       </Page>
     );

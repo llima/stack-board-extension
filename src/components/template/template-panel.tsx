@@ -10,6 +10,9 @@ import { CreateBuildDefinitionAsync } from '../../services/build';
 import { ISettings } from '../../model/settings';
 import { ITemplate } from '../../model/template';
 import { IListBoxItem } from 'azure-devops-ui/ListBox';
+import { Guid } from 'guid-typescript';
+import { Services } from '../../services/services';
+import { ITemplateService, TemplateServiceId } from '../../services/template';
 
 export interface ITemplatePanelProps {
   show: boolean;
@@ -23,6 +26,10 @@ interface ITemplatePanelState {
 
 class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelState>  {
 
+  service = Services.getService<ITemplateService>(
+    TemplateServiceId
+  );
+
   constructor(props: ITemplatePanelProps) {
     super(props);
     this.state = {
@@ -31,7 +38,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
         name: "",
         typeId: "",
         repoName: "",
-        status: "",
+        status: "running",
       }
     };
   }
@@ -56,10 +63,21 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
 
   async createNewProject(): Promise<any> {
     try {
-      const repository = await CreateRepositoryAsync("Company.Service.StackBoard");
+
+      var item = this.state.currentTemplate;
+
+      const repository = await CreateRepositoryAsync(item.repoName);
       const buildDef = await CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git");
 
-      return buildDef;
+      item.id = Guid.create().toString();
+      item.repoUrl = repository.url;
+      item.buildDefinitionId = buildDef.id;
+      item.startTime =  new Date();
+
+      this.service.saveTemplate(item).then(item => {
+        this.props.onDismiss();
+      });
+      
     } catch (ex) {
       console.error(ex);
     }
@@ -99,9 +117,9 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 className="example-dropdown"
                 placeholder="Select a type"
                 items={this.props.settings}
-                onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
-                  console.log(item);
+                onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
                   currentTemplate.typeId = item.id;
+                  currentTemplate.settings = item.data;
                   this.setState({ currentTemplate: currentTemplate});
                 }}
               />
