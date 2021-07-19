@@ -13,7 +13,7 @@ import { IService } from "./services";
 
 export interface ISettingsService extends IService {
     getSettings(): Promise<ISettings[]>;
-    saveSettings(session: ISettings): Promise<ISettings>;
+    saveSettings(settings: ISettings): Promise<ISettings>;
     removeSettings(id: string): Promise<void>;
 }
 
@@ -30,41 +30,27 @@ export class SettingsService implements ISettingsService {
         const manager = await this.getManager();
 
         try {
-            // Try legacy and current collection
-            const settings: ISettings[][] = await Promise.all(
-                [
-                    manager.getDocuments("SourceSettings", {
-                        defaultValue: []
-                    }),
-                    manager.getDocuments(await this._getCollection(), {
-                        defaultValue: []
-                    })
-                ].map(p => p.catch(() => []))
-            );
-
-            return settings.flat();
+            return manager.getDocuments(await this._getCollection(), {
+                defaultValue: []
+            });
         } catch {
             return [];
         }
     }
-    
-    async saveSettings(session: ISettings): Promise<ISettings> {
+
+    async saveSettings(settings: ISettings): Promise<ISettings> {
+        console.log(settings);
         const manager = await this.getManager();
-        await manager.setDocument(await this._getCollection(), session);
-        return session;
+        await manager.setDocument(await this._getCollection(), settings);
+        return settings;
     }
 
     async removeSettings(id: string): Promise<void> {
         const manager = await this.getManager();
-
         try {
             await manager.deleteDocument(await this._getCollection(), id);
         } catch {
-            try {
-                await manager.deleteDocument("SourceSettings", id);
-            } catch {
-                // Ignore
-            }
+            // Ignore
         }
     }
 
@@ -72,16 +58,16 @@ export class SettingsService implements ISettingsService {
         if (!this.manager) {
             this.manager = await getStorageManager();
         }
-
         return this.manager;
     }
 
     async _getCollection(): Promise<string> {
-        const SettingsCollection = "SourceSettings";
+        const SettingsCollection = "SourceSettingsCollections";
         const projectPageService = await DevOps.getService<IProjectPageService>(
             "ms.vss-tfs-web.tfs-page-data-service"
         );
         const projectInfo = await projectPageService.getProject();
+        console.log(`${SettingsCollection}-${projectInfo.id}`);
         return `${SettingsCollection}-${projectInfo.id}`;
     }
 }

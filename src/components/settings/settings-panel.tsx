@@ -61,9 +61,10 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
     };
 
     this.service.getSettings().then(items => {
-      this.setState({ settings: items })
+      this.setState({
+        settings: items.sortByProp("name")
+      });
     });
-
   }
 
   getStartValue(): ISettings {
@@ -113,14 +114,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             "Base repository configuration for template generation."
           }
           footerButtonProps={[
-            { text: "Cancel", onClick: this.props.onDismiss },
-            {
-              text: "Save", primary: true, onClick: () => {
-                this.service.saveSettings(this.state.currentSettings).then(item => {
-                  this.props.onDismiss();
-                });
-              }
-            }
+            { text: "Close", onClick: this.props.onDismiss }
           ]}>
 
           <div className="settings--content">
@@ -162,7 +156,6 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               <label className="settings--group-label">
                 Tags *
               </label>
-
               <div className="flex-column">
                 <TagPicker
                   noResultsFoundText={"No results found"}
@@ -208,7 +201,6 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                   suggestionsLoading={false}
                 />
               </div>
-
             </div>
             <div className="settings--group">
               <Toggle
@@ -246,89 +238,100 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             </>}
 
             <div className="settings--group settings--add-button">
-              {!this.state.currentSettings.id && <Button
-                text="Add"
-                primary={true}
-                disabled={!this.isValid()}
-                onClick={() => {
-                  this.state.currentSettings.id = Guid.create().toString();
-                  this.state.settings.push(this.state.currentSettings);
-                  this.setState({
-                    showAuthentication: false,
-                    currentSettings: this.getStartValue(),
-                    settings: this.state.settings.sortByProp("name")
-                  })
-                }}
-              />}
-              {this.state.currentSettings.id && <ButtonGroup className="settings--add-button">
+              {!this.state.currentSettings.id &&
                 <Button
-                  text="Cancel"
-                  subtle={true}
-                  onClick={() => {
-                    this.selection.clear()
-                    this.setState({
-                      showAuthentication: false,
-                      currentSettings: this.getStartValue()
-                    })
-                  }}
-                />
-                <Button
-                  text="Delete"
-                  danger={true}
-                  onClick={() => {
-                    this.selection.clear();
-                    let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
-                    this.setState({
-                      showAuthentication: false,
-                      currentSettings: this.getStartValue(),
-                      settings: items.sortByProp("name")
-                    })
-
-                  }}
-                />
-                <Button
-                  text="Save"
+                  text="Add"
                   primary={true}
                   disabled={!this.isValid()}
                   onClick={() => {
-                    this.selection.clear();
-                    let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
-                    items.push(this.state.currentSettings);
-                    if (items.length > 0) {
+                    this.state.currentSettings.id = Guid.create().toString();
+                    this.state.settings.push(this.state.currentSettings);
+                    this.service.saveSettings(this.state.currentSettings);
+                    this.setState({
+                      showAuthentication: false,
+                      currentSettings: this.getStartValue(),
+                      settings: this.state.settings.sortByProp("name"),
+                      tagSuggestions: StackValues
+                    })
+                  }} />
+              }
+              {this.state.currentSettings.id &&
+                <ButtonGroup className="settings--add-button">
+                  <Button
+                    text="Cancel"
+                    subtle={true}
+                    onClick={() => {
+                      this.selection.clear()
                       this.setState({
                         showAuthentication: false,
                         currentSettings: this.getStartValue(),
-                        settings: items.sortByProp("name")
+                        tagSuggestions: StackValues
                       })
-                    }
-                  }}
-                />
-              </ButtonGroup>}
+                    }} />
+                  <Button
+                    text="Delete"
+                    danger={true}
+                    onClick={() => {
+                      this.selection.clear();
+                      let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
+                      this.service.removeSettings(this.state.currentSettings.id);
+                      this.setState({
+                        showAuthentication: false,
+                        currentSettings: this.getStartValue(),
+                        settings: items.sortByProp("name"),
+                        tagSuggestions: StackValues
+                      })
+                    }} />
+                  <Button
+                    text="Save"
+                    primary={true}
+                    disabled={!this.isValid()}
+                    onClick={() => {
+                      this.selection.clear();
+                      let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
+                      this.service.saveSettings(this.state.currentSettings);
+                      items.push(this.state.currentSettings);
+                      if (items.length > 0) {
+                        this.setState({
+                          showAuthentication: false,
+                          currentSettings: this.getStartValue(),
+                          settings: items.sortByProp("name"),
+                          tagSuggestions: StackValues
+                        })
+                      }
+                    }} />
+                </ButtonGroup>
+              }
             </div>
 
-            <Card>
-              <div style={{ display: "flex" }}>
+            {this.state.settings && this.state.settings.length > 0 &&
+              <Card>
+                <div style={{ display: "flex" }}>
 
-                <Observer itemProvider={new ObservableValue<ArrayItemProvider<ISettings>>(
-                  new ArrayItemProvider(this.state.settings)
-                )}>
-                  {(observableProps: { itemProvider: ArrayItemProvider<ISettings> }) => (
-                    <ScrollableList
-                      itemProvider={observableProps.itemProvider}
-                      renderRow={this.renderRow}
-                      selection={this.selection}
-                      onSelect={(event: React.SyntheticEvent<HTMLElement>, listRow: IListRow<ISettings>) => {
-                        this.setState({
-                          showAuthentication: listRow.data.pass !== "",
-                          currentSettings: { ...listRow.data },
-                        })
-                      }}
-                      width="100%"
-                    />)}
-                </Observer>
+                  <Observer itemProvider={new ObservableValue<ArrayItemProvider<ISettings>>(new ArrayItemProvider(this.state.settings))}>
+                    {(observableProps: { itemProvider: ArrayItemProvider<ISettings> }) => (
+                      <ScrollableList
+                        width="100%"
+                        itemProvider={observableProps.itemProvider}
+                        renderRow={this.renderRow}
+                        selection={this.selection}
+                        onSelect={(event: React.SyntheticEvent<HTMLElement>, listRow: IListRow<ISettings>) => {
+                          var items = StackValues.filter(item =>
+                            listRow.data.tags.findIndex(d => d.id === item.id) === -1
+                          )
+                          this.setState({
+                            showAuthentication: listRow.data.pass !== "",
+                            currentSettings: listRow.data.deepCopy(),
+                            tagSuggestions: items
+                          });
+                        }}
+                      />
+                    )}
+                  </Observer>
 
-              </div>
-            </Card>
+                </div>
+              </Card>
+            }
           </div>
 
         </Panel>
