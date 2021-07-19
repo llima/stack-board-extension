@@ -67,7 +67,6 @@ export class SettingsService implements ISettingsService {
             "ms.vss-tfs-web.tfs-page-data-service"
         );
         const projectInfo = await projectPageService.getProject();
-        console.log(`${SettingsCollection}-${projectInfo.id}`);
         return `${SettingsCollection}-${projectInfo.id}`;
     }
 }

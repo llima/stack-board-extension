@@ -29,6 +29,9 @@ import { TagPicker } from "azure-devops-ui/TagPicker";
 import { ISuggestionItemProps } from "azure-devops-ui/SuggestionsList";
 import { PillGroup } from 'azure-devops-ui/PillGroup';
 import { Pill, PillSize } from 'azure-devops-ui/Pill';
+import { Icon } from 'azure-devops-ui/Icon';
+import { Location } from "azure-devops-ui/Utilities/Position";
+
 
 export interface ISettingsPanelProps {
   show: boolean;
@@ -70,7 +73,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
   getStartValue(): ISettings {
     return {
       id: "",
-      name: "",
+      replaceKey: "",
+      text: "",
       description: "",
       gitUrl: "",
       user: "",
@@ -92,9 +96,10 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
     const { currentSettings, showAuthentication } = this.state;
 
     return (
-      !!currentSettings.name && currentSettings.name.trim() !== "" &&
+      !!currentSettings.text && currentSettings.text.trim() !== "" &&
       !!currentSettings.description && currentSettings.description.trim() !== "" &&
       !!currentSettings.gitUrl && currentSettings.gitUrl.trim() !== "" &&
+      !!currentSettings.replaceKey && currentSettings.replaceKey.trim() !== "" &&
       (!showAuthentication ||
         currentSettings.pass && currentSettings.pass.trim() !== ""
       )
@@ -103,7 +108,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
 
   render() {
 
-    const { showAuthentication, currentSettings } = this.state;
+    const { showAuthentication, currentSettings, settings, tagSuggestions } = this.state;
 
     if (this.props.show) {
       return (
@@ -123,8 +128,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 Template *
               </label>
               <TextField
-                inputId="name"
-                value={currentSettings.name}
+                inputId="text"
+                value={currentSettings.text}
                 onChange={(event, value) => this.onInputChange(event, value, this)}
                 placeholder="Name your template"
               />
@@ -142,7 +147,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             </div>
             <div className="settings--group">
               <label className="settings--group-label">
-                Repository *
+                Source repository *
               </label>
               <TextField
                 inputId="gitUrl"
@@ -150,6 +155,29 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 onChange={(event, value) => this.onInputChange(event, value, this)}
                 required={true}
                 placeholder="e.g. https://github.com/Microsoft/vscode.git"
+              />
+            </div>
+            <div className="settings--group">
+              <label className="settings--group-label">
+                Replace key *    <Icon ariaLabel="Replace key info" iconName="Info"
+                  tooltipProps={{
+                    anchorOffset: { horizontal: 8, vertical: 8 },
+                    fixedLayout: false,
+                    showOnFocus: true,
+                    text:
+                      "This tooltip is designed to overflow to the bottom right",
+                    tooltipOrigin: {
+                      horizontal: Location.start,
+                      vertical: Location.start
+                    }
+                  }} />
+              </label>
+              <TextField
+                inputId="replaceKey"
+                value={currentSettings.replaceKey}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
+                required={true}
+                placeholder=""
               />
             </div>
             <div className="settings--group">
@@ -170,25 +198,25 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                   onSearchChanged={(searchValue: string) => {
                     var items =
                       StackValues.filter(item =>
-                        this.state.currentSettings.tags.findIndex(d => d.id === item.id) === -1
+                        currentSettings.tags.findIndex(d => d.id === item.id) === -1
                       ).filter(
                         testItem => testItem.text.toLowerCase().indexOf(searchValue.toLowerCase()) > -1
                       )
                     this.setState({ tagSuggestions: items });
                   }}
                   onTagAdded={(tag: IStack) => {
-                    this.state.currentSettings.tags.push(tag);
+                    currentSettings.tags.push(tag);
                     this.setState({
-                      currentSettings: this.state.currentSettings, tagSuggestions: StackValues.filter(item =>
-                        this.state.currentSettings.tags.findIndex(d => d.id === item.id) === -1
+                      currentSettings: currentSettings, tagSuggestions: StackValues.filter(item =>
+                        currentSettings.tags.findIndex(d => d.id === item.id) === -1
                       )
                     });
                   }}
                   onTagRemoved={(tag: IStack) => {
-                    var items = this.state.currentSettings.tags.filter(x => x.id !== tag.id)
-                    this.state.currentSettings.tags = items;
+                    var items = currentSettings.tags.filter(x => x.id !== tag.id)
+                    currentSettings.tags = items;
                     this.setState({
-                      currentSettings: this.state.currentSettings, tagSuggestions: StackValues.filter(item =>
+                      currentSettings: currentSettings, tagSuggestions: StackValues.filter(item =>
                         items.findIndex(d => d.id === item.id) === -1
                       )
                     });
@@ -196,8 +224,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                   renderSuggestionItem={(tag: ISuggestionItemProps<IStack>) => {
                     return <div className="body-m">{tag.item.text}</div>;
                   }}
-                  selectedTags={this.state.currentSettings.tags}
-                  suggestions={this.state.tagSuggestions}
+                  selectedTags={currentSettings.tags}
+                  suggestions={tagSuggestions}
                   suggestionsLoading={false}
                 />
               </div>
@@ -207,16 +235,16 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                 text={"Requires authentication"}
                 checked={showAuthentication}
                 onChange={(event, value) => {
-                  this.state.currentSettings.user = "";
-                  this.state.currentSettings.pass = "";
+                  currentSettings.user = "";
+                  currentSettings.pass = "";
                   this.setState({
                     showAuthentication: value,
-                    currentSettings: this.state.currentSettings
+                    currentSettings: currentSettings
                   });
                 }}
               />
             </div>
-            {this.state.showAuthentication && <>
+            {showAuthentication && <>
               <div className="settings--group">
                 <TextField
                   inputId="user"
@@ -238,15 +266,15 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
             </>}
 
             <div className="settings--group settings--add-button">
-              {!this.state.currentSettings.id &&
+              {!currentSettings.id &&
                 <Button
                   text="Add"
                   primary={true}
                   disabled={!this.isValid()}
                   onClick={() => {
-                    this.state.currentSettings.id = Guid.create().toString();
-                    this.state.settings.push(this.state.currentSettings);
-                    this.service.saveSettings(this.state.currentSettings);
+                    currentSettings.id = Guid.create().toString();
+                    settings.push(currentSettings);
+                    this.service.saveSettings(currentSettings);
                     this.setState({
                       showAuthentication: false,
                       currentSettings: this.getStartValue(),
@@ -255,7 +283,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                     })
                   }} />
               }
-              {this.state.currentSettings.id &&
+              {currentSettings.id &&
                 <ButtonGroup className="settings--add-button">
                   <Button
                     text="Cancel"
@@ -273,8 +301,8 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                     danger={true}
                     onClick={() => {
                       this.selection.clear();
-                      let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
-                      this.service.removeSettings(this.state.currentSettings.id);
+                      let items = settings.filter(d => d.id !== currentSettings.id);
+                      this.service.removeSettings(currentSettings.id);
                       this.setState({
                         showAuthentication: false,
                         currentSettings: this.getStartValue(),
@@ -288,9 +316,9 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
                     disabled={!this.isValid()}
                     onClick={() => {
                       this.selection.clear();
-                      let items = this.state.settings.filter(d => d.id !== this.state.currentSettings.id);
-                      this.service.saveSettings(this.state.currentSettings);
-                      items.push(this.state.currentSettings);
+                      let items = settings.filter(d => d.id !== currentSettings.id);
+                      this.service.saveSettings(currentSettings);
+                      items.push(currentSettings);
                       if (items.length > 0) {
                         this.setState({
                           showAuthentication: false,
@@ -304,11 +332,11 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
               }
             </div>
 
-            {this.state.settings && this.state.settings.length > 0 &&
+            {settings && settings.length > 0 &&
               <Card>
                 <div style={{ display: "flex" }}>
 
-                  <Observer itemProvider={new ObservableValue<ArrayItemProvider<ISettings>>(new ArrayItemProvider(this.state.settings))}>
+                  <Observer itemProvider={new ObservableValue<ArrayItemProvider<ISettings>>(new ArrayItemProvider(settings))}>
                     {(observableProps: { itemProvider: ArrayItemProvider<ISettings> }) => (
                       <ScrollableList
                         width="100%"
@@ -352,7 +380,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
           <div
             style={{ marginLeft: "10px", padding: "10px 0px" }}
             className="flex-column h-scroll-hidden">
-            <span className="text-ellipsis">{item.name}</span>
+            <span className="text-ellipsis">{item.text}</span>
             <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
               {item.description}
             </span>
