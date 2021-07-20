@@ -13,6 +13,7 @@ import { IListBoxItem } from 'azure-devops-ui/ListBox';
 import { Guid } from 'guid-typescript';
 import { Services } from '../../services/services';
 import { ITemplateService, TemplateServiceId } from '../../services/template';
+import { IBuildOptions } from '../../model/buildOptions';
 
 export interface ITemplatePanelProps {
   show: boolean;
@@ -67,8 +68,16 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
       var item = that.state.currentTemplate;
 
       CreateRepositoryAsync(item.repoName).then(repository => {
-        CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git").then(buildDef => {
-
+        const buildOptions : IBuildOptions = {    
+          name: item.name,
+          repositoryId: repository.id,
+          repositoryUrl: item.settings.gitUrl,
+          replaceKey: item.settings.replaceKey,
+          user: item.settings.user,
+          pass: item.settings.pass
+        };
+        
+        CreateBuildDefinitionAsync(buildOptions).then(buildDef => {
           item.id = Guid.create().toString();
           item.repoUrl = repository.url;
           item.buildDefinitionId = buildDef.id;
@@ -77,11 +86,8 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
           that.service.saveTemplate(item).then(item => {
             that.props.onDismiss();
           });
-
-        })
-
+        });
       });
-
     } catch (ex) {
       console.error(ex);
     }
