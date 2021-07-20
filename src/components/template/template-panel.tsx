@@ -61,23 +61,27 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     );
   }
 
-  async createNewProject(): Promise<any> {
+  createNewProject() {
     try {
 
       var item = this.state.currentTemplate;
 
-      const repository = await CreateRepositoryAsync(item.repoName);
-      const buildDef = await CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git");
+      CreateRepositoryAsync(item.repoName).then(repository => {
+        CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git").then(buildDef => {
 
-      item.id = Guid.create().toString();
-      item.repoUrl = repository.url;
-      item.buildDefinitionId = buildDef.id;
-      item.startTime =  new Date();
+          item.id = Guid.create().toString();
+          item.repoUrl = repository.url;
+          item.buildDefinitionId = buildDef.id;
+          item.startTime = new Date();
 
-      this.service.saveTemplate(item).then(item => {
-        this.props.onDismiss();
+          this.service.saveTemplate(item).then(item => {
+            this.props.onDismiss();
+          });
+
+        })
+
       });
-      
+
     } catch (ex) {
       console.error(ex);
     }
@@ -120,7 +124,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
                   currentTemplate.typeId = item.id;
                   currentTemplate.settings = item.data;
-                  this.setState({ currentTemplate: currentTemplate});
+                  this.setState({ currentTemplate: currentTemplate });
                 }}
               />
             </div>

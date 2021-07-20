@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.63",
+    "version": "1.0.65",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -51,7 +51,7 @@
             "id": "stack-board-hub",
             "type": "ms.vss-web.hub",
             "targets": [
-                "ms.vss-work-web.work-hub-group"
+                "elevenlabs.stack-board.board-hub-group"
             ],
             "properties": {
                 "name": "Stack Board",
@@ -60,6 +60,18 @@
                     "light": "marketplace/icon-light.png",
                     "dark": "marketplace/icon-dark.png"
                 }
+            }
+        },
+        {
+            "id": "board-hub-group",
+            "type": "ms.vss-web.hub-group",
+            "description": "Adds a 'Sample UI' hub group",
+            "targets": [
+                "ms.vss-web.project-hub-groups-collection"
+            ],
+            "properties": {
+                "name": "Project",
+                "order": 100
             }
         },
         {
@@ -85,7 +97,7 @@
         {
             "path": "node_modules/vss-web-extension-sdk/lib",
             "addressable": true
-        },        
+        },
         {
             "path": "tasks/stack-board-repos"
         }
