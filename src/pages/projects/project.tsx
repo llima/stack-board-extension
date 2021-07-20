@@ -78,6 +78,7 @@ class Project extends React.Component<{}, IProjectState>  {
   }
   loadTemplates() {
     this.templateService.getTemplate().then(items => {
+      console.log(items);
       this.setState({ templates: items });
     });
   }
@@ -122,7 +123,7 @@ class Project extends React.Component<{}, IProjectState>  {
               </span>
             }
             imageAltText="Bars"
-            
+            imagePath={"https://cdn.vsassets.io/ext/ms.vss-code-web/import-content/repoNotFound.bVoHtlP2mhhyPo5t.svg"}
             actionText="Button"
             actionType={ZeroDataActionType.ctaButton}
             onActionClick={(event, item) =>
@@ -130,7 +131,7 @@ class Project extends React.Component<{}, IProjectState>  {
             }
           />
 
-          <Card
+          {/* <Card
             className="flex-grow bolt-table-card"
             contentProps={{ contentPadding: false }}
             titleProps={{ text: "All projects" }}
@@ -150,7 +151,7 @@ class Project extends React.Component<{}, IProjectState>  {
                 />
               )}
             </Observer>
-          </Card>
+          </Card> */}
         </div>
 
         <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false }); this.loadSettings() }} />

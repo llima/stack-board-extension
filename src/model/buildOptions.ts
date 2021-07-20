@@ -1,8 +1,7 @@
+import { ISettings } from "./settings";
+
 export interface IBuildOptions {
     name: string;
     repositoryId: string;
-    repositoryUrl: string;
-    replaceKey: string;
-    user: string;
-    pass: string;
+    settings: ISettings;
 }

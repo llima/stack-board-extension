@@ -62,32 +62,31 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     );
   }
 
-  createNewProject(that: this) {
+  async createNewProject(that: this) {
     try {
 
       var item = that.state.currentTemplate;
+      console.log(item);
 
-      CreateRepositoryAsync(item.repoName).then(repository => {
-        const buildOptions : IBuildOptions = {    
-          name: item.name,
-          repositoryId: repository.id,
-          repositoryUrl: item.settings.gitUrl,
-          replaceKey: item.settings.replaceKey,
-          user: item.settings.user,
-          pass: item.settings.pass
-        };
-        
-        CreateBuildDefinitionAsync(buildOptions).then(buildDef => {
-          item.id = Guid.create().toString();
-          item.repoUrl = repository.url;
-          item.buildDefinitionId = buildDef.id;
-          item.startTime = new Date();
+      var repository = await CreateRepositoryAsync(item.repoName);
 
-          that.service.saveTemplate(item).then(item => {
-            that.props.onDismiss();
-          });
-        });
+      const buildOptions: IBuildOptions = {
+        name: item.name,
+        repositoryId: repository.id,
+        settings: item.settings
+      };
+
+      var buildDef = await CreateBuildDefinitionAsync(buildOptions);
+      
+      item.id = Guid.create().toString();
+      item.repoUrl = repository.webUrl;
+      item.buildDefinitionId = buildDef.id;
+      item.startTime = new Date();
+
+      that.service.saveTemplate(item).then(item => {
+        that.props.onDismiss();
       });
+
     } catch (ex) {
       console.error(ex);
     }
@@ -133,7 +132,10 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 items={this.props.settings}
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
                   currentTemplate.typeId = item.id;
-                  currentTemplate.settings = item.data;
+                  currentTemplate.settings = item as ISettings;
+                  console.log(item);
+                  console.log(item.data);
+                  console.log(currentTemplate);
                   this.setState({ currentTemplate: currentTemplate });
                 }}
               />

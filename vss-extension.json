@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.78",
+    "version": "1.0.85",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -50,7 +50,6 @@
         {
             "id": "board-hub-group",
             "type": "ms.vss-web.hub-group",
-            "description": "Adds a 'Sample UI' hub group",
             "targets": [
                 "ms.vss-web.project-hub-groups-collection"
             ],
