@@ -43,6 +43,8 @@ import { ISettings } from '../../model/settings';
 import { ITemplateService, TemplateServiceId } from '../../services/template';
 import { ITemplate } from '../../model/template';
 
+import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
+
 interface IProjectState {
   settingsExpanded: boolean;
   templateExpanded: boolean;
@@ -102,6 +104,31 @@ class Project extends React.Component<{}, IProjectState>  {
         </CustomHeader>
 
         <div className="page-content page-content-top">
+          <ZeroData
+            primaryText="This is the primary text"
+            secondaryText={
+              <span>
+                This secondary text contains a{" "}
+                <a
+                  rel="nofollow noopener"
+                  target="_blank"
+                  href="https://bing.com"
+                  aria-label="link to bing.com"
+                >
+                  link
+                </a>{" "}
+                to somewhere else. Lorem ipsum dolor sit amet, consectetur adipiscing
+                elit.
+              </span>
+            }
+            imageAltText="Bars"
+            
+            actionText="Button"
+            actionType={ZeroDataActionType.ctaButton}
+            onActionClick={(event, item) =>
+              alert("Hey, you clicked the button for " + item!.primaryText)
+            }
+          />
 
           <Card
             className="flex-grow bolt-table-card"

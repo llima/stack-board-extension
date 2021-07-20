@@ -32,6 +32,8 @@ class App extends React.Component<{}, IAppState>  {
 
   render() {
 
+    return (<Project />);
+
     const { page } = this.state;
 
     switch (page) {

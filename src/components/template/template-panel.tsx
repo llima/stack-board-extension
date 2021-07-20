@@ -61,10 +61,10 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     );
   }
 
-  createNewProject() {
+  createNewProject(that: this) {
     try {
 
-      var item = this.state.currentTemplate;
+      var item = that.state.currentTemplate;
 
       CreateRepositoryAsync(item.repoName).then(repository => {
         CreateBuildDefinitionAsync("STACKBOARD-CI", repository.id, "https://github.com/company/empty.git").then(buildDef => {
@@ -74,8 +74,8 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
           item.buildDefinitionId = buildDef.id;
           item.startTime = new Date();
 
-          this.service.saveTemplate(item).then(item => {
-            this.props.onDismiss();
+          that.service.saveTemplate(item).then(item => {
+            that.props.onDismiss();
           });
 
         })
@@ -101,7 +101,11 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss, },
-            { text: "Create", primary: true, onClick: this.createNewProject, disabled: !this.isValid() }
+            {
+              text: "Create", primary: true, onClick: (event) => {
+                this.createNewProject(this)
+              }, disabled: !this.isValid()
+            }
           ]}>
 
           <div className="template--content">
