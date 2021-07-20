@@ -133,9 +133,6 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
                   currentTemplate.typeId = item.id;
                   currentTemplate.settings = item as ISettings;
-                  console.log(item);
-                  console.log(item.data);
-                  console.log(currentTemplate);
                   this.setState({ currentTemplate: currentTemplate });
                 }}
               />
