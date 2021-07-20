@@ -8,7 +8,8 @@
     "**/node_modules": true,
     "**/coverage": true,
     "**/lib-amd": true,
-    "src/**/*.scss.ts": true
+    "src/**/*.scss.ts": true,
+    "**/*.vsix": true,
   },
   "typescript.tsdk": ".\\node_modules\\typescript\\lib"
 }
