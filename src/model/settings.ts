@@ -2,7 +2,8 @@ import { IStack } from "./stacks";
 
 export interface ISettings {
     id: string;
-    name: string;
+    text: string;
+    replaceKey: string;
     description: string;
     gitUrl: string;
     user: string;

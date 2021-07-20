@@ -41,29 +41,49 @@ import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Services } from './services/services';
 import { ISettingsService, SettingsServiceId } from './services/settings';
+import { ISettings } from './model/settings';
+import { ITemplateService, TemplateServiceId } from './services/template';
+import { ITemplate } from './model/template';
 
 interface IAppState {
   settingsExpanded: boolean;
-  createExpanded: boolean;
+  templateExpanded: boolean;
+  settings: ISettings[];
+  templates: ITemplate[];
 }
 
 class App extends React.Component<{}, IAppState>  {
+
+  settingsService = Services.getService<ISettingsService>(
+    SettingsServiceId
+  );
+
+  templateService = Services.getService<ITemplateService>(
+    TemplateServiceId
+  );
 
   constructor(props: {}) {
     super(props);
     this.state = {
       settingsExpanded: false,
-      createExpanded: false
+      templateExpanded: false,
+      settings: [],
+      templates: []
     };
+
+    DevOps.init();
+    this.loadSettings();
+    this.loadTemplates();
   }
 
-  async componentWillMount() {
-    DevOps.init();
-    const service = Services.getService<ISettingsService>(
-      SettingsServiceId
-    );
-    service.getSettings().then(items => {
-      console.log(items);
+  loadSettings() {
+    this.settingsService.getSettings().then(items => {
+      this.setState({ settings: items });
+    });
+  }
+  loadTemplates() {
+    this.templateService.getTemplate().then(items => {
+      this.setState({ templates: items });
     });
   }
 
@@ -80,7 +100,7 @@ class App extends React.Component<{}, IAppState>  {
           </HeaderTitleArea>
           <ButtonGroup>
             <Button text="Create" iconProps={{ iconName: "Add" }} primary={true}
-              onClick={() => this.setState({ createExpanded: true })}
+              onClick={() => this.setState({ templateExpanded: true })}
             />
             <Button ariaLabel="Add" iconProps={{ iconName: "Settings" }}
               onClick={() => this.setState({ settingsExpanded: true })}
@@ -113,8 +133,8 @@ class App extends React.Component<{}, IAppState>  {
           </Card>
         </div>
 
-        <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => this.setState({ settingsExpanded: false })} />
-        <TemplatePanel show={this.state.createExpanded} onDismiss={() => this.setState({ createExpanded: false })} />
+        <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false }); this.loadSettings() }} />
+        <TemplatePanel settings={this.state.settings} show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadSettings() }} />
 
       </Page>
     );

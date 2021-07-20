@@ -22,11 +22,6 @@ import { IBuildOptions } from "../model/buildOptions";
 
 const client: BuildRestClient = getClient(BuildRestClient);
 
-export interface BuildProcessYaml {
-  type: number;
-  yamlFilename: string;
-}
-
 export interface PhaseTargetScript {
   type: number;
   allowScriptsAuthAccessOption: boolean;
@@ -125,5 +120,5 @@ export async function RunBuild(buildDefinitionId: number): Promise<Build> {
     return await client.queueBuild(build, currentProject.name);
   }
 
-  throw new Error(`Can't find build definition with id ${buildDefinitionId}`);
+  throw new Error(`Can't find build definition with id - ${buildDefinitionId}`);
 }

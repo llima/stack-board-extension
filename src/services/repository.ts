@@ -44,7 +44,7 @@ export async function CreateRepositoryAsync(
   item.path = "/README.md";
 
   var itemContent = {} as ItemContent;
-  itemContent.content = `${name} - Made with Stack Board Extensions`;
+  itemContent.content = itemContent.content = "### Made with Stack Board Extensions";
   itemContent.contentType = ItemContentType.RawText;
 
   var change = {} as GitChange;
