@@ -21,13 +21,30 @@
       "name": "sourceRepository",
       "type": "string",
       "label": "Source Repository",      
-      "helpMarkDown": "Type source repository. e.g. https://github.com/Microsoft/vscode.git",
-      "defaultValue": ""
+      "helpMarkDown": "Enter the source repository. e.g. https://github.com/Microsoft/vscode.git",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceFrom",
+      "type": "string",
+      "label": "Replace From",      
+      "helpMarkDown": "Enter the keyword to be replaced",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceTo",
+      "type": "string",
+      "label": "Replace To",      
+      "helpMarkDown": "Enter the value to be replaced",
+      "defaultValue": "",
+      "required": true
     }
   ],
   "execution": {
-    "PowerShell3": {
-      "target": "stackboardrepos.ps1"
+    "Node10": {
+        "target": "stackboardrepos.js"
     }
   }
 }
