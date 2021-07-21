@@ -114,6 +114,7 @@ class SettingsPanel extends React.Component<ISettingsPanelProps, ISettingsPanelS
       return (
         <Panel
           onDismiss={this.props.onDismiss}
+          titleProps={{ text: "Template settings" }}
           description={
             "Base repository configuration for template generation."
           }

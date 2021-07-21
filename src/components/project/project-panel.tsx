@@ -1,5 +1,5 @@
 import React from 'react';
-import './template-panel.scss';
+import './project-panel.scss';
 
 import { Panel } from "azure-devops-ui/Panel";
 import { TextField } from "azure-devops-ui/TextField";
@@ -8,33 +8,33 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { CreateRepositoryAsync } from '../../services/repository';
 import { CreateBuildDefinitionAsync } from '../../services/build';
 import { ISettings } from '../../model/settings';
-import { ITemplate } from '../../model/template';
+import { IProject } from '../../model/project';
 import { IListBoxItem } from 'azure-devops-ui/ListBox';
 import { Guid } from 'guid-typescript';
 import { Services } from '../../services/services';
-import { ITemplateService, TemplateServiceId } from '../../services/template';
+import { IProjectService, ProjectServiceId } from '../../services/project';
 import { IBuildOptions } from '../../model/buildOptions';
 
-export interface ITemplatePanelProps {
+export interface IProjectPanelProps {
   show: boolean;
   onDismiss: any;
   settings: ISettings[];
 }
 
-interface ITemplatePanelState {
-  currentTemplate: ITemplate;
+interface IProjectPanelState {
+  currentProject: IProject;
 }
 
-class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelState>  {
+class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelState>  {
 
-  service = Services.getService<ITemplateService>(
-    TemplateServiceId
+  service = Services.getService<IProjectService>(
+    ProjectServiceId
   );
 
-  constructor(props: ITemplatePanelProps) {
+  constructor(props: IProjectPanelProps) {
     super(props);
     this.state = {
-      currentTemplate: {
+      currentProject: {
         id: "",
         name: "",
         typeId: "",
@@ -46,26 +46,26 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
 
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
-    that.state.currentTemplate[prop] = value;
+    that.state.currentProject[prop] = value;
     this.setState({
-      currentTemplate: that.state.currentTemplate
+      currentProject: that.state.currentProject
     });
   }
 
   isValid(): boolean {
-    const { currentTemplate } = this.state;
+    const { currentProject } = this.state;
 
     return (
-      !!currentTemplate.name && currentTemplate.name.trim() !== "" &&
-      !!currentTemplate.typeId && currentTemplate.typeId.trim() !== "" &&
-      !!currentTemplate.repoName && currentTemplate.repoName.trim() !== ""
+      !!currentProject.name && currentProject.name.trim() !== "" &&
+      !!currentProject.typeId && currentProject.typeId.trim() !== "" &&
+      !!currentProject.repoName && currentProject.repoName.trim() !== ""
     );
   }
 
   async createNewProject(that: this) {
     try {
 
-      var item = that.state.currentTemplate;
+      var item = that.state.currentProject;
       console.log(item);
 
       var repository = await CreateRepositoryAsync(item.repoName);
@@ -83,7 +83,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
       item.buildDefinitionId = buildDef.id;
       item.startTime = new Date();
 
-      that.service.saveTemplate(item).then(item => {
+      that.service.saveProject(item).then(item => {
         that.props.onDismiss();
       });
 
@@ -94,7 +94,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
 
   render() {
 
-    const { currentTemplate } = this.state;
+    const { currentProject } = this.state;
 
     if (this.props.show) {
       return (
@@ -113,39 +113,39 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
             }
           ]}>
 
-          <div className="template--content">
-            <div className="template--group">
+          <div className="project--content">
+            <div className="project--group">
               <TextField
                 inputId="name"
                 label="Name *"
-                value={currentTemplate.name}
-                placeholder="Name your template name"
+                value={currentProject.name}
+                placeholder="Name your project name"
                 onChange={(event, value) => this.onInputChange(event, value, this)}
               />
             </div>
 
-            <div className="template--group">
+            <div className="project--group">
               <Dropdown
                 ariaLabel="Basic"
                 className="example-dropdown"
                 placeholder="Select a type"
                 items={this.props.settings}
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
-                  currentTemplate.typeId = item.id;
-                  currentTemplate.settings = item as ISettings;
-                  this.setState({ currentTemplate: currentTemplate });
+                  currentProject.typeId = item.id;
+                  currentProject.settings = item as ISettings;
+                  this.setState({ currentProject: currentProject });
                 }}
               />
             </div>
 
-            <div className="template--group">
-              <label className="template--group-label">
+            <div className="project--group">
+              <label className="project--group-label">
                 Repository name *
               </label>
-              <div className="template--group">
+              <div className="project--group">
                 <TextField
                   inputId="repoName"
-                  value={currentTemplate.repoName}
+                  value={currentProject.repoName}
                   placeholder="Company.Service.Name"
                   onChange={(event, value) => this.onInputChange(event, value, this)}
                 />
@@ -161,4 +161,4 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
   }
 }
 
-export default TemplatePanel;
+export default ProjectPanel;

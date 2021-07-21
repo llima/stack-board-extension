@@ -1,6 +1,6 @@
 import { ISettings } from "./settings";
 
-export interface ITemplate {
+export interface IProject {
     id: string;
     name: string;
     typeId: string;
