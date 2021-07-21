@@ -62,31 +62,31 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     );
   }
 
-  createNewProject() {
+  async createNewProject(that: this) {
     try {
-      var item = this.state.currentTemplate;     
 
-      CreateRepositoryAsync(item.repoName).then(repository => {
-        const buildOptions : IBuildOptions = {    
-          name: item.name,
-          repositoryId: repository.id,
-          repositoryUrl: item.settings.gitUrl,
-          replaceKey: item.settings.replaceKey,
-          user: item.settings.user,
-          pass: item.settings.pass
-        };
-        
-        CreateBuildDefinitionAsync(buildOptions).then(buildDef => {
-          item.id = Guid.create().toString();
-          item.repoUrl = repository.url;
-          item.buildDefinitionId = buildDef.id;
-          item.startTime = new Date();
+      var item = that.state.currentTemplate;
+      console.log(item);
 
-          this.service.saveTemplate(item).then(item => {
-            this.props.onDismiss();
-          });
-        });
+      var repository = await CreateRepositoryAsync(item.repoName);
+
+      const buildOptions: IBuildOptions = {
+        name: item.name,
+        repositoryId: repository.id,
+        settings: item.settings
+      };
+
+      var buildDef = await CreateBuildDefinitionAsync(buildOptions);
+      
+      item.id = Guid.create().toString();
+      item.repoUrl = repository.webUrl;
+      item.buildDefinitionId = buildDef.id;
+      item.startTime = new Date();
+
+      that.service.saveTemplate(item).then(item => {
+        that.props.onDismiss();
       });
+
     } catch (ex) {
       console.error(ex);
     }
@@ -106,7 +106,11 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss, },
-            { text: "Create", primary: true, onClick: this.createNewProject, disabled: !this.isValid() }
+            {
+              text: "Create", primary: true, onClick: (event) => {
+                this.createNewProject(this)
+              }, disabled: !this.isValid()
+            }
           ]}>
 
           <div className="template--content">
@@ -128,7 +132,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 items={this.props.settings}
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
                   currentTemplate.typeId = item.id;
-                  currentTemplate.settings = item.data;
+                  currentTemplate.settings = item as ISettings;
                   this.setState({ currentTemplate: currentTemplate });
                 }}
               />

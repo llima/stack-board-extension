@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.66",
+    "version": "1.0.85",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -15,8 +15,8 @@
         }
     ],
     "icons": {
-        "default": "marketplace/icon-light.png",
-        "branding": "marketplace/icon-light.png"
+        "default": "marketplace/board.png",
+        "branding": "marketplace/board.png"
     },
     "content": {
         "details": {
@@ -48,30 +48,48 @@
     ],
     "contributions": [
         {
+            "id": "board-hub-group",
+            "type": "ms.vss-web.hub-group",
+            "targets": [
+                "ms.vss-web.project-hub-groups-collection"
+            ],
+            "properties": {
+                "name": "Stack Board",
+                "order": 100,
+                "icon": {
+                    "light": "marketplace/board.png",
+                    "dark": "marketplace/board.png"
+                }
+            }
+        },
+        {
             "id": "stack-board-hub",
             "type": "ms.vss-web.hub",
             "targets": [
                 "elevenlabs.stack-board.board-hub-group"
             ],
             "properties": {
-                "name": "Stack Board",
+                "name": "Projects",
                 "uri": "build/index.html",
                 "icon": {
-                    "light": "marketplace/icon-light.png",
-                    "dark": "marketplace/icon-dark.png"
+                    "light": "marketplace/projects/icon-light.png",
+                    "dark": "marketplace/projects/icon-dark.png"
                 }
             }
         },
         {
-            "id": "board-hub-group",
-            "type": "ms.vss-web.hub-group",
-            "description": "Adds a 'Sample UI' hub group",
+            "id": "tech-radar-hub",
+            "type": "ms.vss-web.hub",
             "targets": [
-                "ms.vss-web.project-hub-groups-collection"
+                "elevenlabs.stack-board.board-hub-group"
             ],
             "properties": {
-                "name": "Project",
-                "order": 100
+                "name": "Tech Radar",
+                "uri": "build/index.html",
+                "icon": {
+                    "light": "marketplace/radar/icon-light.png",
+                    "dark": "marketplace/radar/icon-dark.png"
+                }
             }
         },
         {

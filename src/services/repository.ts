@@ -1,5 +1,5 @@
 import * as DevOps from "azure-devops-extension-sdk";
-import { IProjectPageService } from "azure-devops-extension-api";
+import { IHostNavigationService, IProjectPageService } from "azure-devops-extension-api";
 
 import { getClient } from "azure-devops-extension-api";
 import {

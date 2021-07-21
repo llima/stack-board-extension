@@ -60,7 +60,7 @@ export async function CreateBuildDefinitionAsync(
   step.task = task;
   step.displayName = "Stack Board Repos";
   step.enabled = true;
-  step.inputs = { sourceRepository: options.repositoryUrl };
+  step.inputs = { sourceRepository: options.settings.gitUrl };
 
   const phase = {} as Phase;
   phase.name = "Agent job 1";
@@ -92,11 +92,11 @@ export async function CreateBuildDefinitionAsync(
 
   const PAT = {} as BuildDefinitionVariable;
   PAT.isSecret = true;
-  PAT.value = options.pass;
+  PAT.value = options.settings.pass;
 
   const userName = {} as BuildDefinitionVariable;
   userName.isSecret = true;
-  userName.value = options.user;
+  userName.value = options.settings.user;
 
   definition.variables = { PAT: PAT, UserName: userName };
 
