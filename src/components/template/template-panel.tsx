@@ -96,10 +96,11 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     const { currentTemplate, showAuthentication } = this.state;
 
     return (
-      !!currentTemplate.text && currentTemplate.text.trim() !== "" &&
+      !!currentTemplate.text        && currentTemplate.text.trim() !== "" &&
       !!currentTemplate.description && currentTemplate.description.trim() !== "" &&
-      !!currentTemplate.gitUrl && currentTemplate.gitUrl.trim() !== "" &&
-      !!currentTemplate.replaceKey && currentTemplate.replaceKey.trim() !== "" &&
+      !!currentTemplate.gitUrl      && currentTemplate.gitUrl.trim() !== "" &&
+      !!currentTemplate.replaceKey  && currentTemplate.replaceKey.trim() !== "" &&
+      !!currentTemplate.tags        && currentTemplate.tags.length > 0 &&
       (!showAuthentication ||
         currentTemplate.pass && currentTemplate.pass.trim() !== ""
       )

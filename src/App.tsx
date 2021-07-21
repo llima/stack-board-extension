@@ -3,6 +3,7 @@ import * as DevOps from "azure-devops-extension-sdk";
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
 import Project from './pages/project/projects';
 import Radar from './pages/radar/radar';
+import { Surface, SurfaceBackground } from 'azure-devops-ui/Surface';
 
 interface IAppState {
   page: string;
@@ -32,7 +33,11 @@ class App extends React.Component<{}, IAppState>  {
 
   render() {
 
-    return (<Project />);
+    return (
+      <Surface background={SurfaceBackground.neutral}>
+        <Project />
+      </Surface>
+    );
 
     const { page } = this.state;
 
