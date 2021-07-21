@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.95",
+    "version": "1.0.98",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -99,7 +99,7 @@
                 "ms.vss-distributed-task.tasks"
             ],
             "properties": {
-                "name": "tasks/stack-board-repos"
+                "name": "tasks/stack-board-repos/build"
             }
         }
     ],
@@ -117,7 +117,7 @@
             "addressable": true
         },
         {
-            "path": "tasks/stack-board-repos"
+            "path": "tasks/stack-board-repos/build"
         }
     ]
 }

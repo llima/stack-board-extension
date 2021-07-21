@@ -150,6 +150,7 @@ async function main(): Promise<void> {
     //   git.commit("Initial template");
     //   git.push();
 
+    console.log("show files...", __dirname);
     await showFiles(__dirname);
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
