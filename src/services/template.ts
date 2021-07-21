@@ -62,11 +62,11 @@ export class TemplateService implements ITemplateService {
     }
 
     async _getCollection(): Promise<string> {
-        const TemplateCollection = "SourceTemplateCollections";
+        const templateCollection = "BaseTemplateCollections";
         const projectPageService = await DevOps.getService<IProjectPageService>(
             "ms.vss-tfs-web.tfs-page-data-service"
         );
         const projectInfo = await projectPageService.getProject();
-        return `${TemplateCollection}-${projectInfo.id}`;
+        return `${templateCollection}-${projectInfo.id}`;
     }
 }

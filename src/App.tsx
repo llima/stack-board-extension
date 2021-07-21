@@ -1,7 +1,7 @@
 import React from 'react';
 import * as DevOps from "azure-devops-extension-sdk";
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
-import Project from './pages/project/projects';
+import ProjectPage from './pages/project/projects-page';
 import Radar from './pages/radar/radar';
 import { Surface, SurfaceBackground } from 'azure-devops-ui/Surface';
 
@@ -35,7 +35,7 @@ class App extends React.Component<{}, IAppState>  {
 
     return (
       <Surface background={SurfaceBackground.neutral}>
-        <Project />
+        <ProjectPage />
       </Surface>
     );
 
@@ -43,7 +43,7 @@ class App extends React.Component<{}, IAppState>  {
 
     switch (page) {
       case "elevenlabs.stack-board.stack-board-hub":
-        return (<Project />);
+        return (<ProjectPage />);
       case "elevenlabs.stack-board.tech-radar-hub":
         return (<Radar />);
       default:

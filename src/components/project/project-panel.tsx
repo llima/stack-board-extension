@@ -35,10 +35,10 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     super(props);
     this.state = {
       currentProject: {
-        id: "",
-        name: "",
-        repoName: "",
-        status: "running",
+        id        : "",
+        name      : "",
+        repoName  : "",
+        status    : "running",
       }
     };
   }
@@ -55,39 +55,34 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     const { currentProject } = this.state;
 
     return (
-      !!currentProject.name && currentProject.name.trim() !== "" &&
-      !!currentProject.template && currentProject.id.trim() !== "" &&      
-      !!currentProject.repoName && currentProject.repoName.trim() !== ""
+      !!currentProject.name     && currentProject.name.trim()         !== "" &&
+      !!currentProject.template && currentProject.template.id.trim()  !== "" &&      
+      !!currentProject.repoName && currentProject.repoName.trim()     !== ""
     );
   }
 
   async createNewProject(that: this) {
-    try {
 
-      var item = that.state.currentProject;
-      
-      var repository = await CreateRepositoryAsync(item.repoName);
+    var item = that.state.currentProject;
+    var repository = await CreateRepositoryAsync(item.repoName);
 
-      const buildOptions: IBuildOptions = {
-        name: item.name,
-        repositoryId: repository.id,
-        template: item.template
-      };
+    const buildOptions: IBuildOptions = {
+      name          : item.name,
+      repositoryId  : repository.id,
+      template      : item.template
+    };
 
-      var buildDef = await CreateBuildDefinitionAsync(buildOptions);
-      
-      item.id                 = Guid.create().toString();
-      item.repoUrl            = repository.webUrl;
-      item.buildDefinitionId  = buildDef.id;
-      item.startTime          = new Date();
+    var buildDef = await CreateBuildDefinitionAsync(buildOptions);
+    
+    item.id                 = Guid.create().toString();
+    item.repoUrl            = repository.webUrl;
+    item.buildDefinitionId  = buildDef.id;
+    item.startTime          = new Date();
 
-      that.service.saveProject(item).then(item => {
-        that.props.onDismiss();
-      });
+    that.service.saveProject(item).then(item => {
+      that.props.onDismiss();
+    });
 
-    } catch (ex) {
-      console.error(ex);
-    }
   }
 
   render() {
@@ -99,15 +94,15 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
         <Panel
           onDismiss={this.props.onDismiss}
           titleProps={{ text: "Create new project" }}
-          description={
-            "Create new project from a template."
-          }
+          description={"Create new project from a template."}
           footerButtonProps={[
-            { text: "Cancel", onClick: this.props.onDismiss, },
-            {
-              text: "Create", primary: true, onClick: (event) => {
+            { text: "Cancel", onClick: this.props.onDismiss},
+            { text: "Create", 
+              primary: true, 
+              onClick: (event) => {
                 this.createNewProject(this)
-              }, disabled: !this.isValid()
+              }, 
+              disabled: !this.isValid()
             }
           ]}>
 
@@ -128,7 +123,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
                 className="example-dropdown"
                 placeholder="Select a template"
                 items={this.props.template}
-                onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ITemplate>) => {
+                onSelect={(event, item) => {
                   currentProject.template = item as ITemplate;
                   this.setState({ currentProject: currentProject });
                 }}

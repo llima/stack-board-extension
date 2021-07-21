@@ -5,24 +5,30 @@ declare global {
         sortByProp(prop: string): Array<T>;
     }
     interface Object {
-        deepCopy(): any;
+        deepcopy(): any;
     }
 }
 
 Array.prototype.sortByProp = function (prop: string) {
     var _self = this as Array<any>;
-    return _self.sort((n1, n2) => {
-        if (n1[prop].toLowerCase() > n2[prop].toLowerCase()) { return 1; }
-        if (n1[prop].toLowerCase() < n2[prop].toLowerCase()) { return -1; } return 0;
-    })
+    try {
+        return _self.sort((n1, n2) => {
+            if (n1[prop].toLowerCase() > n2[prop].toLowerCase()) { return 1; }
+            if (n1[prop].toLowerCase() < n2[prop].toLowerCase()) { return -1; } return 0;
+        })
+    }
+    catch
+    {
+        return _self;
+    }
 };
 
-Object.prototype.deepCopy = function () : any {
+Object.prototype.deepcopy = function (): any {
     var _self = this;
     var copy;
 
     if (null == _self || "object" != typeof _self) return _self;
-    
+
     if (_self instanceof Date) {
         copy = new Date();
         copy.setTime(_self.getTime());
@@ -32,7 +38,7 @@ Object.prototype.deepCopy = function () : any {
     if (_self instanceof Array) {
         copy = [];
         for (var i = 0, len = _self.length; i < len; i++) {
-            copy[i] = _self[i].deepCopy();
+            copy[i] = _self[i].deepcopy();
         }
         return copy;
     }
@@ -40,7 +46,7 @@ Object.prototype.deepCopy = function () : any {
     if (_self instanceof Object) {
         copy = {};
         for (var attr in _self) {
-            if (_self.hasOwnProperty(attr)) copy[attr] = _self[attr].deepCopy();
+            if (_self.hasOwnProperty(attr)) copy[attr] = _self[attr].deepcopy();
         }
         return copy;
     }
