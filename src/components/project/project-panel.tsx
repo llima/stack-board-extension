@@ -37,7 +37,6 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       currentProject: {
         id: "",
         name: "",
-        typeId: "",
         repoName: "",
         status: "running",
       }
@@ -57,7 +56,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
     return (
       !!currentProject.name && currentProject.name.trim() !== "" &&
-      !!currentProject.typeId && currentProject.typeId.trim() !== "" &&
+      !!currentProject.template && currentProject.id.trim() !== "" &&      
       !!currentProject.repoName && currentProject.repoName.trim() !== ""
     );
   }
@@ -66,8 +65,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     try {
 
       var item = that.state.currentProject;
-      console.log(item);
-
+      
       var repository = await CreateRepositoryAsync(item.repoName);
 
       const buildOptions: IBuildOptions = {
@@ -78,10 +76,10 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
       var buildDef = await CreateBuildDefinitionAsync(buildOptions);
       
-      item.id = Guid.create().toString();
-      item.repoUrl = repository.webUrl;
-      item.buildDefinitionId = buildDef.id;
-      item.startTime = new Date();
+      item.id                 = Guid.create().toString();
+      item.repoUrl            = repository.webUrl;
+      item.buildDefinitionId  = buildDef.id;
+      item.startTime          = new Date();
 
       that.service.saveProject(item).then(item => {
         that.props.onDismiss();
@@ -102,7 +100,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
           onDismiss={this.props.onDismiss}
           titleProps={{ text: "Create new project" }}
           description={
-            "Create new project configuration from template."
+            "Create new project from a template."
           }
           footerButtonProps={[
             { text: "Cancel", onClick: this.props.onDismiss, },
@@ -128,10 +126,9 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
               <Dropdown
                 ariaLabel="Basic"
                 className="example-dropdown"
-                placeholder="Select a type"
+                placeholder="Select a template"
                 items={this.props.template}
                 onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ITemplate>) => {
-                  currentProject.typeId = item.id;
                   currentProject.template = item as ITemplate;
                   this.setState({ currentProject: currentProject });
                 }}

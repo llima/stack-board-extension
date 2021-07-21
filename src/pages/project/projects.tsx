@@ -86,7 +86,7 @@ class Projects extends React.Component<{}, IProjectsState>  {
 
   render() {
     return (
-      <Page>
+      <Page >
         <CustomHeader className="bolt-header-with-commandbar">
           <HeaderTitleArea>
             <HeaderTitleRow>
@@ -95,14 +95,14 @@ class Projects extends React.Component<{}, IProjectsState>  {
               </HeaderTitle>
             </HeaderTitleRow>
             <HeaderDescription>
-              Projects list generated from projects
+              Projects list generated from templates
             </HeaderDescription>
           </HeaderTitleArea>
           <ButtonGroup>
             <Button text="Create" iconProps={{ iconName: "Add" }} primary={true}
               onClick={() => this.setState({ projectExpanded: true })}
             />
-            <Button ariaLabel="Add" iconProps={{ iconName: "Template" }}
+            <Button ariaLabel="Settings" iconProps={{ iconName: "Settings" }}
               onClick={() => this.setState({ templateExpanded: true })}
             />
           </ButtonGroup>
@@ -113,7 +113,7 @@ class Projects extends React.Component<{}, IProjectsState>  {
             primaryText="Get started your first project"
             secondaryText={
               <span>
-                Save time by creating a new project from projects.
+                Save time by creating a new project from templates.
               </span>
             }
             imageAltText="Bars"
