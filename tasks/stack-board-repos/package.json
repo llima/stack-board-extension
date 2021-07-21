@@ -1,6 +1,6 @@
 {
   "name": "stack-board-repos",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stack Board Repos Extension for Azure DevOps",
   "main": "stackboardrepos.js",
   "repository": {
@@ -12,11 +12,14 @@
   "bugs": {
     "url": "https://github.com/eleven-financial/stack-board-extension/issues"
   },
+  "scripts": {
+    "build": "npx tsc stackboardrepos.ts"
+  },
   "homepage": "./",
   "dependencies": {
-    "@types/node": "^10.17.0",
+    "@types/node": "^12.0.0",
     "azure-pipelines-task-lib": "^3.1.3",
-    "replace-in-file": "^6.2.0",    
+    "replace-in-file": "^6.2.0",
     "simple-git": "^2.41.1"
   },
   "devDependencies": {
