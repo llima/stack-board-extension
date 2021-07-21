@@ -33,11 +33,7 @@ class App extends React.Component<{}, IAppState>  {
 
   render() {
 
-    return (
-      <Surface background={SurfaceBackground.neutral}>
-        <ProjectPage />
-      </Surface>
-    );
+    return (<ProjectPage />);
 
     const { page } = this.state;
 

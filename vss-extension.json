@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.96",
+    "version": "1.0.102",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -15,15 +15,15 @@
         }
     ],
     "icons": {
-        "default": "marketplace/board.png",
-        "branding": "marketplace/board.png"
+        "default": "azure/board.png",
+        "branding": "azure/board.png"
     },
     "content": {
         "details": {
-            "path": "marketplace/overview.md"
+            "path": "azure/overview.md"
         },
         "license": {
-            "path": "marketplace/license.md"
+            "path": "azure/license.md"
         }
     },
     "repository": {
@@ -57,8 +57,8 @@
                 "name": "Stack Board",
                 "order": 100,
                 "icon": {
-                    "light": "marketplace/board.png",
-                    "dark": "marketplace/board.png"
+                    "light": "azure/board.png",
+                    "dark": "azure/board.png"
                 }
             }
         },
@@ -72,8 +72,8 @@
                 "name": "Projects",
                 "uri": "front/build/index.html",
                 "icon": {
-                    "light": "marketplace/projects/icon-light.png",
-                    "dark": "marketplace/projects/icon-dark.png"
+                    "light": "azure/projects/icon-light.png",
+                    "dark": "azure/projects/icon-dark.png"
                 }
             }
         },
@@ -87,8 +87,8 @@
                 "name": "Tech Radar",
                 "uri": "front/build/index.html",
                 "icon": {
-                    "light": "marketplace/radar/icon-light.png",
-                    "dark": "marketplace/radar/icon-dark.png"
+                    "light": "azure/radar/icon-light.png",
+                    "dark": "azure/radar/icon-dark.png"
                 }
             }
         },
@@ -105,7 +105,7 @@
     ],
     "files": [
         {
-            "path": "marketplace",
+            "path": "azure",
             "addressable": true
         },
         {

@@ -21,7 +21,7 @@ import {
 } from "azure-devops-ui/Table";
 
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Services } from '../../services/services';
 import { ITemplateService, TemplateServiceId, } from '../../services/template';
@@ -32,13 +32,15 @@ import { IProject } from '../../model/project';
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
+import { Spinner } from "azure-devops-ui/Spinner";
 
 
 interface IProjectsState {
   templateExpanded: boolean;
   projectExpanded: boolean;
-  template: ITemplate[];
+  templates: ITemplate[];
   projects: IProject[];
+  loading: boolean;
 }
 
 class ProjectsPage extends React.Component<{}, IProjectsState>  {
@@ -50,30 +52,27 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     super(props);
 
     this.state = {
+      loading: true,
       templateExpanded: false,
       projectExpanded: false,
-      template: [],
-      projects: []
+      templates: [],
+      projects: [],
     };
 
-    this.loadTemplate();
     this.loadProjects();
   }
 
-  loadTemplate() {
-    this.templateService.getTemplate().then(items => {
-      this.setState({ template: items });
-    });
-  }
   loadProjects() {
-    this.projectService.getProject().then(items => {
-      this.setState({ projects: items });
+    this.templateService.getTemplate().then(templates => {
+      this.projectService.getProject().then(projects => {
+        this.setState({ projects: projects, templates: templates, loading: false });
+      });
     });
   }
 
   render() {
 
-    const { projects } = this.state;
+    const { projects, loading } = this.state;
 
     return (
       <Page className="flex-grow">
@@ -99,7 +98,8 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
         </CustomHeader>
 
         <div className="page-content page-content-top">
-          {projects.length == 0 && <ZeroData
+
+          {!loading && projects.length == 0 && <ZeroData
             primaryText="Get started your first project"
             secondaryText={
               <span>
@@ -115,7 +115,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
             } />
           }
 
-          {projects.length > 0 && <Card
+          {!loading && projects.length > 0 && <Card
             className="flex-grow bolt-table-card"
             contentProps={{ contentPadding: false }}
             titleProps={{ text: "All projects" }}
@@ -136,15 +136,31 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
             </Observer>
           </Card>}
 
+          {loading && <Card
+            className="flex-grow bolt-table-card"
+            contentProps={{ contentPadding: false }}
+            titleProps={{ text: "All projects" }}
+          >
+            <Table<IProject>
+              ariaLabel="Table shimmer"
+              className="table-example"
+              columns={columns}
+              containerClassName="h-scroll-auto"
+              itemProvider={new ObservableArray<
+                IProject | ObservableValue<IProject | undefined>
+              >(new Array(5).fill(new ObservableValue<IProject | undefined>(undefined)))}
+              role="table"
+            />
+          </Card>}
+
         </div>
 
-        <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadTemplate() }} />
-        <ProjectPanel template={this.state.template} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false }); this.loadTemplate() }} />
+        <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false, loading: true }); this.loadProjects() }} />
+        <ProjectPanel template={this.state.templates} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false, loading: false }); this.loadProjects() }} />
 
       </Page>
     );
   }
-  
 }
 
 export default ProjectsPage;

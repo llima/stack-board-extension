@@ -1,9 +1,27 @@
-import { Pill, PillSize } from 'azure-devops-ui/Pill';
-import { PillGroup } from 'azure-devops-ui/PillGroup';
-import { Status, Statuses, StatusSize } from 'azure-devops-ui/Status';
-import { ColumnMore, ITableColumn, SimpleTableCell } from 'azure-devops-ui/Table';
-import { Tooltip } from 'azure-devops-ui/TooltipEx';
-import { IProject, IStatusIndicator, ProjectStatus } from '../../model/project';
+import { ObservableValue } from "azure-devops-ui/Core/Observable";
+import { ISimpleListCell } from "azure-devops-ui/List";
+import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
+
+import {
+  ISimpleTableCell,
+  ITableColumn,
+  SimpleTableCell,
+  TwoLineTableCell,
+} from "azure-devops-ui/Table";
+
+import { css } from "azure-devops-ui/Util";
+
+import { Icon, IIconProps } from "azure-devops-ui/Icon";
+
+import { Ago } from "azure-devops-ui/Ago";
+import { Duration } from "azure-devops-ui/Duration";
+import { Tooltip } from "azure-devops-ui/TooltipEx";
+
+import { Pill, PillSize, PillVariant } from "azure-devops-ui/Pill";
+
+import { IProject, IStatusIndicator, ProjectStatus } from "../../model/project";
+import { PillGroup } from "azure-devops-ui/PillGroup";
+import { Link } from "azure-devops-ui/Link";
 
 
 
@@ -64,22 +82,39 @@ export const projectsMock: IProject[] = [
 
 export const columns: ITableColumn<IProject>[] = [
   {
+    id: "Status",
+    name: "Status",
+    renderCell: renderStatusColumn,
+    readonly: true,
+    width: 60,
+  },
+  {
     id: "name",
-    name: "Projects",
+    name: "Project",
     renderCell: renderNameColumn,
     readonly: true,
-    sortProps: {
-      ariaLabelAscending: "Sorted A to Z",
-      ariaLabelDescending: "Sorted Z to A",
-    },
-    width: -33,
+    width: -20,
+  },
+  {
+    className: "pipelines-two-line-cell",
+    id: "repository",
+    name: "Repository",
+    renderCell: renderTemplateColumn,
+    width: -40,
   },
   {
     id: "type",
     ariaLabel: "Stack",
     readonly: true,
-    renderCell: renderTags,
-    width: -33,
+    renderCell: renderTagsColumn,
+    width: -20,
+  },
+  {
+    id: "time",
+    ariaLabel: "Time and duration",
+    readonly: true,
+    renderCell: renderDateColumn,
+    width: -20,
   },
 ];
 
@@ -109,7 +144,7 @@ export function getStatusIndicator(status: string): IStatusIndicator {
   return indicatorData;
 }
 
-export function renderNameColumn(
+export function renderStatusColumn(
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IProject>,
@@ -120,23 +155,94 @@ export function renderNameColumn(
       columnIndex={columnIndex}
       tableColumn={tableColumn}
       key={"col-" + columnIndex}
-      contentClassName="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden"
     >
       <Status
         {...getStatusIndicator(tableItem.status).statusProps}
         className="icon-large-margin"
         size={StatusSize.l}
       />
-      <div className="flex-row scroll-hidden">
-        <Tooltip overflowOnly={true}>
-          <span className="text-ellipsis">{tableItem.name}</span>
-        </Tooltip>
-      </div>
+
     </SimpleTableCell>
   );
 }
 
-export function renderTags(
+export function renderNameColumn(
+  rowIndex: number,
+  columnIndex: number,
+  tableColumn: ITableColumn<IProject>,
+  tableItem: IProject
+): JSX.Element {
+  return (
+    <TwoLineTableCell
+      key={"col-" + columnIndex}
+      columnIndex={columnIndex}
+      tableColumn={tableColumn}
+      line1={
+        <div className="fontWeightSemiBold font-weight-semibold fontSizeM font-size-m scroll-hidden">
+          <span className="text-ellipsis">{tableItem.name}</span>
+        </div>
+      }
+      line2={
+        <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
+          {Icon({
+            className: "icon-margin",
+            iconName: "FileCode",
+            key: "release-type",
+          })}
+          <span className="text-ellipsis" key="release-type-text" style={{ flexShrink: 10000 }}>
+            {tableItem.template.text}
+          </span>
+        </span>
+      }
+    />
+  );
+}
+
+export function renderTemplateColumn(
+  rowIndex: number,
+  columnIndex: number,
+  tableColumn: ITableColumn<IProject>,
+  tableItem: IProject
+): JSX.Element {
+  return (
+    <TwoLineTableCell
+      className="bolt-table-cell-content-with-inline-link no-v-padding"
+      key={"col-" + columnIndex}
+      columnIndex={columnIndex}
+      tableColumn={tableColumn}
+      line1={
+        <span className="flex-row scroll-hidden">
+          <Link
+            className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
+            excludeTabStop
+            href={tableItem.repoUrl}>
+            {tableItem.repoName}
+          </Link>
+        </span>
+      }
+      line2={
+        <span className="fontSize font-size secondary-text flex-row flex-center text-ellipsis">
+          <Link
+            className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
+            excludeTabStop
+            href={tableItem.repoUrl}
+          >
+            {Icon({
+              className: "icon-margin",
+              iconName: "OpenSource",
+              key: "branch-name",
+            })}
+            <span className="text-ellipsis">
+              {tableItem.repoUrl}
+            </span>
+          </Link>
+        </span>
+      }
+    />
+  );
+}
+
+export function renderTagsColumn(
   rowIndex: number,
   columnIndex: number,
   tableColumn: ITableColumn<IProject>,
@@ -158,3 +264,49 @@ export function renderTags(
     </SimpleTableCell>
   );
 }
+
+export function renderDateColumn(
+  rowIndex: number,
+  columnIndex: number,
+  tableColumn: ITableColumn<IProject>,
+  tableItem: IProject
+): JSX.Element {
+  return (
+    <TwoLineTableCell
+      key={"col-" + columnIndex}
+      columnIndex={columnIndex}
+      tableColumn={tableColumn}
+      line1={WithIcon({
+        className: "fontSize font-size",
+        iconProps: { iconName: "Calendar" },
+        children: (
+          <Ago date={tableItem.startTime} />
+        ),
+      })}
+      line2={WithIcon({
+        className: "fontSize font-size bolt-table-two-line-cell-item",
+        iconProps: { iconName: "Clock" },
+        children: (
+          <Duration
+            startDate={tableItem.startTime}
+            endDate={tableItem.endTime}
+          />
+        ),
+      })}
+    />
+  );
+}
+
+function WithIcon(props: {
+  className?: string;
+  iconProps: IIconProps;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className={css(props.className, "flex-row flex-center")}>
+      {Icon({ ...props.iconProps, className: "icon-margin" })}
+      {props.children}
+    </div>
+  );
+}
+
