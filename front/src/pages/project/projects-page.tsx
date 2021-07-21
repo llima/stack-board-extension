@@ -17,12 +17,7 @@ import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import TemplatePanel from '../../components/template/template-panel';
 
 import {
-  ColumnMore,
-  ITableColumn,
   Table,
-  ColumnSorting,
-  SortOrder,
-  sortItems,
 } from "azure-devops-ui/Table";
 
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
@@ -36,7 +31,7 @@ import { IProject } from '../../model/project';
 
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
-import { projectsMock, renderNameColumn } from './projectsTable';
+import { columns, projectsMock } from './projects-page-settings';
 
 
 interface IProjectsState {
@@ -58,8 +53,8 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
       templateExpanded: false,
       projectExpanded: false,
       template: [],
-      projects: projectsMock
-    };    
+      projects: []
+    };
 
     this.loadTemplate();
     this.loadProjects();
@@ -104,7 +99,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
         </CustomHeader>
 
         <div className="page-content page-content-top">
-           {projects.length == 0 && <ZeroData
+          {projects.length == 0 && <ZeroData
             primaryText="Get started your first project"
             secondaryText={
               <span>
@@ -118,28 +113,28 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
             onActionClick={(event, item) =>
               this.setState({ projectExpanded: true })
             } />
-          } 
+          }
 
           {projects.length > 0 && <Card
             className="flex-grow bolt-table-card"
             contentProps={{ contentPadding: false }}
             titleProps={{ text: "All projects" }}
           >
-            <Observer itemProvider={this.itemProvider}>
+            <Observer itemProvider={new ObservableValue<ArrayItemProvider<IProject>>(
+              new ArrayItemProvider(this.state.projects)
+            )}>
               {(observableProps: { itemProvider: ArrayItemProvider<IProject> }) => (
                 <Table
                   ariaLabel="Projects table"
-                  behaviors={[this.sortingBehavior]}
-                  columns={this.columns}
-                  containerClassName="h-scroll-auto"
+                  columns={columns}
                   itemProvider={observableProps.itemProvider}
                   showLines={true}
                   onSelect={(event, data) => console.log("Selected Row - " + data.index)}
                   onActivate={(event, row) => console.log("Activated Row - " + row.index)}
                 />
-              )} 
+              )}
             </Observer>
-          </Card>} 
+          </Card>}
 
         </div>
 
@@ -149,52 +144,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
       </Page>
     );
   }
-
-  columns: ITableColumn<IProject>[] = [
-    {
-      id: "name",
-      name: "Projects",
-      renderCell: renderNameColumn,
-      readonly: true,
-      sortProps: {
-        ariaLabelAscending: "Sorted A to Z",
-        ariaLabelDescending: "Sorted Z to A",
-      },
-      width: -33,
-    },
-
-    new ColumnMore(() => {
-      return {
-        id: "sub-menu",
-        items: [
-          { id: "download", text: "Download" },
-          { id: "delete", text: "Delete" },
-        ],
-      };
-    }),
-  ];
-
-  itemProvider = new ObservableValue<ArrayItemProvider<IProject>>(
-    new ArrayItemProvider(this.state ? this.state.projects : [])
-  );
-
-  sortingBehavior = new ColumnSorting<Partial<IProject>>(
-    (columnIndex: number, proposedSortOrder: SortOrder) => {
-      this.itemProvider.value = new ArrayItemProvider(
-        sortItems(
-          columnIndex,
-          proposedSortOrder,
-          [
-            (item1: IProject, item2: IProject) => {
-              return item1.name.localeCompare(item2.name);
-            }
-          ],
-          this.columns,
-          this.state ? this.state.projects : []
-        )
-      );
-    }
-  );
+  
 }
 
 export default ProjectsPage;

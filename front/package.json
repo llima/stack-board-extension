@@ -15,7 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && npm run package-release",
+    "build": "react-scripts build",
     "package-release": "tfx extension create --manifest-globs ../vss-extension.json --overrides-file ../configs/release.json --root ../"
 
   },
