@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "./static/css/main.f734a3ad.chunk.css",
+    "main.js": "./static/js/main.e2e1225c.chunk.js",
+    "main.js.map": "./static/js/main.e2e1225c.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.3118bfff.js",
+    "runtime-main.js.map": "./static/js/runtime-main.3118bfff.js.map",
+    "static/css/2.f47fc703.chunk.css": "./static/css/2.f47fc703.chunk.css",
+    "static/js/2.0d0cc7eb.chunk.js": "./static/js/2.0d0cc7eb.chunk.js",
+    "static/js/2.0d0cc7eb.chunk.js.map": "./static/js/2.0d0cc7eb.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.f47fc703.chunk.css.map": "./static/css/2.f47fc703.chunk.css.map",
+    "static/css/main.f734a3ad.chunk.css.map": "./static/css/main.f734a3ad.chunk.css.map",
+    "static/js/2.0d0cc7eb.chunk.js.LICENSE.txt": "./static/js/2.0d0cc7eb.chunk.js.LICENSE.txt",
+    "static/media/FabricIcons.css": "./static/media/AzDevMDL2.bc93748d.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3118bfff.js",
+    "static/css/2.f47fc703.chunk.css",
+    "static/js/2.0d0cc7eb.chunk.js",
+    "static/css/main.f734a3ad.chunk.css",
+    "static/js/main.e2e1225c.chunk.js"
+  ]
+}

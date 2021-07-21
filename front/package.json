@@ -16,8 +16,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && npm run package-release",
-    "package-dev": "tfx extension create --manifest-globs vss-extension.json --overrides-file ./configs/dev.json --root ./",
-    "package-release": "tfx extension create --manifest-globs vss-extension.json --overrides-file ./configs/release.json --root ./"
+    "package-release": "tfx extension create --manifest-globs ../vss-extension.json --overrides-file ../configs/release.json --root ../"
+
   },
   "dependencies": {
     "@fluentui/example-data": "^8.2.3",

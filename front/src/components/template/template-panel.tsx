@@ -87,9 +87,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     var prop = event.target.id.replace("__bolt-", "");
     that.state.currentTemplate[prop] = value;
 
-    this.setState({
-      currentTemplate: that.state.currentTemplate
-    });
+    this.setState({currentTemplate: that.state.currentTemplate});
   }
 
   isValid(): boolean {
@@ -350,7 +348,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                           )
                           this.setState({
                             showAuthentication: listRow.data.pass !== "",
-                            currentTemplate: listRow.data.deepCopy(),
+                            currentTemplate: listRow.data.deepcopy(),
                             tagSuggestions: items
                           });
                         }}

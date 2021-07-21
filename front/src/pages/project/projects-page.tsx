@@ -1,5 +1,5 @@
 import React from 'react';
-import './projects.scss';
+import './projects-page.scss';
 
 import {
   CustomHeader,
@@ -15,15 +15,6 @@ import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import TemplatePanel from '../../components/template/template-panel';
-
-import {
-  renderNameColumn,
-  renderLastRunColumn,
-  renderDateColumn,
-  renderType,
-  IPipelineItem,
-  pipelineItems
-} from "../../data/TableData";
 
 import {
   ColumnMore,
@@ -45,6 +36,8 @@ import { IProject } from '../../model/project';
 
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
+import { projectsMock, renderNameColumn } from './projectsTable';
+
 
 interface IProjectsState {
   templateExpanded: boolean;
@@ -53,7 +46,7 @@ interface IProjectsState {
   projects: IProject[];
 }
 
-class Projects extends React.Component<{}, IProjectsState>  {
+class ProjectsPage extends React.Component<{}, IProjectsState>  {
 
   templateService = Services.getService<ITemplateService>(TemplateServiceId);
   projectService = Services.getService<IProjectService>(ProjectServiceId);
@@ -65,8 +58,8 @@ class Projects extends React.Component<{}, IProjectsState>  {
       templateExpanded: false,
       projectExpanded: false,
       template: [],
-      projects: []
-    };
+      projects: projectsMock
+    };    
 
     this.loadTemplate();
     this.loadProjects();
@@ -79,14 +72,16 @@ class Projects extends React.Component<{}, IProjectsState>  {
   }
   loadProjects() {
     this.projectService.getProject().then(items => {
-      console.log(items);
       this.setState({ projects: items });
     });
   }
 
   render() {
+
+    const { projects } = this.state;
+
     return (
-      <Page >
+      <Page className="flex-grow">
         <CustomHeader className="bolt-header-with-commandbar">
           <HeaderTitleArea>
             <HeaderTitleRow>
@@ -109,7 +104,7 @@ class Projects extends React.Component<{}, IProjectsState>  {
         </CustomHeader>
 
         <div className="page-content page-content-top">
-          <ZeroData
+           {projects.length == 0 && <ZeroData
             primaryText="Get started your first project"
             secondaryText={
               <span>
@@ -122,20 +117,19 @@ class Projects extends React.Component<{}, IProjectsState>  {
             actionType={ZeroDataActionType.ctaButton}
             onActionClick={(event, item) =>
               this.setState({ projectExpanded: true })
-            }
-          />
+            } />
+          } 
 
-          {/* <Card
+          {projects.length > 0 && <Card
             className="flex-grow bolt-table-card"
             contentProps={{ contentPadding: false }}
             titleProps={{ text: "All projects" }}
           >
             <Observer itemProvider={this.itemProvider}>
-              {(observableProps: { itemProvider: ArrayItemProvider<IPipelineItem> }) => (
+              {(observableProps: { itemProvider: ArrayItemProvider<IProject> }) => (
                 <Table
-                  ariaLabel="Advanced table"
+                  ariaLabel="Projects table"
                   behaviors={[this.sortingBehavior]}
-                  className="table-example"
                   columns={this.columns}
                   containerClassName="h-scroll-auto"
                   itemProvider={observableProps.itemProvider}
@@ -143,9 +137,10 @@ class Projects extends React.Component<{}, IProjectsState>  {
                   onSelect={(event, data) => console.log("Selected Row - " + data.index)}
                   onActivate={(event, row) => console.log("Activated Row - " + row.index)}
                 />
-              )}
+              )} 
             </Observer>
-          </Card> */}
+          </Card>} 
+
         </div>
 
         <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadTemplate() }} />
@@ -155,7 +150,7 @@ class Projects extends React.Component<{}, IProjectsState>  {
     );
   }
 
-  columns: ITableColumn<IPipelineItem>[] = [
+  columns: ITableColumn<IProject>[] = [
     {
       id: "name",
       name: "Projects",
@@ -165,27 +160,6 @@ class Projects extends React.Component<{}, IProjectsState>  {
         ariaLabelAscending: "Sorted A to Z",
         ariaLabelDescending: "Sorted Z to A",
       },
-      width: -33,
-    },
-    {
-      className: "pipelines-two-line-cell",
-      id: "lastRun",
-      name: "Template",
-      renderCell: renderLastRunColumn,
-      width: -33,
-    },
-    {
-      id: "type",
-      ariaLabel: "Time and duration",
-      readonly: true,
-      renderCell: renderType,
-      width: -33,
-    },
-    {
-      id: "time",
-      ariaLabel: "Time and duration",
-      readonly: true,
-      renderCell: renderDateColumn,
       width: -33,
     },
 
@@ -200,27 +174,27 @@ class Projects extends React.Component<{}, IProjectsState>  {
     }),
   ];
 
-  itemProvider = new ObservableValue<ArrayItemProvider<IPipelineItem>>(
-    new ArrayItemProvider(pipelineItems)
+  itemProvider = new ObservableValue<ArrayItemProvider<IProject>>(
+    new ArrayItemProvider(this.state ? this.state.projects : [])
   );
 
-  sortingBehavior = new ColumnSorting<Partial<IPipelineItem>>(
+  sortingBehavior = new ColumnSorting<Partial<IProject>>(
     (columnIndex: number, proposedSortOrder: SortOrder) => {
       this.itemProvider.value = new ArrayItemProvider(
         sortItems(
           columnIndex,
           proposedSortOrder,
           [
-            (item1: IPipelineItem, item2: IPipelineItem) => {
+            (item1: IProject, item2: IProject) => {
               return item1.name.localeCompare(item2.name);
             }
           ],
           this.columns,
-          pipelineItems
+          this.state ? this.state.projects : []
         )
       );
     }
   );
 }
 
-export default Projects;
+export default ProjectsPage;

@@ -62,11 +62,11 @@ export class ProjectService implements IProjectService {
     }
 
     async _getCollection(): Promise<string> {
-        const ProjectCollection = "SourceProjectCollections";
+        const projectCollection = "BaseProjectCollections";
         const projectPageService = await DevOps.getService<IProjectPageService>(
             "ms.vss-tfs-web.tfs-page-data-service"
         );
         const projectInfo = await projectPageService.getProject();
-        return `${ProjectCollection}-${projectInfo.id}`;
+        return `${projectCollection}-${projectInfo.id}`;
     }
 }
