@@ -7,7 +7,7 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 
 import { CreateRepositoryAsync } from '../../services/repository';
 import { CreateBuildDefinitionAsync } from '../../services/build';
-import { ISettings } from '../../model/settings';
+import { ITemplate } from '../../model/template';
 import { IProject } from '../../model/project';
 import { IListBoxItem } from 'azure-devops-ui/ListBox';
 import { Guid } from 'guid-typescript';
@@ -18,7 +18,7 @@ import { IBuildOptions } from '../../model/buildOptions';
 export interface IProjectPanelProps {
   show: boolean;
   onDismiss: any;
-  settings: ISettings[];
+  template: ITemplate[];
 }
 
 interface IProjectPanelState {
@@ -73,7 +73,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       const buildOptions: IBuildOptions = {
         name: item.name,
         repositoryId: repository.id,
-        settings: item.settings
+        template: item.template
       };
 
       var buildDef = await CreateBuildDefinitionAsync(buildOptions);
@@ -129,10 +129,10 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
                 ariaLabel="Basic"
                 className="example-dropdown"
                 placeholder="Select a type"
-                items={this.props.settings}
-                onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ISettings>) => {
+                items={this.props.template}
+                onSelect={(event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<ITemplate>) => {
                   currentProject.typeId = item.id;
-                  currentProject.settings = item as ISettings;
+                  currentProject.template = item as ITemplate;
                   this.setState({ currentProject: currentProject });
                 }}
               />

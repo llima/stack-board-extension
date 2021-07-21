@@ -1,4 +1,4 @@
-import { ISettings } from "./settings";
+import { ITemplate } from "./template";
 
 export interface IProject {
     id: string;
@@ -6,7 +6,7 @@ export interface IProject {
     typeId: string;
     repoName: string;
     status: string;
-    settings?: ISettings;
+    template?: ITemplate;
 
     repoUrl?: string;
     buildDefinitionId?: number;

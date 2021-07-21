@@ -1,6 +1,6 @@
 import { IStack } from "./stacks";
 
-export interface ISettings {
+export interface ITemplate {
     id: string;
     text: string;
     replaceKey: string;

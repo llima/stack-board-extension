@@ -14,7 +14,7 @@ import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import SettingsPanel from '../../components/settings/settings-panel';
+import TemplatePanel from '../../components/template/template-panel';
 
 import {
   renderNameColumn,
@@ -38,8 +38,8 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Services } from '../../services/services';
-import { ISettingsService, SettingsServiceId, } from '../../services/settings';
-import { ISettings } from '../../model/settings';
+import { ITemplateService, TemplateServiceId, } from '../../services/template';
+import { ITemplate } from '../../model/template';
 import { IProjectService, ProjectServiceId } from '../../services/project';
 import { IProject } from '../../model/project';
 
@@ -47,34 +47,34 @@ import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 
 interface IProjectsState {
-  settingsExpanded: boolean;
+  templateExpanded: boolean;
   projectExpanded: boolean;
-  settings: ISettings[];
+  template: ITemplate[];
   projects: IProject[];
 }
 
 class Projects extends React.Component<{}, IProjectsState>  {
 
-  settingsService = Services.getService<ISettingsService>(SettingsServiceId);
+  templateService = Services.getService<ITemplateService>(TemplateServiceId);
   projectService = Services.getService<IProjectService>(ProjectServiceId);
 
   constructor(props: {}) {
     super(props);
 
     this.state = {
-      settingsExpanded: false,
+      templateExpanded: false,
       projectExpanded: false,
-      settings: [],
+      template: [],
       projects: []
     };
 
-    this.loadSettings();
+    this.loadTemplate();
     this.loadProjects();
   }
 
-  loadSettings() {
-    this.settingsService.getSettings().then(items => {
-      this.setState({ settings: items });
+  loadTemplate() {
+    this.templateService.getTemplate().then(items => {
+      this.setState({ template: items });
     });
   }
   loadProjects() {
@@ -102,8 +102,8 @@ class Projects extends React.Component<{}, IProjectsState>  {
             <Button text="Create" iconProps={{ iconName: "Add" }} primary={true}
               onClick={() => this.setState({ projectExpanded: true })}
             />
-            <Button ariaLabel="Add" iconProps={{ iconName: "Settings" }}
-              onClick={() => this.setState({ settingsExpanded: true })}
+            <Button ariaLabel="Add" iconProps={{ iconName: "Template" }}
+              onClick={() => this.setState({ templateExpanded: true })}
             />
           </ButtonGroup>
         </CustomHeader>
@@ -148,8 +148,8 @@ class Projects extends React.Component<{}, IProjectsState>  {
           </Card> */}
         </div>
 
-        <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false }); this.loadSettings() }} />
-        <ProjectPanel settings={this.state.settings} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false }); this.loadSettings() }} />
+        <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadTemplate() }} />
+        <ProjectPanel template={this.state.template} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false }); this.loadTemplate() }} />
 
       </Page>
     );
@@ -170,7 +170,7 @@ class Projects extends React.Component<{}, IProjectsState>  {
     {
       className: "pipelines-two-line-cell",
       id: "lastRun",
-      name: "Settings",
+      name: "Template",
       renderCell: renderLastRunColumn,
       width: -33,
     },
