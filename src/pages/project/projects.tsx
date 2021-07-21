@@ -1,8 +1,9 @@
 import React from 'react';
-import './project.scss';
+import './projects.scss';
 
 import {
   CustomHeader,
+  HeaderDescription,
   HeaderTitle,
   HeaderTitleArea,
   HeaderTitleRow,
@@ -13,7 +14,6 @@ import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import SettingsPanel from '../../components/settings/settings-panel';
 import TemplatePanel from '../../components/template/template-panel';
 
 import {
@@ -38,48 +38,49 @@ import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
 import { Services } from '../../services/services';
-import { ISettingsService, SettingsServiceId, } from '../../services/settings';
-import { ISettings } from '../../model/settings';
-import { ITemplateService, TemplateServiceId } from '../../services/template';
+import { ITemplateService, TemplateServiceId, } from '../../services/template';
 import { ITemplate } from '../../model/template';
+import { IProjectService, ProjectServiceId } from '../../services/project';
+import { IProject } from '../../model/project';
 
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
+import ProjectPanel from '../../components/project/project-panel';
 
-interface IProjectState {
-  settingsExpanded: boolean;
+interface IProjectsState {
   templateExpanded: boolean;
-  settings: ISettings[];
-  templates: ITemplate[];
+  projectExpanded: boolean;
+  template: ITemplate[];
+  projects: IProject[];
 }
 
-class Project extends React.Component<{}, IProjectState>  {
+class Projects extends React.Component<{}, IProjectsState>  {
 
-  settingsService = Services.getService<ISettingsService>(SettingsServiceId);
   templateService = Services.getService<ITemplateService>(TemplateServiceId);
+  projectService = Services.getService<IProjectService>(ProjectServiceId);
 
   constructor(props: {}) {
     super(props);
 
     this.state = {
-      settingsExpanded: false,
       templateExpanded: false,
-      settings: [],
-      templates: []
+      projectExpanded: false,
+      template: [],
+      projects: []
     };
 
-    this.loadSettings();
-    this.loadTemplates();
+    this.loadTemplate();
+    this.loadProjects();
   }
 
-  loadSettings() {
-    this.settingsService.getSettings().then(items => {
-      this.setState({ settings: items });
+  loadTemplate() {
+    this.templateService.getTemplate().then(items => {
+      this.setState({ template: items });
     });
   }
-  loadTemplates() {
-    this.templateService.getTemplate().then(items => {
+  loadProjects() {
+    this.projectService.getProject().then(items => {
       console.log(items);
-      this.setState({ templates: items });
+      this.setState({ projects: items });
     });
   }
 
@@ -90,44 +91,37 @@ class Project extends React.Component<{}, IProjectState>  {
           <HeaderTitleArea>
             <HeaderTitleRow>
               <HeaderTitle className="text-ellipsis" titleSize={TitleSize.Large}>
-                Stack board
+                Projects
               </HeaderTitle>
             </HeaderTitleRow>
+            <HeaderDescription>
+              Projects list generated from projects
+            </HeaderDescription>
           </HeaderTitleArea>
           <ButtonGroup>
             <Button text="Create" iconProps={{ iconName: "Add" }} primary={true}
-              onClick={() => this.setState({ templateExpanded: true })}
+              onClick={() => this.setState({ projectExpanded: true })}
             />
-            <Button ariaLabel="Add" iconProps={{ iconName: "Settings" }}
-              onClick={() => this.setState({ settingsExpanded: true })}
+            <Button ariaLabel="Add" iconProps={{ iconName: "Template" }}
+              onClick={() => this.setState({ templateExpanded: true })}
             />
           </ButtonGroup>
         </CustomHeader>
 
         <div className="page-content page-content-top">
           <ZeroData
-            primaryText="This is the primary text"
+            primaryText="Get started your first project"
             secondaryText={
               <span>
-                This secondary text contains a{" "}
-                <a
-                  rel="nofollow noopener"
-                  target="_blank"
-                  href="https://bing.com"
-                  aria-label="link to bing.com"
-                >
-                  link
-                </a>{" "}
-                to somewhere else. Lorem ipsum dolor sit amet, consectetur adipiscing
-                elit.
+                Save time by creating a new project from projects.
               </span>
             }
             imageAltText="Bars"
             imagePath={"https://cdn.vsassets.io/ext/ms.vss-code-web/import-content/repoNotFound.bVoHtlP2mhhyPo5t.svg"}
-            actionText="Button"
+            actionText="Create"
             actionType={ZeroDataActionType.ctaButton}
             onActionClick={(event, item) =>
-              alert("Hey, you clicked the button for " + item!.primaryText)
+              this.setState({ projectExpanded: true })
             }
           />
 
@@ -154,8 +148,8 @@ class Project extends React.Component<{}, IProjectState>  {
           </Card> */}
         </div>
 
-        <SettingsPanel show={this.state.settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false }); this.loadSettings() }} />
-        <TemplatePanel settings={this.state.settings} show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadSettings() }} />
+        <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false }); this.loadTemplate() }} />
+        <ProjectPanel template={this.state.template} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false }); this.loadTemplate() }} />
 
       </Page>
     );
@@ -164,7 +158,7 @@ class Project extends React.Component<{}, IProjectState>  {
   columns: ITableColumn<IPipelineItem>[] = [
     {
       id: "name",
-      name: "Project",
+      name: "Projects",
       renderCell: renderNameColumn,
       readonly: true,
       sortProps: {
@@ -176,7 +170,7 @@ class Project extends React.Component<{}, IProjectState>  {
     {
       className: "pipelines-two-line-cell",
       id: "lastRun",
-      name: "Settings",
+      name: "Template",
       renderCell: renderLastRunColumn,
       width: -33,
     },
@@ -229,4 +223,4 @@ class Project extends React.Component<{}, IProjectState>  {
   );
 }
 
-export default Project;
+export default Projects;

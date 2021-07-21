@@ -1,15 +1,12 @@
-import { ISettings } from "./settings";
+import { IStack } from "./stacks";
 
 export interface ITemplate {
     id: string;
-    name: string;
-    typeId: string;
-    repoName: string;
-    status: string;
-    settings?: ISettings;
-
-    repoUrl?: string;
-    buildDefinitionId?: number;
-    startTime?: Date;
-    endTime?: Date;
+    text: string;
+    replaceKey: string;
+    description: string;
+    gitUrl: string;
+    user: string;
+    pass: string;
+    tags: IStack[]
 }

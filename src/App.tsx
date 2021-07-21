@@ -1,7 +1,7 @@
 import React from 'react';
 import * as DevOps from "azure-devops-extension-sdk";
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
-import Project from './pages/projects/project';
+import Project from './pages/project/projects';
 import Radar from './pages/radar/radar';
 
 interface IAppState {

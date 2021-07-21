@@ -5,28 +5,28 @@ import {
 } from "azure-devops-extension-api";
 
 import {
-    ISettings,
-} from "../model/settings";
+    IProject,
+} from "../model/project";
 
 import { getStorageManager } from "./storage";
 import { IService } from "./services";
 
-export interface ISettingsService extends IService {
-    getSettings(): Promise<ISettings[]>;
-    saveSettings(settings: ISettings): Promise<ISettings>;
-    removeSettings(id: string): Promise<void>;
+export interface IProjectService extends IService {
+    getProject(): Promise<IProject[]>;
+    saveProject(project: IProject): Promise<IProject>;
+    removeProject(id: string): Promise<void>;
 }
 
-export const SettingsServiceId = "SettingsService";
+export const ProjectServiceId = "ProjectService";
 
-export class SettingsService implements ISettingsService {
+export class ProjectService implements IProjectService {
     manager: IExtensionDataManager | undefined;
 
     constructor() {
         this.getManager();
     }
 
-    async getSettings(): Promise<ISettings[]> {
+    async getProject(): Promise<IProject[]> {
         const manager = await this.getManager();
 
         try {
@@ -38,14 +38,14 @@ export class SettingsService implements ISettingsService {
         }
     }
 
-    async saveSettings(settings: ISettings): Promise<ISettings> {
-        console.log(settings);
+    async saveProject(project: IProject): Promise<IProject> {
+        console.log(project);
         const manager = await this.getManager();
-        await manager.setDocument(await this._getCollection(), settings);
-        return settings;
+        await manager.setDocument(await this._getCollection(), project);
+        return project;
     }
 
-    async removeSettings(id: string): Promise<void> {
+    async removeProject(id: string): Promise<void> {
         const manager = await this.getManager();
         try {
             await manager.deleteDocument(await this._getCollection(), id);
@@ -62,11 +62,11 @@ export class SettingsService implements ISettingsService {
     }
 
     async _getCollection(): Promise<string> {
-        const SettingsCollection = "SourceSettingsCollections";
+        const ProjectCollection = "SourceProjectCollections";
         const projectPageService = await DevOps.getService<IProjectPageService>(
             "ms.vss-tfs-web.tfs-page-data-service"
         );
         const projectInfo = await projectPageService.getProject();
-        return `${SettingsCollection}-${projectInfo.id}`;
+        return `${ProjectCollection}-${projectInfo.id}`;
     }
 }
