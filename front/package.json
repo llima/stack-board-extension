@@ -16,6 +16,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "release": "npm run package-release",
     "package-release": "tfx extension create --manifest-globs ../vss-extension.json --overrides-file ../configs/release.json --root ../"
 
   },

@@ -66,7 +66,11 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     this.templateService.getTemplate().then(templates => {
       this.projectService.getProject().then(projects => {
         this.setState({ projects: projects, templates: templates, loading: false });
+      }).catch(e => {
+        this.setState({ loading: false });
       });
+    }).catch(e => {
+      this.setState({ loading: false });
     });
   }
 
