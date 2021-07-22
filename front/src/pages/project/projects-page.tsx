@@ -91,8 +91,10 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
   }
 
   async deleteProject(type: string, that: this) {
-    console.log(type);
-    that.setState({ seletectedProject: null, showDelete: false });
+    that.projectService.removeProject(that.state.seletectedProject.id).then(() => {
+      that.setState({ seletectedProject: null, showDelete: false });
+      that.loadProjects();
+    })
   }
 
   render() {
