@@ -1,23 +1,17 @@
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
-import { ISimpleListCell } from "azure-devops-ui/List";
-import { IStatusProps, Status, Statuses, StatusSize } from "azure-devops-ui/Status";
+import { Status, Statuses, StatusSize } from "azure-devops-ui/Status";
 
 import {
-  ISimpleTableCell,
   ITableColumn,
   SimpleTableCell,
   TwoLineTableCell,
 } from "azure-devops-ui/Table";
 
 import { css } from "azure-devops-ui/Util";
-
 import { Icon, IIconProps } from "azure-devops-ui/Icon";
 
 import { Ago } from "azure-devops-ui/Ago";
 import { Duration } from "azure-devops-ui/Duration";
-import { Tooltip } from "azure-devops-ui/TooltipEx";
-
-import { Pill, PillSize, PillVariant } from "azure-devops-ui/Pill";
+import { Pill, PillSize } from "azure-devops-ui/Pill";
 
 import { IProject, IStatusIndicator, ProjectStatus } from "../../model/project";
 import { PillGroup } from "azure-devops-ui/PillGroup";
@@ -80,7 +74,7 @@ export const projectsMock: IProject[] = [
   }
 ];
 
-export const columns: ITableColumn<IProject>[] = [
+export var columns: ITableColumn<IProject>[] = [
   {
     id: "Status",
     name: "Status",
@@ -115,7 +109,7 @@ export const columns: ITableColumn<IProject>[] = [
     readonly: true,
     renderCell: renderDateColumn,
     width: -20,
-  },
+  }
 ];
 
 export function getStatusIndicator(status: string): IStatusIndicator {
@@ -215,6 +209,7 @@ export function renderTemplateColumn(
           <Link
             className="fontSizeM font-size-m text-ellipsis bolt-table-link bolt-table-inline-link"
             excludeTabStop
+            target="_blank"
             href={tableItem.repoUrl}>
             {tableItem.repoName}
           </Link>
@@ -225,6 +220,7 @@ export function renderTemplateColumn(
           <Link
             className="monospaced-text text-ellipsis flex-row flex-center bolt-table-link bolt-table-inline-link"
             excludeTabStop
+            target="_blank"
             href={tableItem.repoUrl}
           >
             {Icon({

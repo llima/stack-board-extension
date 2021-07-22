@@ -10,6 +10,7 @@ import {
   TitleSize
 } from "azure-devops-ui/Header";
 
+
 import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
@@ -17,6 +18,7 @@ import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import TemplatePanel from '../../components/template/template-panel';
 
 import {
+  ColumnMore,
   Table,
 } from "azure-devops-ui/Table";
 
@@ -28,10 +30,10 @@ import { ITemplateService, TemplateServiceId, } from '../../services/template';
 import { ITemplate } from '../../model/template';
 import { IProjectService, ProjectServiceId } from '../../services/project';
 import { IProject } from '../../model/project';
-
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
+import ProjectModal from '../../components/project/project-modal';
 
 
 interface IProjectsState {
@@ -40,6 +42,8 @@ interface IProjectsState {
   templates: ITemplate[];
   projects: IProject[];
   loading: boolean;
+  showDelete: boolean;
+  seletectedProject?: IProject;
 }
 
 class ProjectsPage extends React.Component<{}, IProjectsState>  {
@@ -51,6 +55,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     super(props);
 
     this.state = {
+      showDelete: false,
       loading: true,
       templateExpanded: false,
       projectExpanded: false,
@@ -58,13 +63,25 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
       projects: [],
     };
 
+    columns.push(new ColumnMore((listItem) => {
+      return {
+        id: "sub-menu",
+        items: [
+          { id: "delete", text: "Delete", onActivate: () => this.setState({ showDelete: true, seletectedProject: listItem }) },
+        ],
+      };
+    }))
+
     this.loadProjects();
   }
 
   loadProjects() {
     this.templateService.getTemplate().then(templates => {
       this.projectService.getProject().then(projects => {
-        this.setState({ projects: projects, templates: templates, loading: false });
+        var items = projects.sort((a: IProject, b: IProject) => {
+          return b.startTime.getTime() - a.startTime.getTime();
+        })
+        this.setState({ projects: items, templates: templates, loading: false });
       }).catch(e => {
         this.setState({ loading: false });
       });
@@ -73,9 +90,14 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     });
   }
 
+  async deleteProject(type: string, that: this) {
+    console.log(type);
+    that.setState({ seletectedProject: null, showDelete: false });
+  }
+
   render() {
 
-    const { projects, loading } = this.state;
+    const { projects, loading, templateExpanded, templates, projectExpanded, seletectedProject, showDelete } = this.state;
 
     return (
       <Page className="flex-grow">
@@ -132,8 +154,6 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
                   columns={columns}
                   itemProvider={observableProps.itemProvider}
                   showLines={true}
-                  onSelect={(event, data) => console.log("Selected Row - " + data.index)}
-                  onActivate={(event, row) => console.log("Activated Row - " + row.index)}
                 />
               )}
             </Observer>
@@ -158,8 +178,9 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
 
         </div>
 
-        <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false, loading: true }); this.loadProjects() }} />
-        <ProjectPanel templates={this.state.templates} projects={this.state.projects} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false, loading: false }); this.loadProjects() }} />
+        <TemplatePanel show={templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false, loading: true }); this.loadProjects() }} />
+        <ProjectPanel show={projectExpanded} templates={templates} projects={projects} onDismiss={() => { this.setState({ projectExpanded: false, loading: false }); this.loadProjects() }} />
+        <ProjectModal show={showDelete} project={seletectedProject} onDismiss={() => { this.setState({ seletectedProject: null, showDelete: false }); }} onConfirm={(type) => { this.deleteProject(type, this); }} />
 
       </Page>
     );

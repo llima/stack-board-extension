@@ -1,9 +1,10 @@
 import React from 'react';
 import * as DevOps from "azure-devops-extension-sdk";
-import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
+
 import ProjectPage from './pages/project/projects-page';
 import Radar from './pages/radar/radar';
-import { Surface, SurfaceBackground } from 'azure-devops-ui/Surface';
+
+import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
 
 interface IAppState {
   page: string;
