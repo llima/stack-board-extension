@@ -60,7 +60,11 @@ export async function CreateBuildDefinitionAsync(
   step.task = task;
   step.displayName = "Stack Board Repos";
   step.enabled = true;
-  step.inputs = { sourceRepository: options.template.gitUrl };
+  step.inputs = { 
+    sourceRepository: options.template.gitUrl,
+    replaceFrom: options.template.replaceKey,
+    replaceTo: options.name
+  };
 
   const phase = {} as Phase;
   phase.name = "Agent job 1";
