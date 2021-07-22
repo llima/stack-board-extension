@@ -1,5 +1,5 @@
 import * as DevOps from "azure-devops-extension-sdk";
-import { IHostNavigationService, IProjectPageService } from "azure-devops-extension-api";
+import { IProjectPageService } from "azure-devops-extension-api";
 
 import { getClient } from "azure-devops-extension-api";
 import {
@@ -63,4 +63,16 @@ export async function CreateRepositoryAsync(
   await client.createPush(push, repository.id, currentProject.name);
 
   return repository;
+}
+
+export async function DeleteRepositoryAsync(
+  name: string
+): Promise<void> {
+  await DevOps.ready();
+  const projectService = await DevOps.getService<IProjectPageService>(
+    "ms.vss-tfs-web.tfs-page-data-service"
+  );
+  const currentProject = await projectService.getProject();
+
+  return await client.deleteRepository(name, currentProject.name);
 }

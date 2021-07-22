@@ -65,18 +65,18 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
     that.state.currentProject[prop] = value;
-  
+
     if (prop === "name" && that.props.projects.filter(d => d.name.toLocaleLowerCase() === that.state.currentProject.name.toLocaleLowerCase()).length > 0) {
-      that.setState({nameIsValid: false, currentProject: that.state.currentProject});
+      that.setState({ nameIsValid: false, currentProject: that.state.currentProject });
       return;
     }
 
     if (prop === "repoName" && that.props.projects.filter(d => d.repoName.toLocaleLowerCase() === that.state.currentProject.repoName.toLocaleLowerCase()).length > 0) {
-      that.setState({repoIsValid: false, currentProject: that.state.currentProject});
+      that.setState({ repoIsValid: false, currentProject: that.state.currentProject });
       return;
     }
 
-    this.setState({currentProject: that.state.currentProject, nameIsValid: true, repoIsValid: true});
+    this.setState({ currentProject: that.state.currentProject, nameIsValid: true, repoIsValid: true });
   }
 
   isValid(): boolean {
@@ -111,7 +111,6 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     that.service.saveProject(item).then(item => {
       that.close(that);
     });
-
   }
 
   render() {
@@ -143,23 +142,10 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
           ]}>
 
           <div className="project--content">
-            <div className="project--group">
-
-              <FormItem message="the project name must be unique" error={!nameIsValid}>
-                <TextField
-                  inputId="name"
-                  label="Name *"
-                  value={currentProject.name}
-                  placeholder="Name your project name"
-                  onChange={(event, value) => this.onInputChange(event, value, this)}
-                />
-              </FormItem>
-
-            </div>
 
             <div className="project--group">
               <Dropdown
-                ariaLabel="Basic"
+                ariaLabel="Basic"                
                 className="example-dropdown"
                 placeholder="Select a template"
                 items={this.props.templates}
@@ -179,22 +165,27 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
             </div>}
 
             <div className="project--group">
-              <label className="project--group-label">
-                Repository name *
-              </label>
-              <div className="project--group">
+              <FormItem message="the project name must be unique" error={!nameIsValid}>
+                <TextField
+                  inputId="name"
+                  label="Name *"
+                  value={currentProject.name}
+                  placeholder="Name your project name"
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
+                />
+              </FormItem>
+            </div>
 
-                <FormItem message="the repository name must be unique" error={!repoIsValid}>
-                  <TextField
-                    inputId="repoName"
-                    value={currentProject.repoName}
-                    placeholder="Company.Service.Name"
-                    onChange={(event, value) => this.onInputChange(event, value, this)}
-                  />
-                </FormItem>
-
-
-              </div>
+            <div className="project--group">
+              <FormItem message="the repository name must be unique" error={!repoIsValid}>
+                <TextField
+                  inputId="repoName"
+                  label="Repository name *"
+                  value={currentProject.repoName}
+                  placeholder="Company.Service.Name"
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
+                />
+              </FormItem>
             </div>
 
           </div>

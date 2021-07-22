@@ -14,3 +14,12 @@ button, input, select, textarea {
   font-family: inherit;
   font-size: inherit;
 }
+
+.projects {
+
+  &--add-button {
+    text-align: right;
+    float: right;
+  }
+
+}

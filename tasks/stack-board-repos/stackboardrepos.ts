@@ -129,14 +129,16 @@ async function main(): Promise<void> {
     shell.rm("-rf", sourceFolder);
 
     console.log("apply git changes...");
-    shell.exec("git config user.email 'renato.dans@elevenfinancial.com'");
-    shell.exec("git config user.name 'Renato Dans Dias'");
-    shell.exec("git init");
+
+    const gitUser = username ?? "11labs@elevenfinancial.com";
+    shell.exec(`git config user.email \"${gitUser}\"`);
+    shell.exec(`git config user.name \"${gitUser}\"`);
+    
     shell.exec("git add .");
     shell.exec(
-      "git commit -m 'Initial template made with Stack Board Extensions!'"
+      "git commit -m \"Initial template made with Stack Board Extensions!\""
     );
-    shell.exec("git push origin develop --force");
+    shell.exec("git push origin develop");
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
   } catch (err) {
