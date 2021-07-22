@@ -32,7 +32,6 @@ import { IProject } from '../../model/project';
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
-import { Spinner } from "azure-devops-ui/Spinner";
 
 
 interface IProjectsState {
@@ -160,7 +159,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
         </div>
 
         <TemplatePanel show={this.state.templateExpanded} onDismiss={() => { this.setState({ templateExpanded: false, loading: true }); this.loadProjects() }} />
-        <ProjectPanel template={this.state.templates} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false, loading: false }); this.loadProjects() }} />
+        <ProjectPanel templates={this.state.templates} projects={this.state.projects} show={this.state.projectExpanded} onDismiss={() => { this.setState({ projectExpanded: false, loading: false }); this.loadProjects() }} />
 
       </Page>
     );

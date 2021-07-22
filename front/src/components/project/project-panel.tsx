@@ -9,24 +9,30 @@ import { CreateRepositoryAsync } from '../../services/repository';
 import { CreateBuildDefinitionAsync } from '../../services/build';
 import { ITemplate } from '../../model/template';
 import { IProject } from '../../model/project';
-import { IListBoxItem } from 'azure-devops-ui/ListBox';
 import { Guid } from 'guid-typescript';
 import { Services } from '../../services/services';
 import { IProjectService, ProjectServiceId } from '../../services/project';
 import { IBuildOptions } from '../../model/buildOptions';
+import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard";
+import { FormItem } from "azure-devops-ui/FormItem";
+import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 
 export interface IProjectPanelProps {
   show: boolean;
   onDismiss: any;
-  template: ITemplate[];
+  templates: ITemplate[];
+  projects: IProject[];
 }
 
 interface IProjectPanelState {
   currentProject: IProject;
+  nameIsValid: boolean;
+  repoIsValid: boolean;
 }
 
 class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelState>  {
 
+  errorObservable = new ObservableValue<string>("");
   service = Services.getService<IProjectService>(
     ProjectServiceId
   );
@@ -34,30 +40,53 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
   constructor(props: IProjectPanelProps) {
     super(props);
     this.state = {
-      currentProject: {
-        id        : "",
-        name      : "",
-        repoName  : "",
-        status    : "running",
-      }
+      currentProject: this.getStartValue(),
+      nameIsValid: true,
+      repoIsValid: true
     };
+  }
+
+  getStartValue(): IProject {
+    return {
+      id: "",
+      name: "",
+      repoName: "",
+      status: "running",
+      template: null
+    };
+  }
+
+  close(that: this) {
+    that.setState({ currentProject: that.getStartValue() }, () => {
+      that.props.onDismiss();
+    });
   }
 
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
     that.state.currentProject[prop] = value;
-    this.setState({
-      currentProject: that.state.currentProject
-    });
+  
+    if (prop === "name" && that.props.projects.filter(d => d.name.toLocaleLowerCase() === that.state.currentProject.name.toLocaleLowerCase()).length > 0) {
+      that.setState({nameIsValid: false, currentProject: that.state.currentProject});
+      return;
+    }
+
+    if (prop === "repoName" && that.props.projects.filter(d => d.repoName.toLocaleLowerCase() === that.state.currentProject.repoName.toLocaleLowerCase()).length > 0) {
+      that.setState({repoIsValid: false, currentProject: that.state.currentProject});
+      return;
+    }
+
+    this.setState({currentProject: that.state.currentProject, nameIsValid: true, repoIsValid: true});
   }
 
   isValid(): boolean {
-    const { currentProject } = this.state;
+    const { currentProject, repoIsValid, nameIsValid } = this.state;
 
     return (
-      !!currentProject.name     && currentProject.name.trim()         !== "" &&
-      !!currentProject.template && currentProject.template.id.trim()  !== "" &&      
-      !!currentProject.repoName && currentProject.repoName.trim()     !== ""
+      repoIsValid && nameIsValid &&
+      !!currentProject.name && currentProject.name.trim() !== "" &&
+      !!currentProject.template && currentProject.template.id.trim() !== "" &&
+      !!currentProject.repoName && currentProject.repoName.trim() !== ""
     );
   }
 
@@ -67,54 +96,65 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     var repository = await CreateRepositoryAsync(item.repoName);
 
     const buildOptions: IBuildOptions = {
-      name          : item.name,
-      repositoryId  : repository.id,
-      template      : item.template
+      name: item.name,
+      repositoryId: repository.id,
+      template: item.template
     };
 
     var buildDef = await CreateBuildDefinitionAsync(buildOptions);
-    
-    item.id                 = Guid.create().toString();
-    item.repoUrl            = repository.webUrl;
-    item.buildDefinitionId  = buildDef.id;
-    item.startTime          = new Date();
+
+    item.id = Guid.create().toString();
+    item.repoUrl = repository.webUrl;
+    item.buildDefinitionId = buildDef.id;
+    item.startTime = new Date();
 
     that.service.saveProject(item).then(item => {
-      that.props.onDismiss();
+      that.close(that);
     });
 
   }
 
   render() {
 
-    const { currentProject } = this.state;
+    const { currentProject, nameIsValid, repoIsValid } = this.state;
 
     if (this.props.show) {
       return (
         <Panel
-          onDismiss={this.props.onDismiss}
+          onDismiss={() => {
+            this.close(this);
+          }}
           titleProps={{ text: "Create new project" }}
           description={"Create new project from a template."}
           footerButtonProps={[
-            { text: "Cancel", onClick: this.props.onDismiss},
-            { text: "Create", 
-              primary: true, 
+            {
+              text: "Cancel", onClick: (event) => {
+                this.close(this);
+              }
+            },
+            {
+              text: "Create",
+              primary: true,
               onClick: (event) => {
                 this.createNewProject(this)
-              }, 
+              },
               disabled: !this.isValid()
             }
           ]}>
 
           <div className="project--content">
             <div className="project--group">
-              <TextField
-                inputId="name"
-                label="Name *"
-                value={currentProject.name}
-                placeholder="Name your project name"
-                onChange={(event, value) => this.onInputChange(event, value, this)}
-              />
+
+              <FormItem message="the project name must be unique" error={!nameIsValid}>
+                <TextField
+                  inputId="name"
+                  label="Name *"
+                  value={currentProject.name}
+                  placeholder="Name your project name"
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
+                />
+              </FormItem>
+
             </div>
 
             <div className="project--group">
@@ -122,7 +162,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
                 ariaLabel="Basic"
                 className="example-dropdown"
                 placeholder="Select a template"
-                items={this.props.template}
+                items={this.props.templates}
                 onSelect={(event, item) => {
                   currentProject.template = item as ITemplate;
                   this.setState({ currentProject: currentProject });
@@ -130,17 +170,30 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
               />
             </div>
 
+            {currentProject.template && <div className="project--group">
+              <MessageCard
+                className="flex-self-stretch"
+                severity={MessageCardSeverity.Info}>
+                {currentProject.template.description}
+              </MessageCard>
+            </div>}
+
             <div className="project--group">
               <label className="project--group-label">
                 Repository name *
               </label>
               <div className="project--group">
-                <TextField
-                  inputId="repoName"
-                  value={currentProject.repoName}
-                  placeholder="Company.Service.Name"
-                  onChange={(event, value) => this.onInputChange(event, value, this)}
-                />
+
+                <FormItem message="the repository name must be unique" error={!repoIsValid}>
+                  <TextField
+                    inputId="repoName"
+                    value={currentProject.repoName}
+                    placeholder="Company.Service.Name"
+                    onChange={(event, value) => this.onInputChange(event, value, this)}
+                  />
+                </FormItem>
+
+
               </div>
             </div>
 
