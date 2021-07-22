@@ -1,8 +1,8 @@
 import tl = require("azure-pipelines-task-lib/task");
 import path = require("path");
 import fs = require("fs");
+import shell = require("shelljs");
 
-import simpleGit, { SimpleGit } from "simple-git";
 import {
   ReplaceInFileConfig,
   replaceInFileSync,
@@ -48,25 +48,23 @@ function replaceTo(text: string, from: string, to: string): string {
   return text.replace(from, to);
 }
 
-function transformTo(
-  value: string,
-  useRegex?: boolean,
-  includeUpperCase?: boolean
-): string[] {
+function transformToRegex(value: string, includeUpperCase?: boolean): RegExp[] {
   const values = [];
+  values.push(new RegExp(`${value}`, "g"));
 
-  if (useRegex) {
-    values.push(new RegExp(`${value}`, "g"));
+  if (includeUpperCase) {
+    values.push(new RegExp(`${value.toUpperCase()}`, "g"));
+  }
 
-    if (includeUpperCase) {
-      values.push(new RegExp(`${value.toUpperCase()}`, "g"));
-    }
-  } else {
+  return values;
+}
+
+function transformTo(value: string, includeUpperCase?: boolean): string[] {
+  const values = [];
+  values.push(value);
+
+  if (includeUpperCase) {
     values.push(value);
-
-    if (includeUpperCase) {
-      values.push(value);
-    }
   }
 
   return values;
@@ -93,50 +91,27 @@ function makeGitUrl(url: string, username: string, pass: string): string {
   }
 }
 
-async function showFiles(folder: string): Promise<void> {
-  var files = fs.readdirSync(folder),
-    f: number,
-    fileName: string,
-    path: string,
-    newPath: string,
-    file: any;
-
-  for (f = 0; f < files.length; f += 1) {
-    fileName = files[f];
-    path = folder + "/" + fileName;
-    file = fs.statSync(path);
-
-    if (file.isDirectory()) {
-      console.log("Folder", fileName);
-      await showFiles(path);
-    } else {
-      console.log("File", fileName);
-    }
-  }
-}
-
 async function main(): Promise<void> {
   try {
     tl.setResourcePath(path.join(__dirname, "task.json"));
 
-    const sourceRepository: string = tl.getPathInput("sourceRepository", true);
-    const replaceFrom: string = tl.getPathInput("replaceFrom", true);
-    const replaceTo: string = tl.getPathInput("replaceTo", true);
+    const sourceRepository = tl.getPathInput("sourceRepository", true) ?? "";
+    const replaceFrom = tl.getPathInput("replaceFrom", true) ?? "";
+    const replaceTo = tl.getPathInput("replaceTo", true) ?? "";
 
-    const username: string = tl.getVariable("UserName");
-    const PAT: string = tl.getVariable("PAT");
+    const username = tl.getVariable("UserName") ?? "";
+    const PAT = tl.getVariable("PAT") ?? "";
 
     const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
-    const sourceFolder = "template";
-    const sourceGit: SimpleGit = simpleGit();
+    const sourceFolder = "STACKBOARD-REPOS-TEMPLATE";
 
     console.log("git clone template...");
-    sourceGit.clone(sourceGitUrl, sourceFolder);
+    shell.exec(`git clone ${sourceGitUrl} ${sourceFolder}`);
 
     const options: ReplaceInFileConfig = {
       files: sourceFolder + "/**",
-      from: transformTo(replaceFrom, true, true),
-      to: transformTo(replaceTo, false, true),
+      from: transformToRegex(replaceFrom, true),
+      to: transformTo(replaceTo, true),
     };
 
     console.log("replace content...");
@@ -145,13 +120,23 @@ async function main(): Promise<void> {
     console.log("rename files...");
     await renameFiles(sourceFolder, replaceFrom, replaceTo);
 
-    //console.log("apply changes...");
-    //   git.add(".");
-    //   git.commit("Initial template");
-    //   git.push();
+    const currentDir = __dirname;
+    shell.mv(`${sourceFolder}/*`, `${currentDir}`);
+    const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
+    if (gitIgnore.length > 0) {
+      shell.mv(`${sourceFolder}/.gitignore`, `${currentDir}`);
+    }    
+    shell.rm("-rf", sourceFolder);
 
-    console.log("show files...", __dirname);
-    await showFiles(__dirname);
+    console.log("apply git changes...");
+    shell.exec("git config user.email 'renato.dans@elevenfinancial.com'");
+    shell.exec("git config user.name 'Renato Dans Dias'");
+    shell.exec("git init");
+    shell.exec("git add .");
+    shell.exec(
+      "git commit -m 'Initial template made with Stack Board Extensions!'"
+    );
+    shell.exec("git push origin develop --force");
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
   } catch (err) {

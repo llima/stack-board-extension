@@ -6,7 +6,7 @@ import { TextField } from "azure-devops-ui/TextField";
 import { Dropdown } from "azure-devops-ui/Dropdown";
 
 import { CreateRepositoryAsync } from '../../services/repository';
-import { CreateBuildDefinitionAsync } from '../../services/build';
+import { CreateBuildDefinitionAsync } from '../../services/pipeline';
 import { ITemplate } from '../../model/template';
 import { IProject } from '../../model/project';
 import { Guid } from 'guid-typescript';
