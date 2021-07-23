@@ -27,7 +27,7 @@ import { Services } from '../../services/services';
 import { ITemplateService, TemplateServiceId, } from '../../services/template';
 import { ITemplate } from '../../model/template';
 import { IProjectService, ProjectServiceId } from '../../services/project';
-import { IProject } from '../../model/project';
+import { IProject, ProjectStatus } from '../../model/project';
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
@@ -80,6 +80,17 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
           return b.startTime.getTime() - a.startTime.getTime();
         })
         this.setState({ projects: items, templates: templates, loading: false });
+        var runnings = items.filter(d => d.status == ProjectStatus.Running)
+        if (runnings.length > 0) {
+
+          
+
+          setInterval(function () {
+            runnings.forEach(element => {
+              console.log(element);
+            });
+          }, 5000);
+        }
       }).catch(e => {
         this.setState({ loading: false });
       });

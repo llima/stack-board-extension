@@ -8,7 +8,7 @@ import { Dropdown } from "azure-devops-ui/Dropdown";
 import { CreateRepositoryAsync } from '../../services/repository';
 import { CreateBuildDefinitionAsync, RunBuild } from '../../services/pipeline';
 import { ITemplate } from '../../model/template';
-import { IProject } from '../../model/project';
+import { IProject, ProjectStatus } from '../../model/project';
 import { Guid } from 'guid-typescript';
 import { Services } from '../../services/services';
 import { IProjectService, ProjectServiceId } from '../../services/project';
@@ -55,7 +55,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       id: "",
       name: "",
       repoName: "",
-      status: "running",
+      status: ProjectStatus.Running,
       template: null,
       user: null
     };
