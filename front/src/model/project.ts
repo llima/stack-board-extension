@@ -9,6 +9,8 @@ export interface IProject {
     template?: ITemplate;
 
     repoUrl?: string;
+    repoId?: string;
+
     buildDefinitionId?: number;
     startTime?: Date;
     endTime?: Date;

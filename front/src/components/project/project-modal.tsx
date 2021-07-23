@@ -47,8 +47,9 @@ class ProjectModal extends React.Component<IProjectModalProps, IProjectModalStat
   }
 
   confirm(that: this) {
+    var type = that.state.deleteType;
     that.setState({ nameValidation: "", deleteType: "project" }, () => {
-      that.props.onConfirm(that.state.deleteType);
+      that.props.onConfirm(type);
     });
   }
 
@@ -77,7 +78,7 @@ class ProjectModal extends React.Component<IProjectModalProps, IProjectModalStat
                 This project will be permanently deleted. This is a destructive operation.
               </div>
               <RadioButtonGroup className="project-modal--group"
-                onSelect={selectedId => (this.setState({ deleteType: selectedId }))}
+                onSelect={selectedId => { console.log(selectedId); this.setState({ deleteType: selectedId })}}
                 selectedButtonId={deleteType}
                 text={"What type of exclusion?"}>
                 <RadioButton id="project" text="Project" />

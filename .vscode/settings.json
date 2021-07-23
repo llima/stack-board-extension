@@ -6,7 +6,8 @@
     "**/.DS_Store": true,
     "**/bower_components": true,
     "**/node_modules": true,
-    
+    "**/build": true,
+  
     "**/coverage": true,
     "**/lib-amd": true,
     "src/**/*.scss.ts": true,

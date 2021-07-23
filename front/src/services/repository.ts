@@ -25,7 +25,7 @@ export interface RepoChange {
 export async function CreateRepositoryAsync(
   name: string
 ): Promise<GitRepository> {
-  await DevOps.ready();
+  
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
@@ -66,13 +66,13 @@ export async function CreateRepositoryAsync(
 }
 
 export async function DeleteRepositoryAsync(
-  name: string
+  id: string
 ): Promise<void> {
-  await DevOps.ready();
+  
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
+  
   const currentProject = await projectService.getProject();
-
-  return await client.deleteRepository(name, currentProject.name);
+  return await client.deleteRepository(id, currentProject.name);
 }

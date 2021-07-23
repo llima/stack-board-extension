@@ -105,6 +105,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
     item.id = Guid.create().toString();
     item.repoUrl = repository.webUrl;
+    item.repoId = repository.id;
     item.buildDefinitionId = buildDef.id;
     item.startTime = new Date();
 

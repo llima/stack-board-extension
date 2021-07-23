@@ -11,6 +11,8 @@ import {
 } from "azure-devops-ui/Header";
 
 
+import { CreateRepositoryAsync, DeleteRepositoryAsync } from '../../services/repository';
+
 import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
@@ -34,6 +36,7 @@ import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
 import ProjectModal from '../../components/project/project-modal';
+import { DeletePipelineAsync } from '../../services/pipeline';
 
 
 interface IProjectsState {
@@ -75,7 +78,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     this.loadProjects();
   }
 
-  loadProjects() {
+  async loadProjects() {
     this.templateService.getTemplate().then(templates => {
       this.projectService.getProject().then(projects => {
         var items = projects.sort((a: IProject, b: IProject) => {
@@ -91,6 +94,12 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
   }
 
   async deleteProject(type: string, that: this) {
+    
+    if (type === "all") {
+      await DeleteRepositoryAsync(that.state.seletectedProject.repoId);
+      await DeletePipelineAsync(that.state.seletectedProject.buildDefinitionId);
+    }
+
     that.projectService.removeProject(that.state.seletectedProject.id).then(() => {
       that.setState({ seletectedProject: null, showDelete: false });
       that.loadProjects();
