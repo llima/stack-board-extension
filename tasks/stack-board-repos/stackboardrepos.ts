@@ -125,20 +125,20 @@ async function main(): Promise<void> {
     const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
     if (gitIgnore.length > 0) {
       shell.mv(`${sourceFolder}/.gitignore`, `${currentDir}`);
-    }    
+    }
     shell.rm("-rf", sourceFolder);
 
     console.log("apply git changes...");
 
-    const gitUser = username ?? "11labs@elevenfinancial.com";
+    const gitUser = username == "" ? "11labs@elevenfinancial.com" : username;
     shell.exec(`git config user.email \"${gitUser}\"`);
     shell.exec(`git config user.name \"${gitUser}\"`);
-    
+
     shell.exec("git add .");
     shell.exec(
-      "git commit -m \"Initial template made with Stack Board Extensions!\""
+      'git commit -m "Initial template made with Stack Board Extensions!"'
     );
-    shell.exec("git push origin develop");
+    shell.exec("git push origin develop --force");
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
   } catch (err) {
