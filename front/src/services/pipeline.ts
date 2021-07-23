@@ -104,7 +104,7 @@ export async function CreateBuildDefinitionAsync(
 
   const userInfo = {} as BuildDefinitionVariable;
   userInfo.isSecret = true;
-  userInfo.value = "renato.dans@elevenfinancial.com|Renato Dans Dias";
+  userInfo.value = `${options.user.name}|${options.user.displayName}`;
 
   definition.variables = { stackboard_pat: PAT, stackboard_username: userName, stackboard_userinfo: userInfo };
 

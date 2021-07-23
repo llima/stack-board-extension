@@ -12,9 +12,9 @@
   "version": {
     "Major": "0",
     "Minor": "0",
-    "Patch": "16"
+    "Patch": "19"
   },
-  "minimumAgentVersion": "0.0.16",
+  "minimumAgentVersion": "0.0.19",
   "instanceNameFormat": "Stack Board Repos",
   "inputs": [
     {
