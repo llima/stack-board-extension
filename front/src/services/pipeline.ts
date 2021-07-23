@@ -39,7 +39,7 @@ export async function CreateBuildDefinitionAsync(
   const repository = {} as BuildRepository;
   repository.type = "TfsGit";
   repository.id = options.repositoryId;
-  repository.defaultBranch = "refs/heads/develop";
+  repository.defaultBranch = "refs/heads/main";
 
   const agent = {} as AgentSpecification;
   agent.identifier = "ubuntu-20.04";

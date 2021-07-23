@@ -1,6 +1,8 @@
 import React from 'react';
 import './projects-page.scss';
 
+import * as DevOps from "azure-devops-extension-sdk";
+
 import {
   CustomHeader,
   HeaderDescription,
@@ -37,7 +39,6 @@ import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
 import ProjectModal from '../../components/project/project-modal';
 import { DeletePipelineAsync } from '../../services/pipeline';
-
 
 interface IProjectsState {
   templateExpanded: boolean;
@@ -78,7 +79,11 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
     this.loadProjects();
   }
 
-  async loadProjects() {
+  loadProjects() {
+
+    var oi = DevOps.getUser();
+    console.log(oi);
+
     this.templateService.getTemplate().then(templates => {
       this.projectService.getProject().then(projects => {
         var items = projects.sort((a: IProject, b: IProject) => {
@@ -94,7 +99,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
   }
 
   async deleteProject(type: string, that: this) {
-    
+
     if (type === "all") {
       await DeleteRepositoryAsync(that.state.seletectedProject.repoId);
       await DeletePipelineAsync(that.state.seletectedProject.buildDefinitionId);

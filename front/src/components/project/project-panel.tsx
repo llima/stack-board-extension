@@ -28,6 +28,7 @@ interface IProjectPanelState {
   currentProject: IProject;
   nameIsValid: boolean;
   repoIsValid: boolean;
+  creating: boolean;
 }
 
 class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelState>  {
@@ -41,6 +42,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     super(props);
     this.state = {
       currentProject: this.getStartValue(),
+      creating: false,
       nameIsValid: true,
       repoIsValid: true
     };
@@ -57,7 +59,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
   }
 
   close(that: this) {
-    that.setState({ currentProject: that.getStartValue() }, () => {
+    that.setState({ currentProject: that.getStartValue(), creating: false }, () => {
       that.props.onDismiss();
     });
   }
@@ -92,6 +94,8 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
   async createNewProject(that: this) {
 
+    that.setState({ creating: true });
+
     var item = that.state.currentProject;
     var repository = await CreateRepositoryAsync(item.repoName);
 
@@ -116,7 +120,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
   render() {
 
-    const { currentProject, nameIsValid, repoIsValid } = this.state;
+    const { currentProject, nameIsValid, repoIsValid, creating } = this.state;
 
     if (this.props.show) {
       return (
@@ -133,12 +137,12 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
               }
             },
             {
-              text: "Create",
+              text: creating ? "Creating..." : "Create",
               primary: true,
               onClick: (event) => {
                 this.createNewProject(this)
               },
-              disabled: !this.isValid()
+              disabled: !this.isValid() || creating
             }
           ]}>
 
@@ -146,7 +150,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
             <div className="project--group">
               <Dropdown
-                ariaLabel="Basic"                
+                ariaLabel="Basic"
                 className="example-dropdown"
                 placeholder="Select a template"
                 items={this.props.templates}

@@ -120,8 +120,6 @@ async function main(): Promise<void> {
     console.log("Rename files...");
     await renameFiles(sourceFolder, replaceFrom, replaceTo);
 
-    console.log("Move folder and files to...", workingDirectory);
-
     shell.rm("-rf", `${sourceFolder}/.git`);
 
     shell.mv(`${sourceFolder}/*`, `${workingDirectory}`);
