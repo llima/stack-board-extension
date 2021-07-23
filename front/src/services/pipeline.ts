@@ -30,7 +30,7 @@ export interface PhaseTargetScript {
 export async function CreateBuildDefinitionAsync(
   options: IBuildOptions
 ): Promise<BuildDefinition> {
-  await DevOps.ready();
+
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
@@ -60,7 +60,7 @@ export async function CreateBuildDefinitionAsync(
   step.task = task;
   step.displayName = "Stack Board Repos";
   step.enabled = true;
-  step.inputs = { 
+  step.inputs = {
     sourceRepository: options.template.gitUrl,
     replaceFrom: options.template.replaceKey,
     replaceTo: options.name
@@ -112,7 +112,7 @@ export async function CreateBuildDefinitionAsync(
 }
 
 export async function RunBuild(buildDefinitionId: number): Promise<Build> {
-  await DevOps.ready();
+
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
@@ -129,4 +129,14 @@ export async function RunBuild(buildDefinitionId: number): Promise<Build> {
   }
 
   throw new Error(`Can't find build definition with id - ${buildDefinitionId}`);
+}
+
+export async function DeletePipelineAsync(buildDefinitionId: number) : Promise<void> {
+
+  const projectService = await DevOps.getService<IProjectPageService>(
+    "ms.vss-tfs-web.tfs-page-data-service"
+  );
+
+  const currentProject = await projectService.getProject();
+  return await client.deleteDefinition(currentProject.name, buildDefinitionId);
 }
