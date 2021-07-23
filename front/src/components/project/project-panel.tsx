@@ -6,7 +6,7 @@ import { TextField } from "azure-devops-ui/TextField";
 import { Dropdown } from "azure-devops-ui/Dropdown";
 
 import { CreateRepositoryAsync } from '../../services/repository';
-import { CreateBuildDefinitionAsync, RunBuild } from '../../services/pipeline';
+import { CreateBuildDefinitionAsync, RunBuildAsync } from '../../services/pipeline';
 import { ITemplate } from '../../model/template';
 import { IProject } from '../../model/project';
 import { Guid } from 'guid-typescript';
@@ -109,7 +109,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       template: item.template,
       user: user
     });
-    await RunBuild(buildDef.id);
+    await RunBuildAsync(buildDef.id);
 
     item.id = Guid.create().toString();
 
