@@ -1,8 +1,6 @@
 import React from 'react';
 import './projects-page.scss';
 
-import * as DevOps from "azure-devops-extension-sdk";
-
 import {
   CustomHeader,
   HeaderDescription,
@@ -12,8 +10,7 @@ import {
   TitleSize
 } from "azure-devops-ui/Header";
 
-
-import { CreateRepositoryAsync, DeleteRepositoryAsync } from '../../services/repository';
+import { DeleteRepositoryAsync } from '../../services/repository';
 
 import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
@@ -21,10 +18,7 @@ import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
 import TemplatePanel from '../../components/template/template-panel';
 
-import {
-  ColumnMore,
-  Table,
-} from "azure-devops-ui/Table";
+import { ColumnMore, Table } from "azure-devops-ui/Table";
 
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
@@ -80,10 +74,6 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
   }
 
   loadProjects() {
-
-    var oi = DevOps.getUser();
-    console.log(oi);
-
     this.templateService.getTemplate().then(templates => {
       this.projectService.getProject().then(projects => {
         var items = projects.sort((a: IProject, b: IProject) => {

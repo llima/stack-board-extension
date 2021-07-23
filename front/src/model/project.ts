@@ -1,3 +1,4 @@
+import { IUserContext } from "azure-devops-extension-sdk";
 import { IStatusProps } from "azure-devops-ui/Status";
 import { ITemplate } from "./template";
 
@@ -14,6 +15,8 @@ export interface IProject {
     buildDefinitionId?: number;
     startTime?: Date;
     endTime?: Date;
+
+    user?: IUserContext;
 }
 
 export interface IStatusIndicator {
