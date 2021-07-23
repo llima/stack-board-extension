@@ -37,7 +37,7 @@ export async function CreateRepositoryAsync(
   var repository = await client.createRepository(options, currentProject.name);
 
   var gitRefUpdate = {} as GitRefUpdate;
-  gitRefUpdate.name = "refs/heads/develop";
+  gitRefUpdate.name = "refs/heads/main";
   gitRefUpdate.oldObjectId = "0000000000000000000000000000000000000000";
 
   var item = {} as GitItem;

@@ -104,25 +104,25 @@ async function main(): Promise<void> {
     const PAT = tl.getVariable("stackboard_pat") ?? "";
 
     const workingDirectory = tl.getVariable("System.DefaultWorkingDirectory");
-
-    const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
     const sourceFolder = "STACKBOARD-REPOS-TEMPLATE";
 
+    const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
     shell.exec(`git clone ${sourceGitUrl} ${sourceFolder}`);
 
+    console.log("Replace content...");
     const options: ReplaceInFileConfig = {
       files: sourceFolder + "/**",
       from: transformToRegex(replaceFrom, true),
       to: transformTo(replaceTo, true),
-    };
-
-    console.log("Replace content...");
+    };    
     await replaceContent(options);
 
     console.log("Rename files...");
     await renameFiles(sourceFolder, replaceFrom, replaceTo);
 
     console.log("Move folder and files to...", workingDirectory);
+
+    shell.rm("-rf", `${sourceFolder}/.git`);
 
     shell.mv(`${sourceFolder}/*`, `${workingDirectory}`);
     const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
@@ -136,6 +136,7 @@ async function main(): Promise<void> {
     shell.exec(`git config user.email \"${userinfo.split("|")[0]}\"`);
     shell.exec(`git config user.name \"${userinfo.split("|")[1]}\"`);
 
+    shell.exec("git checkout -b develop");
     shell.exec("git add --all");
     shell.exec("git commit -m \"Initial template made with Stack Board Extensions!\"");
     shell.exec("git push origin develop --force");
