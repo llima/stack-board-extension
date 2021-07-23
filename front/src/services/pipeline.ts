@@ -95,14 +95,18 @@ export async function CreateBuildDefinitionAsync(
   definition.queue = agentPoolQueue;
 
   const PAT = {} as BuildDefinitionVariable;
-  PAT.isSecret = true;
+  PAT.isSecret = true;  
   PAT.value = options.template.pass;
 
   const userName = {} as BuildDefinitionVariable;
   userName.isSecret = true;
   userName.value = options.template.user;
 
-  definition.variables = { PAT: PAT, UserName: userName };
+  const userInfo = {} as BuildDefinitionVariable;
+  userInfo.isSecret = true;
+  userInfo.value = "renato.dans@elevenfinancial.com|Renato Dans Dias";
+
+  definition.variables = { stackboard_pat: PAT, stackboard_username: userName, stackboard_userinfo: userInfo };
 
   return await client.createDefinition(definition, currentProject.name);
 }
