@@ -64,3 +64,15 @@ export async function CreateRepositoryAsync(
 
   return repository;
 }
+
+export async function DeleteRepositoryAsync(
+  name: string
+): Promise<void> {
+  await DevOps.ready();
+  const projectService = await DevOps.getService<IProjectPageService>(
+    "ms.vss-tfs-web.tfs-page-data-service"
+  );
+  const currentProject = await projectService.getProject();
+
+  return await client.deleteRepository(name, currentProject.name);
+}
