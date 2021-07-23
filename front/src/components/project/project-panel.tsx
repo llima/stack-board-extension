@@ -6,13 +6,12 @@ import { TextField } from "azure-devops-ui/TextField";
 import { Dropdown } from "azure-devops-ui/Dropdown";
 
 import { CreateRepositoryAsync } from '../../services/repository';
-import { CreateBuildDefinitionAsync, RunBuild } from '../../services/pipeline';
+import { CreateBuildDefinitionAsync, RunBuildAsync } from '../../services/pipeline';
 import { ITemplate } from '../../model/template';
 import { IProject, ProjectStatus } from '../../model/project';
 import { Guid } from 'guid-typescript';
 import { Services } from '../../services/services';
 import { IProjectService, ProjectServiceId } from '../../services/project';
-import { IBuildOptions } from '../../model/buildOptions';
 import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
@@ -109,17 +108,16 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       template: item.template,
       user: user
     });
-    await RunBuild(buildDef.id);
+    var runDuild = await RunBuildAsync(buildDef.id);
 
     item.id = Guid.create().toString();
 
     item.user = user;
     item.repoUrl = repository.webUrl;
     item.repoId = repository.id;
+    item.runBuildId = runDuild.id;
     item.buildDefinitionId = buildDef.id;
     item.startTime = new Date();
-
-    console.log(item);
 
     that.service.saveProject(item).then(item => {
       that.close(that);

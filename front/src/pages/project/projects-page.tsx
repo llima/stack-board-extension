@@ -32,7 +32,7 @@ import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
 import ProjectPanel from '../../components/project/project-panel';
 import { columns, projectsMock } from './projects-page-settings';
 import ProjectModal from '../../components/project/project-modal';
-import { DeletePipelineAsync } from '../../services/pipeline';
+import { DeletePipelineAsync, GetBuildStatusAsync } from '../../services/pipeline';
 
 interface IProjectsState {
   templateExpanded: boolean;
@@ -48,6 +48,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
 
   templateService = Services.getService<ITemplateService>(TemplateServiceId);
   projectService = Services.getService<IProjectService>(ProjectServiceId);
+  intervalStatus: any;
 
   constructor(props: {}) {
     super(props);
@@ -80,23 +81,41 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
           return b.startTime.getTime() - a.startTime.getTime();
         })
         this.setState({ projects: items, templates: templates, loading: false });
-        var runnings = items.filter(d => d.status == ProjectStatus.Running)
-        if (runnings.length > 0) {
-
-          
-
-          setInterval(function () {
-            runnings.forEach(element => {
-              console.log(element);
-            });
-          }, 5000);
-        }
+        this.setVerifyProjectStatus();
       }).catch(e => {
         this.setState({ loading: false });
       });
     }).catch(e => {
       this.setState({ loading: false });
     });
+  }
+
+  async setVerifyProjectStatus() {
+
+    var that = this;
+    var projects = that.state.projects;
+    await that.verifyProjectStatus(projects, that);
+
+    if (projects.filter(d => d.status === ProjectStatus.Running).length > 0) {
+      that.intervalStatus = setInterval(async function () {
+        await that.verifyProjectStatus(projects, that);
+      }, 5000);
+    }
+  }
+
+  async verifyProjectStatus(projects, that: this) {
+    for (let index = 0; index < projects.length; index++) {
+      const element = projects[index];
+      if (element.status == ProjectStatus.Running) {
+        element.status = await GetBuildStatusAsync(element.runBuildId)
+        if (element.status == ProjectStatus.Succeeded)
+          await DeletePipelineAsync(element.buildDefinitionId);
+      }
+    }
+    if (projects.filter(d => d.status === ProjectStatus.Running).length == 0) {
+      clearInterval(that.intervalStatus);
+    }
+    that.setState({ projects: projects });
   }
 
   async deleteProject(type: string, that: this) {

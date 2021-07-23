@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.0.163",
+    "version": "1.1.0",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -75,21 +75,6 @@
                 "icon": {
                     "light": "azure/projects/icon-light.png",
                     "dark": "azure/projects/icon-dark.png"
-                }
-            }
-        },
-        {
-            "id": "tech-radar-hub",
-            "type": "ms.vss-web.hub",
-            "targets": [
-                "elevenlabs.stack-board.board-hub-group"
-            ],
-            "properties": {
-                "name": "Tech Radar",
-                "uri": "front/build/index.html",
-                "icon": {
-                    "light": "azure/radar/icon-light.png",
-                    "dark": "azure/radar/icon-dark.png"
                 }
             }
         },

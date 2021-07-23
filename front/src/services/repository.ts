@@ -10,7 +10,7 @@ import {
   GitRefUpdate,
   GitRepository,
   GitRepositoryCreateOptions,
-  GitRestClient,
+  GitRestClient,  
   ItemContent,
   ItemContentType,
   VersionControlChangeType,
@@ -37,7 +37,7 @@ export async function CreateRepositoryAsync(
   var repository = await client.createRepository(options, currentProject.name);
 
   var gitRefUpdate = {} as GitRefUpdate;
-  gitRefUpdate.name = "refs/heads/develop";
+  gitRefUpdate.name = "refs/heads/main";
   gitRefUpdate.oldObjectId = "0000000000000000000000000000000000000000";
 
   var item = {} as GitItem;
@@ -52,11 +52,11 @@ export async function CreateRepositoryAsync(
   change.item = item;
   change.newContent = itemContent;
 
-  var gitCommitRef = {} as GitCommitRef;
-  gitCommitRef.comment = "Initial commit.";
+  var gitCommitRef = {} as GitCommitRef;  
+  gitCommitRef.comment = "Initial repository made with Stack Board Extensions!";  
   gitCommitRef.changes = [change];
 
-  var push = {} as GitPush;
+  var push = {} as GitPush;  
   push.refUpdates = [gitRefUpdate];
   push.commits = [gitCommitRef];
 

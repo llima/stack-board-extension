@@ -39,7 +39,6 @@ export class TemplateService implements ITemplateService {
     }
 
     async saveTemplate(template: ITemplate): Promise<ITemplate> {
-        console.log(template);
         const manager = await this.getManager();
         await manager.setDocument(await this._getCollection(), template);
         return template;

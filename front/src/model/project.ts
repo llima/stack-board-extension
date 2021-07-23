@@ -13,6 +13,7 @@ export interface IProject {
     repoId?: string;
 
     buildDefinitionId?: number;
+    runBuildId?: number;
     startTime?: Date;
     endTime?: Date;
 

@@ -39,7 +39,6 @@ export class ProjectService implements IProjectService {
     }
 
     async saveProject(project: IProject): Promise<IProject> {
-        console.log(project);
         const manager = await this.getManager();
         await manager.setDocument(await this._getCollection(), project);
         return project;

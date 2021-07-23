@@ -1,6 +1,6 @@
 {
   "name": "stack-board-repos",
-  "version": "0.0.9",
+  "version": "0.0.19",
   "description": "Stack Board Repos Extension for Azure DevOps",
   "main": "stackboardrepos.js",
   "repository": {

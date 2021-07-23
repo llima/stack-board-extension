@@ -99,45 +99,44 @@ async function main(): Promise<void> {
     const replaceFrom = tl.getPathInput("replaceFrom", true) ?? "";
     const replaceTo = tl.getPathInput("replaceTo", true) ?? "";
 
-    const username = tl.getVariable("UserName") ?? "";
-    const PAT = tl.getVariable("PAT") ?? "";
+    const userinfo = tl.getVariable("stackboard_userinfo") ?? "|";
+    const username = tl.getVariable("stackboard_username") ?? "";
+    const PAT = tl.getVariable("stackboard_pat") ?? "";
 
-    const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
+    const workingDirectory = tl.getVariable("System.DefaultWorkingDirectory");
     const sourceFolder = "STACKBOARD-REPOS-TEMPLATE";
 
-    console.log("git clone template...");
+    const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
     shell.exec(`git clone ${sourceGitUrl} ${sourceFolder}`);
 
+    console.log("Replace content...");
     const options: ReplaceInFileConfig = {
       files: sourceFolder + "/**",
       from: transformToRegex(replaceFrom, true),
       to: transformTo(replaceTo, true),
-    };
-
-    console.log("replace content...");
+    };    
     await replaceContent(options);
 
-    console.log("rename files...");
+    console.log("Rename files...");
     await renameFiles(sourceFolder, replaceFrom, replaceTo);
 
-    const currentDir = __dirname;
-    shell.mv(`${sourceFolder}/*`, `${currentDir}`);
+    shell.rm("-rf", `${sourceFolder}/.git`);
+
+    shell.mv(`${sourceFolder}/*`, `${workingDirectory}`);
     const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
     if (gitIgnore.length > 0) {
-      shell.mv(`${sourceFolder}/.gitignore`, `${currentDir}`);
+      shell.mv(`${sourceFolder}/.gitignore`, `${workingDirectory}`);
     }
     shell.rm("-rf", sourceFolder);
 
-    console.log("apply git changes...");
+    console.log("Apply git changes...");
 
-    const gitUser = username == "" ? "11labs@elevenfinancial.com" : username;
-    shell.exec(`git config user.email \"${gitUser}\"`);
-    shell.exec(`git config user.name \"${gitUser}\"`);
+    shell.exec(`git config user.email \"${userinfo.split("|")[0]}\"`);
+    shell.exec(`git config user.name \"${userinfo.split("|")[1]}\"`);
 
-    shell.exec("git add .");
-    shell.exec(
-      'git commit -m "Initial template made with Stack Board Extensions!"'
-    );
+    shell.exec("git checkout -b develop");
+    shell.exec("git add --all");
+    shell.exec("git commit -m \"Initial template made with Stack Board Extensions!\"");
     shell.exec("git push origin develop --force");
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");

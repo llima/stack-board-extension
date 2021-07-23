@@ -11,6 +11,8 @@ import {
   BuildDefinitionVariable,
   BuildRepository,
   BuildRestClient,
+  BuildResult,
+  BuildStatus,
   DefinitionType,
   DesignerProcess,
   DesignerProcessTarget,
@@ -19,6 +21,7 @@ import {
   TaskDefinitionReference,
 } from "azure-devops-extension-api/Build";
 import { IBuildOptions } from "../model/buildOptions";
+import { ProjectStatus } from "../model/project";
 
 const client: BuildRestClient = getClient(BuildRestClient);
 
@@ -30,7 +33,6 @@ export interface PhaseTargetScript {
 export async function CreateBuildDefinitionAsync(
   options: IBuildOptions
 ): Promise<BuildDefinition> {
-
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
@@ -39,7 +41,7 @@ export async function CreateBuildDefinitionAsync(
   const repository = {} as BuildRepository;
   repository.type = "TfsGit";
   repository.id = options.repositoryId;
-  repository.defaultBranch = "refs/heads/develop";
+  repository.defaultBranch = "refs/heads/main";
 
   const agent = {} as AgentSpecification;
   agent.identifier = "ubuntu-20.04";
@@ -63,7 +65,7 @@ export async function CreateBuildDefinitionAsync(
   step.inputs = {
     sourceRepository: options.template.gitUrl,
     replaceFrom: options.template.replaceKey,
-    replaceTo: options.name
+    replaceTo: options.name,
   };
 
   const phase = {} as Phase;
@@ -102,13 +104,20 @@ export async function CreateBuildDefinitionAsync(
   userName.isSecret = true;
   userName.value = options.template.user;
 
-  definition.variables = { PAT: PAT, UserName: userName };
+  const userInfo = {} as BuildDefinitionVariable;
+  userInfo.isSecret = true;
+  userInfo.value = `${options.user.name}|${options.user.displayName}`;
+
+  definition.variables = {
+    stackboard_pat: PAT,
+    stackboard_username: userName,
+    stackboard_userinfo: userInfo,
+  };
 
   return await client.createDefinition(definition, currentProject.name);
 }
 
-export async function RunBuild(buildDefinitionId: number): Promise<Build> {
-
+export async function RunBuildAsync(buildDefinitionId: number): Promise<Build> {
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
@@ -127,12 +136,40 @@ export async function RunBuild(buildDefinitionId: number): Promise<Build> {
   throw new Error(`Can't find build definition with id - ${buildDefinitionId}`);
 }
 
-export async function DeletePipelineAsync(buildDefinitionId: number) : Promise<void> {
-
+export async function DeletePipelineAsync(
+  buildDefinitionId: number
+): Promise<void> {
   const projectService = await DevOps.getService<IProjectPageService>(
     "ms.vss-tfs-web.tfs-page-data-service"
   );
 
   const currentProject = await projectService.getProject();
   return await client.deleteDefinition(currentProject.name, buildDefinitionId);
+}
+
+export async function GetBuildStatusAsync(
+  buildId: number
+): Promise<ProjectStatus> {
+  const projectService = await DevOps.getService<IProjectPageService>(
+    "ms.vss-tfs-web.tfs-page-data-service"
+  );
+
+  const currentProject = await projectService.getProject();
+  const build = await client.getBuild(currentProject.name, buildId);
+
+  switch (build.status) {
+    case BuildStatus.None:
+    case BuildStatus.InProgress:
+    case BuildStatus.NotStarted:
+      return ProjectStatus.Running;
+    case BuildStatus.Cancelling:
+      return ProjectStatus.Failed;
+    case BuildStatus.Completed: {
+      return build.result == BuildResult.Succeeded
+        ? ProjectStatus.Succeeded
+        : ProjectStatus.Failed;
+    }
+    default:
+      return ProjectStatus.Running;
+  }
 }
