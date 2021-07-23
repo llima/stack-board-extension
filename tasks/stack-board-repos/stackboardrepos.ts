@@ -136,8 +136,7 @@ async function main(): Promise<void> {
     shell.exec(`git config user.email \"${userinfo.split("|")[0]}\"`);
     shell.exec(`git config user.name \"${userinfo.split("|")[1]}\"`);
 
-    shell.exec("git add .");
-    shell.exec("git status");
+    shell.exec("git add --all");
     shell.exec("git commit -m \"Initial template made with Stack Board Extensions!\"");
     shell.exec("git push origin develop --force");
 
