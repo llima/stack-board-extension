@@ -17,6 +17,8 @@ import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard";
 import { FormItem } from "azure-devops-ui/FormItem";
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 
+import * as DevOps from "azure-devops-extension-sdk";
+
 export interface IProjectPanelProps {
   show: boolean;
   onDismiss: any;
@@ -54,7 +56,8 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
       name: "",
       repoName: "",
       status: "running",
-      template: null
+      template: null,
+      user: null
     };
   }
 
@@ -96,22 +99,27 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
     that.setState({ creating: true });
 
+    var user = DevOps.getUser();
     var item = that.state.currentProject;
-    var repository = await CreateRepositoryAsync(item.repoName);
 
-    const buildOptions: IBuildOptions = {
+    var repository = await CreateRepositoryAsync(item.repoName);    
+    var buildDef = await CreateBuildDefinitionAsync({
       name: item.name,
       repositoryId: repository.id,
-      template: item.template
-    };
-    var buildDef = await CreateBuildDefinitionAsync(buildOptions);
+      template: item.template,
+      user: user
+    });
     await RunBuild(buildDef.id);
 
     item.id = Guid.create().toString();
+
+    item.user = user;
     item.repoUrl = repository.webUrl;
     item.repoId = repository.id;
     item.buildDefinitionId = buildDef.id;
     item.startTime = new Date();
+
+    console.log(item);
 
     that.service.saveProject(item).then(item => {
       that.close(that);
