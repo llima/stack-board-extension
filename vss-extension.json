@@ -1,0 +1,105 @@
+{
+    "manifestVersion": 1,
+    "id": "stack-board",
+    "publisher": "elevenlabs",
+    "version": "1.1.0",
+    "name": "Stack Board",
+    "description": "Stack board extension for Azure DevOps",
+    "public": true,
+    "categories": [
+        "Azure Boards"
+    ],
+    "targets": [
+        {
+            "id": "Microsoft.VisualStudio.Services"
+        }
+    ],
+    "icons": {
+        "default": "azure/board.png",
+        "branding": "azure/board.png"
+    },
+    "content": {
+        "details": {
+            "path": "azure/overview.md"
+        },
+        "license": {
+            "path": "azure/license.md"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/eleven-financial/stack-board-extension"
+    },
+    "links": {
+        "support": {
+            "url": "mailto:luiz.lima@elevenfinancial.com"
+        }
+    },
+    "scopes": [
+        "vso.profile",
+        "vso.project",
+        "vso.work",
+        "vso.work_write",
+        "vso.code_manage",
+        "vso.build_execute"
+    ],
+    "tags": [
+        "Stack",
+        "Template"
+    ],
+    "contributions": [
+        {
+            "id": "board-hub-group",
+            "type": "ms.vss-web.hub-group",
+            "targets": [
+                "ms.vss-web.project-hub-groups-collection"
+            ],
+            "properties": {
+                "name": "Stack Board",
+                "order": 100,
+                "icon": {
+                    "light": "azure/board.png",
+                    "dark": "azure/board.png"
+                }
+            }
+        },
+        {
+            "id": "stack-board-hub",
+            "type": "ms.vss-web.hub",
+            "targets": [
+                "elevenlabs.stack-board.board-hub-group"
+            ],
+            "properties": {
+                "name": "Projects",
+                "uri": "front/build/index.html",
+                "icon": {
+                    "light": "azure/projects/icon-light.png",
+                    "dark": "azure/projects/icon-dark.png"
+                }
+            }
+        },
+        {
+            "id": "stack-board-repos",
+            "type": "ms.vss-distributed-task.task",
+            "targets": [
+                "ms.vss-distributed-task.tasks"
+            ],
+            "properties": {
+                "name": "tasks/stack-board-repos/build"
+            }
+        }
+    ],
+    "files": [
+        {
+            "path": "azure",
+            "addressable": true
+        },
+        {
+            "path": "front/build",
+            "addressable": true
+        },
+        {
+            "path": "tasks/stack-board-repos/build"
+        }
+    ]
+}

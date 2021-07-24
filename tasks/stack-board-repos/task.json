@@ -1,0 +1,50 @@
+{
+  "id": "4C770A38-2B38-4144-AAE5-32D81B7A5C0C",
+  "name": "stack-board-repos",
+  "friendlyName": "Stack Board Repos",
+  "description": "Stack Board Repos Extension for Azure DevOps",
+  "author": "11Labs - Eleven Financial",
+  "helpUrl": "https://github.com/eleven-financial/stack-board-extension",
+  "helpMarkDown": "[Learn more about this task](https://github.com/eleven-financial/stack-board-extension/blob/develop/README.md)",
+  "category": "Utility",
+  "visibility": ["Build"],
+  "demands": [],
+  "version": {
+    "Major": "0",
+    "Minor": "0",
+    "Patch": "19"
+  },
+  "minimumAgentVersion": "0.0.19",
+  "instanceNameFormat": "Stack Board Repos",
+  "inputs": [
+    {
+      "name": "sourceRepository",
+      "type": "string",
+      "label": "Source Repository",      
+      "helpMarkDown": "Enter the source repository. e.g. https://github.com/Microsoft/vscode.git",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceFrom",
+      "type": "string",
+      "label": "Replace From",      
+      "helpMarkDown": "Enter the keyword to be replaced",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceTo",
+      "type": "string",
+      "label": "Replace To",      
+      "helpMarkDown": "Enter the value to be replaced",
+      "defaultValue": "",
+      "required": true
+    }
+  ],
+  "execution": {
+    "Node10": {
+        "target": "stackboardrepos.js"
+    }
+  }
+}
