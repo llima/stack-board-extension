@@ -1,3 +1,0 @@
-# Estimate 2 
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer vitae orci nibh. Pellentesque in ipsum vitae quam convallis malesuada sed sed urna. Aliquam nec vulputate libero, et elementum magna. Aliquam euismod felis eu suscipit ultricies. Quisque et massa lacus. Integer viverra a metus in ullamcorper. Pellentesque imperdiet consectetur tortor, at euismod quam sagittis non. Integer vitae ornare tortor. Nam et facilisis ante, eget suscipit leo. Quisque id eleifend purus. Ut lorem justo, ullamcorper nec dictum id, pretium vitae massa. Cras convallis blandit felis, sed efficitur erat dictum ac. Suspendisse tincidunt nibh non arcu iaculis, a varius erat consequat.
