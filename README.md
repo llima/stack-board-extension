@@ -4,7 +4,7 @@ Designed to speed up the start of new projects by development teams, Stack Board
 
 It is possible to define several source code models, thus delivering architecture standards and software best practices.
 
-![01.png](azure/images/01.png)
+![01.png](azure/projects/doc/01.png)
 
 ## **Features**
 
@@ -14,7 +14,7 @@ It is possible to define several source code models, thus delivering architectur
 
 ### **Template Catalog**
 
-![03.png](azure/images/03.png)
+![03.png](azure/projects/doc/03.png)
 
 | Name | Description |
 |--|--|
@@ -29,7 +29,7 @@ It is possible to define several source code models, thus delivering architectur
 
 ### **Create new project**
 
-![02.png](azure/images/02.png)
+![02.png](azure/projects/doc/02.png)
 
 | Name | Description |
 |--|--|
@@ -39,11 +39,11 @@ It is possible to define several source code models, thus delivering architectur
 
 ### **Running**
 
-![04.png](azure/images/04.png)
+![04.png](azure/projects/doc/04.png)
 
 ### **Successed**
 
-![05.png](azure/images/05.png)
+![05.png](azure/projects/doc/05.png)
 
 ### **Requirements**
 
@@ -53,7 +53,7 @@ It is possible to define several source code models, thus delivering architectur
 - Create branch
 - Force push
 
-![06.png](azure/images/06.png)
+![06.png](azure/projects/doc/06.png)
 
 
 ## **License**
