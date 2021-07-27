@@ -20,7 +20,7 @@
     },
     "content": {
         "details": {
-            "path": "azure/overview.md"
+            "path": "README.md"
         },
         "license": {
             "path": "azure/license.md"
