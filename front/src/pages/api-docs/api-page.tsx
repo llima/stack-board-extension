@@ -30,7 +30,7 @@ class Api extends React.Component<{}, IApiState>  {
     return (
       <Page className="flex-grow">
         <MasterDetailsContext.Provider value={masterDetailsContext}>
-          <div className="flex-row">
+          <div className="flex-row flex-grow">
             <MasterPanel className="master-example-panel" />
             <DetailsPanel />
           </div>

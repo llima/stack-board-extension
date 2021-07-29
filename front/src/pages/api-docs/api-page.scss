@@ -15,8 +15,8 @@ button, input, select, textarea {
   font-size: inherit;
 }
 
-.modal{
-  display: none;
+.scheme-container{
+  display: none !important;
 }
 
 .swagger-ui {
@@ -24,10 +24,20 @@ button, input, select, textarea {
   color: $black;
 }
 
+.swagger-ui section.models
+{
+  border: 1px solid $neutral-alpha-80;
+}
+
+.swagger-ui section.models.is-open h4,
 .swagger-ui .opblock-tag {
   border-bottom: 1px solid $neutral-alpha-80;
 }
 
+.loading-container,
+.swagger-ui .model,
+.swagger-ui .tab li,
+.swagger-ui .model-title,
 .swagger-ui .parameter__type,
 .swagger-ui .parameter__name,
 .swagger-ui table thead tr td, .swagger-ui table thead tr th,
@@ -35,9 +45,10 @@ button, input, select, textarea {
 .swagger-ui .opblock .opblock-summary-operation-id, .swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-path__deprecated,
 .swagger-ui .opblock-tag small
 {
-  color: $neutral-alpha-80;
+  color: red;
 }
 
+.swagger-ui section.models h4,
 .swagger-ui .opblock-tag,
 .swagger-ui .info li, 
 .swagger-ui .info p, 

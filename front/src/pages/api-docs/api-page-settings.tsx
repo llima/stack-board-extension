@@ -30,7 +30,7 @@ import { IApi } from "../../model/api";
 const SampleData: IApi[] = [
     {
         name: "Eleven.Service.Push",
-        url: "https://petstore.swagger.io/v2/swagger.json",
+        url: "https://petstore.swagger.io/v2/swagger.json2",
     },
     {
         name: "Eleven.Service.User",
@@ -173,7 +173,7 @@ const InitialDetailView: React.FunctionComponent<{
                 }}
             </ScreenSizeObserver>
             <div className="page-content page-content-top">
-                <Card >
+                <Card>
                     <SwaggerUI url={detailItem.url} />
                 </Card>
             </div>
