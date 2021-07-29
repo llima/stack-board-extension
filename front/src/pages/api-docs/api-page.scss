@@ -15,6 +15,39 @@ button, input, select, textarea {
   font-size: inherit;
 }
 
+.modal{
+  display: none;
+}
+
+.swagger-ui {
+  width: 100%;
+  color: $black;
+}
+
+.swagger-ui .opblock-tag {
+  border-bottom: 1px solid $neutral-alpha-80;
+}
+
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__name,
+.swagger-ui table thead tr td, .swagger-ui table thead tr th,
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui .opblock .opblock-summary-operation-id, .swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-path__deprecated,
+.swagger-ui .opblock-tag small
+{
+  color: $neutral-alpha-80;
+}
+
+.swagger-ui .opblock-tag,
+.swagger-ui .info li, 
+.swagger-ui .info p, 
+.swagger-ui .info table,
+.swagger-ui .info .base-url,
+.swagger-ui .info .title
+{
+  color: $black;
+}
+
 .master-example-row {
   background-color: inherit;
   cursor: pointer;

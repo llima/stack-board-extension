@@ -5,7 +5,7 @@ import ProjectPage from './pages/project/projects-page';
 import Radar from './pages/radar/radar';
 
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
-import Api from './pages/api-docs/api';
+import Api from './pages/api-docs/api-page';
 
 interface IAppState {
   page: string;
@@ -21,10 +21,7 @@ class App extends React.Component<{}, IAppState>  {
     super(props);
 
     DevOps.init();
-
-    this.state = {
-      page: "",
-    };
+    this.state = {page: ""};
 
     this.projectService.then(item => {
       item.getPageRoute().then(route => {
