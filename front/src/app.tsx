@@ -5,6 +5,7 @@ import ProjectPage from './pages/project/projects-page';
 import Radar from './pages/radar/radar';
 
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
+import Api from './pages/api-docs/api-page';
 
 interface IAppState {
   page: string;
@@ -20,10 +21,7 @@ class App extends React.Component<{}, IAppState>  {
     super(props);
 
     DevOps.init();
-
-    this.state = {
-      page: "",
-    };
+    this.state = {page: ""};
 
     this.projectService.then(item => {
       item.getPageRoute().then(route => {
@@ -33,9 +31,7 @@ class App extends React.Component<{}, IAppState>  {
   }
 
   render() {
-
-    return (<ProjectPage />);
-
+    
     const { page } = this.state;
 
     switch (page) {
@@ -43,6 +39,8 @@ class App extends React.Component<{}, IAppState>  {
         return (<ProjectPage />);
       case "elevenlabs.stack-board.tech-radar-hub":
         return (<Radar />);
+      case "elevenlabs.stack-board.api-docs-hub":
+        return (<Api />);
       default:
         return null;
     }

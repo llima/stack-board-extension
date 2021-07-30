@@ -108,13 +108,13 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
   async verifyProjectStatus(projects, that: this) {
     for (let index = 0; index < projects.length; index++) {
       const element = projects[index];
-      if (element.status == ProjectStatus.Running) {
+      if (element.status === ProjectStatus.Running) {
         element.status = await GetBuildStatusAsync(element.runBuildId)
-        if (element.status == ProjectStatus.Succeeded)
+        if (element.status === ProjectStatus.Succeeded)
           await DeletePipelineAsync(element.buildDefinitionId);
       }
     }
-    if (projects.filter(d => d.status === ProjectStatus.Running).length == 0) {
+    if (projects.filter(d => d.status === ProjectStatus.Running).length === 0) {
       clearInterval(that.intervalStatus);
     }
     that.setState({ projects: projects });
@@ -162,7 +162,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
 
         <div className="page-content page-content-top">
 
-          {!loading && projects.length == 0 && <ZeroData
+          {!loading && projects.length === 0 && <ZeroData
             primaryText="Get started your first project"
             secondaryText={
               <span>

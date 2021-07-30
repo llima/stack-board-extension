@@ -1,0 +1,120 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.api-page {
+  
+  &--loading {
+    margin-top: 50px;
+  }
+
+}
+
+
+////CUSTOM  -------------------------------------------------------------------
+
+button, input, select, textarea {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.scheme-container{
+  display: none !important;
+}
+
+.swagger-ui {
+  width: 100%;
+  color: $black;
+}
+
+.swagger-ui section.models
+{
+  border: 1px solid $neutral-alpha-80;
+}
+
+.swagger-ui section.models.is-open h4,
+.swagger-ui .opblock-tag {
+  border-bottom: 1px solid $neutral-alpha-80;
+}
+
+ .swagger-ui .loading-container .loading:before {
+   border: 2px solid rgba(85,85,85,.1);
+   border-top-color: $black !important;
+ }
+
+.swagger-ui .loading-container .loading:after,
+.swagger-ui .model,
+.swagger-ui .tab li,
+.swagger-ui .model-title,
+.swagger-ui .parameter__type,
+.swagger-ui .parameter__name,
+.swagger-ui table thead tr td, .swagger-ui table thead tr th,
+.swagger-ui .opblock .opblock-summary-description,
+.swagger-ui .opblock .opblock-summary-operation-id, .swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-path__deprecated,
+.swagger-ui .opblock-tag small
+{
+  color: $neutral-alpha-80 !important;
+}
+
+.swagger-ui section.models h4,
+.swagger-ui .opblock-tag,
+.swagger-ui .info li, 
+.swagger-ui .info p, 
+.swagger-ui .info table,
+.swagger-ui .info .base-url,
+.swagger-ui .info .title
+{
+  color: $black;
+}
+
+.master-row {
+  background-color: inherit;
+  cursor: pointer;
+}
+
+.master-row-content {
+  padding: 8px 8px 8px 20px;
+}
+
+.master-scroll-container {
+  max-height: 200px;
+  width: 100%;
+}
+
+@media screen and (max-width: 1023px) {
+  .single-layer-details {
+      max-width: 150px;
+  }
+}
+
+.single-layer-details-contents {
+  font-size: 18px;
+  margin-left: 12px;
+}
+
+.description-primary-text.secondary-text,
+.bolt-master-panel-header-subtitle.secondary-text {
+  color: inherit;
+}
+
+@media screen and (max-width: 800px) {
+  .context-details {
+      max-width: 320px;
+  }
+}
+
+.details-view-title {
+  white-space: normal;
+}
+
+.bolt-master-panel-header-title {
+  white-space: normal;
+}

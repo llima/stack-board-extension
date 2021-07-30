@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.1.3",
+    "version": "1.2.0",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -36,6 +36,7 @@
         }
     },
     "scopes": [
+        "vso.settings",
         "vso.profile",
         "vso.project",
         "vso.work",
@@ -45,9 +46,52 @@
     ],
     "tags": [
         "Stack",
-        "Template"
+        "Template", 
+        "API Dock"
     ],
     "contributions": [
+        {
+            "id": "stack-board-feature",
+            "type": "ms.vss-web.feature",
+            "description": "Enable/Disable all Stack Board features (Projects, API Docs...)",
+            "targets": [
+                "ms.vss-web.managed-features"
+            ],
+            "properties": {
+                "name": "Stack Board",
+                "hostConfigurable": true,
+                "defaultState": true,
+                "hostScopes": ["project"]
+            }
+        },
+        {
+            "id": "stack-board-project-feature",
+            "type": "ms.vss-web.feature",
+            "description": "Enable/Disable Project feature (Stack Board)",
+            "targets": [
+                "ms.vss-web.managed-features"
+            ],
+            "properties": {
+                "name": "Stack Board - Projects",
+                "hostConfigurable": true,
+                "defaultState": true,
+                "hostScopes": ["project"]
+            }
+        },
+        {
+            "id": "stack-board-api-feature",
+            "type": "ms.vss-web.feature",
+            "description": "Enable/Disable API Docs feature (Stack Board)",
+            "targets": [
+                "ms.vss-web.managed-features"
+            ],
+            "properties": {
+                "name": "Stack Board - API Docs",
+                "hostConfigurable": true,
+                "defaultState": true,
+                "hostScopes": ["project"]
+            }
+        },
         {
             "id": "board-hub-group",
             "type": "ms.vss-web.hub-group",
@@ -61,7 +105,15 @@
                     "light": "azure/board.png",
                     "dark": "azure/board.png"
                 }
-            }
+            },
+            "constraints": [
+                {
+                    "name": "Feature",
+                    "properties": {
+                        "featureId": "elevenlabs.stack-board.stack-board-feature"
+                    }
+                }
+            ]
         },
         {
             "id": "stack-board-hub",
@@ -71,12 +123,45 @@
             ],
             "properties": {
                 "name": "Projects",
+                "order": 1,
                 "uri": "front/build/index.html",
                 "icon": {
                     "light": "azure/projects/icon-light.png",
                     "dark": "azure/projects/icon-dark.png"
                 }
-            }
+            },
+            "constraints": [
+                {
+                    "name": "Feature",
+                    "properties": {
+                        "featureId": "elevenlabs.stack-board.stack-board-project-feature"
+                    }
+                }
+            ]
+        },
+        {
+            "id": "api-docs-hub",
+            "type": "ms.vss-web.hub",
+            "targets": [
+                "elevenlabs.stack-board.board-hub-group"
+            ],
+            "properties": {
+                "name": "API Docs",
+                "order": 2,
+                "uri": "front/build/index.html",
+                "icon": {
+                    "light": "azure/api/icon-light.png",
+                    "dark": "azure/api/icon-dark.png"
+                }
+            },
+            "constraints": [
+                {
+                    "name": "Feature",
+                    "properties": {
+                        "featureId": "elevenlabs.stack-board.stack-board-api-feature"
+                    }
+                }
+            ]
         },
         {
             "id": "stack-board-repos",
