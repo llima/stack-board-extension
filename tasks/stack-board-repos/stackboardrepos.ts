@@ -72,7 +72,7 @@ function transformTo(value: string, includeUpperCase?: boolean): string[] {
 
 function makeGitUrl(url: string, username: string, pass: string): string {
   const type = username && pass ? 1 : !username && pass ? 2 : 0;
-  if (type == 0) {
+  if (type === 0) {
     return url;
   }
 

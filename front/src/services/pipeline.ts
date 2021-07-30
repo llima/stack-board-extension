@@ -165,7 +165,7 @@ export async function GetBuildStatusAsync(
     case BuildStatus.Cancelling:
       return ProjectStatus.Failed;
     case BuildStatus.Completed: {
-      return build.result == BuildResult.Succeeded
+      return build.result === BuildResult.Succeeded
         ? ProjectStatus.Succeeded
         : ProjectStatus.Failed;
     }
