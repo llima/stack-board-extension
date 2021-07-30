@@ -1,21 +1,18 @@
 import * as React from "react";
 
 import { Card } from "azure-devops-ui/Card";
-import { IObservableValue, ObservableValue } from "azure-devops-ui/Core/Observable";
+import { IObservableValue } from "azure-devops-ui/Core/Observable";
 import { ScreenSize } from "azure-devops-ui/Core/Util/Screen";
 import { Header, TitleSize } from "azure-devops-ui/Header";
 import { IListItemDetails, List, ListItem, ListSelection } from "azure-devops-ui/List";
-import { MasterPanelHeader } from "azure-devops-ui/MasterDetails";
+
 import {
-    BaseMasterDetailsContext,
     bindSelectionToObservable,
-    IMasterDetailsContext,
-    IMasterDetailsContextLayer,
     MasterDetailsContext,
 } from "azure-devops-ui/MasterDetailsContext";
+
 import { Page } from "azure-devops-ui/Page";
 
-import { TextField, TextFieldStyle } from "azure-devops-ui/TextField";
 import { Tooltip } from "azure-devops-ui/TooltipEx";
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ScreenSizeObserver } from "azure-devops-ui/Utilities/ScreenSize";
@@ -25,12 +22,10 @@ import "swagger-ui-react/swagger-ui.css"
 
 import { IApi } from "../../model/api";
 
-
-
-const SampleData: IApi[] = [
+export const SampleData: IApi[] = [
     {
         name: "Eleven.Service.Push",
-        url: "https://petstore.swagger.io/v2/swagger.json2",
+        url: "https://petstore.swagger.io/v2/swagger.json",
     },
     {
         name: "Eleven.Service.User",
@@ -42,81 +37,13 @@ const SampleData: IApi[] = [
     },
 ];
 
-const renderInitialRow = (
-    index: number,
-    item: IApi,
-    details: IListItemDetails<IApi>,
-    key?: string
-): JSX.Element => {
-    return (
-        <ListItem
-            className="master-example-row"
-            key={key || "list-item" + index}
-            index={index}
-            details={details}
-        >
-            <div className="master-example-row-content flex-row flex-center h-scroll-hidden">
-                <div className="flex-column text-ellipsis">
-                    <Tooltip overflowOnly={true}>
-                        <div className="primary-text text-ellipsis">{item.name}</div>
-                    </Tooltip>
-                    <Tooltip overflowOnly={true}>
-                        <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
-                            {item.url}
-                        </span>
-
-                    </Tooltip>
-                </div>
-            </div>
-        </ListItem>
-    );
-};
-
-const initialPayload: IMasterDetailsContextLayer<IApi, undefined> = {
-    key: "initial",
-    masterPanelContent: {
-        renderContent: (parentItem, initialSelectedMasterItem) => (
-            <InitialMasterPanelContent initialSelectedMasterItem={initialSelectedMasterItem} />
-        ),
-        renderHeader: () => <Header
-            title={"API Documentation"}
-            commandBarItems={[
-                {
-                    iconProps: { iconName: "Add" },
-                    id: "testCreate",
-                    important: true,
-                    tooltipProps: {
-                        text: "Register a new api"
-                    },
-                    onActivate: () => {
-                        alert("This would normally trigger a modal popup");
-                    }
-                },
-            ]}
-            titleSize={TitleSize.Large}
-        />,
-        renderSearch: () => (
-            <TextField
-                prefixIconProps={{ iconName: "Search" }}
-                placeholder="Search does not work"
-                style={TextFieldStyle.inline}
-            />
-        ),
-        hideBackButton: true,
-    },
-    detailsContent: {
-        renderContent: (item) => <InitialDetailView detailItem={item} />,
-    },
-    selectedMasterItem: new ObservableValue<IApi>(SampleData[0]),
-    parentItem: undefined,
-};
-
-const InitialMasterPanelContent: React.FunctionComponent<{
+export const ListView: React.FunctionComponent<{
     initialSelectedMasterItem: IObservableValue<IApi>;
+    initialItems: IApi[];
 }> = (props) => {
-    const [initialItemProvider] = React.useState(new ArrayItemProvider(SampleData));
-    const [initialSelection] = React.useState(new ListSelection({ selectOnFocus: false }));
-    const masterDetailsContext = React.useContext(MasterDetailsContext);
+    const [initialItemProvider]     = React.useState(new ArrayItemProvider(props.initialItems));
+    const [initialSelection]        = React.useState(new ListSelection({ selectOnFocus: false }));
+    const masterDetailsContext      = React.useContext(MasterDetailsContext);
 
     React.useEffect(() => {
         bindSelectionToObservable(
@@ -131,19 +58,19 @@ const InitialMasterPanelContent: React.FunctionComponent<{
             ariaLabel={"Engineering master list"}
             itemProvider={initialItemProvider}
             selection={initialSelection}
-            renderRow={renderInitialRow}
+            renderRow={renderListRow}
             width="100%"
             onSelect={() => masterDetailsContext.setDetailsPanelVisbility(true)}
         />
     );
 };
 
-const InitialDetailView: React.FunctionComponent<{
+export const DetailView: React.FunctionComponent<{
     detailItem: IApi;
+    deleteEvent: any
 }> = (props) => {
     const masterDetailsContext = React.useContext(MasterDetailsContext);
-    const { detailItem } = props;
-
+    const { detailItem,deleteEvent  } = props;
 
     return (
         <Page className="flex-grow">
@@ -164,7 +91,7 @@ const InitialDetailView: React.FunctionComponent<{
                                     text: "Delete",
                                     important: false,
                                     onActivate: () => {
-                                        alert("This would normally trigger a modal popup");
+                                        deleteEvent(detailItem)
                                     }
                                 },
                             ]}
@@ -181,6 +108,32 @@ const InitialDetailView: React.FunctionComponent<{
     );
 };
 
-export const masterDetailsContext: IMasterDetailsContext = new BaseMasterDetailsContext(
-    initialPayload, () => { }
-);
+const renderListRow = (
+    index: number,
+    item: IApi,
+    details: IListItemDetails<IApi>,
+    key?: string
+): JSX.Element => {
+    return (
+        <ListItem
+            className="master-row"
+            key={key || "list-item" + index}
+            index={index}
+            details={details}
+        >
+            <div className="master-row-content flex-row flex-center h-scroll-hidden">
+                <div className="flex-column text-ellipsis">
+                    <Tooltip overflowOnly={true}>
+                        <div className="primary-text text-ellipsis">{item.name}</div>
+                    </Tooltip>
+                    <Tooltip overflowOnly={true}>
+                        <span className="fontSizeMS font-size-ms text-ellipsis secondary-text">
+                            {item.url}
+                        </span>
+
+                    </Tooltip>
+                </div>
+            </div>
+        </ListItem>
+    );
+};

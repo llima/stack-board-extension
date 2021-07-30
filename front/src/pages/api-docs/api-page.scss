@@ -34,7 +34,12 @@ button, input, select, textarea {
   border-bottom: 1px solid $neutral-alpha-80;
 }
 
-.loading-container,
+ .swagger-ui .loading-container .loading:before {
+   border: 2px solid rgba(85,85,85,.1);
+   border-top-color: $black !important;
+ }
+
+.swagger-ui .loading-container .loading:after,
 .swagger-ui .model,
 .swagger-ui .tab li,
 .swagger-ui .model-title,
@@ -45,7 +50,7 @@ button, input, select, textarea {
 .swagger-ui .opblock .opblock-summary-operation-id, .swagger-ui .opblock .opblock-summary-path, .swagger-ui .opblock .opblock-summary-path__deprecated,
 .swagger-ui .opblock-tag small
 {
-  color: red;
+  color: $neutral-alpha-80 !important;
 }
 
 .swagger-ui section.models h4,
@@ -59,16 +64,16 @@ button, input, select, textarea {
   color: $black;
 }
 
-.master-example-row {
+.master-row {
   background-color: inherit;
   cursor: pointer;
 }
 
-.master-example-row-content {
+.master-row-content {
   padding: 8px 8px 8px 20px;
 }
 
-.master-example-scroll-container {
+.master-scroll-container {
   max-height: 200px;
   width: 100%;
 }

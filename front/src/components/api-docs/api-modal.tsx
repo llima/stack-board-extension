@@ -4,7 +4,6 @@ import './api-modal.scss';
 import { TextField } from "azure-devops-ui/TextField";
 import { IApi } from '../../model/api';
 
-import { RadioButton, RadioButtonGroup } from "azure-devops-ui/RadioButton";
 import { CustomDialog } from "azure-devops-ui/Dialog";
 import { PanelContent, PanelFooter } from "azure-devops-ui/Panel";
 import { CustomHeader, HeaderTitleArea } from 'azure-devops-ui/Header';
@@ -16,11 +15,11 @@ export interface IApiModalProps {
   show: boolean;
   onDismiss: any;
   onConfirm: any;
+  api: IApi;
 }
 
 interface IApiModalState {
   nameValidation: string;
-  deleteType: string;
 }
 
 class ApiModal extends React.Component<IApiModalProps, IApiModalState>  {
@@ -28,29 +27,33 @@ class ApiModal extends React.Component<IApiModalProps, IApiModalState>  {
   constructor(props: IApiModalProps) {
     super(props);
     this.state = {
-      nameValidation: "",
-      deleteType: "api"
+      nameValidation: ""
     };
   }
 
+  isDeleteValid(): boolean {
+    return (
+      this.props.api.name.toLocaleLowerCase() === this.state.nameValidation.toLocaleLowerCase()
+    );
+  }
 
   close(that: this) {
-    that.setState({ nameValidation: "", deleteType: "api" }, () => {
+    that.setState({ nameValidation: "" }, () => {
       that.props.onDismiss();
     });
   }
 
   confirm(that: this) {
-    var type = that.state.deleteType;
-    that.setState({ nameValidation: "", deleteType: "api" }, () => {
-      that.props.onConfirm(type);
+    that.setState({ nameValidation: "", }, () => {
+      that.props.onConfirm();
     });
   }
 
   render() {
 
-    const { nameValidation, deleteType } = this.state;
-    
+    const { nameValidation } = this.state;
+    const { api } = this.props;
+
     if (this.props.show) {
       return (
         <CustomDialog
@@ -60,14 +63,24 @@ class ApiModal extends React.Component<IApiModalProps, IApiModalState>  {
             <HeaderTitleArea>
               <div className="flex-grow scroll-hidden">
                 <div className="title-m">
-                  Add ?
+                  Delete '{api.name}'?
                 </div>
               </div>
             </HeaderTitleArea>
           </CustomHeader>
           <PanelContent>
             <div className="flex-column flex-grow api-modal--content">
-             
+              <div className="api-modal--group">
+                This api will be permanently deleted. This is a destructive operation.
+              </div>
+              <div className="flex-column api-modal--group">
+                <TextField
+                  inputId="name"
+                  label="Please type the name of the api to confirm."
+                  value={nameValidation}
+                  onChange={(event, value) => this.setState({ nameValidation: value })}
+                />
+              </div>
             </div>
           </PanelContent>
           <PanelFooter showSeparator className="body-m">
@@ -79,6 +92,7 @@ class ApiModal extends React.Component<IApiModalProps, IApiModalState>  {
               <Button
                 text="Delete"
                 danger={true}
+                disabled={!this.isDeleteValid()}
                 onClick={() => this.confirm(this)} />
             </ButtonGroup>
           </PanelFooter>
