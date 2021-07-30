@@ -9,6 +9,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.api-page {
+  
+  &--loading {
+    margin-top: 50px;
+  }
+
+}
+
+
+////CUSTOM  -------------------------------------------------------------------
+
 button, input, select, textarea {
   color: inherit;
   font-family: inherit;

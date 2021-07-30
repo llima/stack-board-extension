@@ -21,17 +21,21 @@ import SwaggerUI from "swagger-ui-react"
 import "swagger-ui-react/swagger-ui.css"
 
 import { IApi } from "../../model/api";
+import Api from "./api-page";
 
-export const SampleData: IApi[] = [
+export const SampleData2: IApi[] = [
     {
+        id: "1",
         name: "Eleven.Service.Push",
         url: "https://petstore.swagger.io/v2/swagger.json",
     },
     {
+        id: "2",
         name: "Eleven.Service.User",
         url: "https://generator.swagger.io/api/swagger.json",
     },
     {
+        id: "3",
         name: "Eleven.Service.Report",
         url: "https://petstore.swagger.io/v2/swagger.json",
     },
@@ -40,27 +44,28 @@ export const SampleData: IApi[] = [
 export const ListView: React.FunctionComponent<{
     initialSelectedMasterItem: IObservableValue<IApi>;
     initialItems: IApi[];
+    that: Api;
 }> = (props) => {
-    const [initialItemProvider]     = React.useState(new ArrayItemProvider(props.initialItems));
-    const [initialSelection]        = React.useState(new ListSelection({ selectOnFocus: false }));
-    const masterDetailsContext      = React.useContext(MasterDetailsContext);
+    const [initialItemProvider] = React.useState(new ArrayItemProvider(props.initialItems));
+    const [initialSelection] = React.useState(new ListSelection({ selectOnFocus: false }));
+    const masterDetailsContext = React.useContext(MasterDetailsContext);
 
     React.useEffect(() => {
         bindSelectionToObservable(
             initialSelection,
             initialItemProvider,
-            props.initialSelectedMasterItem
+            props.initialSelectedMasterItem,
         );
     });
 
     return (
         <List
-            ariaLabel={"Engineering master list"}
+            ariaLabel={"APIs list"}
             itemProvider={initialItemProvider}
             selection={initialSelection}
             renderRow={renderListRow}
             width="100%"
-            onSelect={() => masterDetailsContext.setDetailsPanelVisbility(true)}
+            onSelect={(item) => { masterDetailsContext.setDetailsPanelVisbility(true); props.that.setState({ seletectedApi: props.initialSelectedMasterItem.value }) }}
         />
     );
 };
@@ -70,7 +75,7 @@ export const DetailView: React.FunctionComponent<{
     deleteEvent: any
 }> = (props) => {
     const masterDetailsContext = React.useContext(MasterDetailsContext);
-    const { detailItem,deleteEvent  } = props;
+    const { detailItem, deleteEvent } = props;
 
     return (
         <Page className="flex-grow">

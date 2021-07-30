@@ -4,7 +4,7 @@ import './api-page.scss';
 import { Page } from 'azure-devops-ui/Page';
 import { BaseMasterDetailsContext, MasterDetailsContext } from 'azure-devops-ui/MasterDetailsContext';
 import { DetailsPanel, MasterPanel } from 'azure-devops-ui/MasterDetails';
-import { DetailView, ListView, SampleData } from './api-page-settings';
+import { DetailView, ListView, SampleData2 } from './api-page-settings';
 import { Header, TitleSize } from 'azure-devops-ui/Header';
 import { TextField, TextFieldStyle } from 'azure-devops-ui/TextField';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
@@ -14,6 +14,8 @@ import { ZeroData, ZeroDataActionType } from 'azure-devops-ui/ZeroData';
 import { Services } from '../../services/services';
 import { ApiServiceId, IApiService } from '../../services/api';
 import ApiModal from '../../components/api-docs/api-modal';
+import { Spinner } from "azure-devops-ui/Spinner";
+
 
 interface IApiState {
   showAdd: boolean;
@@ -33,7 +35,7 @@ class Api extends React.Component<{}, IApiState>  {
     this.state = {
       showAdd: false,
       showDelete: false,
-      loading: false,
+      loading: true,
       apis: []
     };
 
@@ -42,7 +44,7 @@ class Api extends React.Component<{}, IApiState>  {
 
   loadApis() {
     this.apiService.getApi().then(apis => {
-      this.setState({ apis: apis, loading: false});
+      this.setState({ apis: apis, loading: false });
     }).catch(e => {
       this.setState({ loading: false });
     });
@@ -79,55 +81,55 @@ class Api extends React.Component<{}, IApiState>  {
         }
 
         {!loading && apis.length > 0 && <MasterDetailsContext.Provider value={new BaseMasterDetailsContext({
-            key: "initial",
-            masterPanelContent: {
-              renderHeader: () => <Header
-                title={"API Documentation"}
-                commandBarItems={[
-                  {
-                    iconProps: { iconName: "Add" },
-                    id: "testCreate",
-                    important: true,
-                    tooltipProps: {
-                      text: "Register a new api"
-                    },
-                    onActivate: () => {
-                      this.setState({ showAdd: true });
-                    }
+          key: "initial",
+          masterPanelContent: {
+            renderHeader: () => <Header
+              title={"API Documentation"}
+              commandBarItems={[
+                {
+                  iconProps: { iconName: "Add" },
+                  id: "testCreate",
+                  important: true,
+                  tooltipProps: {
+                    text: "Register a new api"
                   },
-                ]}
-                titleSize={TitleSize.Large}
-              />,
-              renderSearch: () => (
-                <TextField
-                  prefixIconProps={{ iconName: "Search" }}
-                  placeholder="Search does not work"
-                  style={TextFieldStyle.inline}
-                />
-              ),
-              renderContent: (parentItem, initialSelectedMasterItem) => (
-                <ListView initialSelectedMasterItem={initialSelectedMasterItem} initialItems={apis} />
-              ),
-              hideBackButton: true,
-            },
-            detailsContent: {
-              renderContent: (item) => <DetailView detailItem={item} deleteEvent={(item) => { this.setState({ seletectedApi: item, showDelete: true }); }} />,
-            },
-            selectedMasterItem: new ObservableValue<IApi>(apis[0]),
-            parentItem: undefined,
-          }, () => { })}>
+                  onActivate: () => {
+                    this.setState({ showAdd: true });
+                  }
+                },
+              ]}
+              titleSize={TitleSize.Large}
+            />,
+            renderContent: (parentItem, initialSelectedMasterItem) => (
+              <ListView initialSelectedMasterItem={initialSelectedMasterItem} initialItems={apis} that={this} />
+            ),
+            hideBackButton: true,
+          },
+          detailsContent: {
+            renderContent: (item) => <DetailView detailItem={item} deleteEvent={(item) => { this.setState({ seletectedApi: item, showDelete: true }); }} />,
+          },
+          selectedMasterItem: new ObservableValue<IApi>(seletectedApi ?? apis[0]),
+          parentItem: undefined,
+        }, () => { })}>
           <div className="flex-row flex-grow">
             <MasterPanel />
             <DetailsPanel />
           </div>
         </MasterDetailsContext.Provider>}
 
-        <ApiPanel show={showAdd} onDismiss={() => { this.setState({ showAdd: false, loading: true }); this.loadApis() }} />
-        <ApiModal show={showDelete} api={seletectedApi} onDismiss={() => { this.setState({ seletectedApi: null, showDelete: false }); }} onConfirm={() => { this.deleteApi(this); }} />
+        {loading && <div className="api-page--loading">
+          <Spinner label="loading" />
+        </div>}
 
+        <ApiPanel show={showAdd} onDismiss={() => { this.setState({ showAdd: false, loading: true }); this.loadApis() }} />
+        <ApiModal show={showDelete} api={seletectedApi} onDismiss={() => { this.setState({ showDelete: false }); }} onConfirm={() => { this.setState({ loading: true }); this.deleteApi(this); }} />
       </Page>
     );
   }
+
+
+  
 }
+
 
 export default Api;

@@ -31,9 +31,7 @@ class App extends React.Component<{}, IAppState>  {
   }
 
   render() {
-
-    return (<Api />);
-
+    
     const { page } = this.state;
 
     switch (page) {
