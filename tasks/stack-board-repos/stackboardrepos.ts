@@ -127,6 +127,11 @@ async function main(): Promise<void> {
     if (gitIgnore.length > 0) {
       shell.mv(`${sourceFolder}/.gitignore`, `${workingDirectory}`);
     }
+    const gitattributes = shell.find(`${sourceFolder}/.gitattributes`);
+    if (gitattributes.length > 0) {
+      shell.mv(`${sourceFolder}/.gitattributes`, `${workingDirectory}`);
+    }
+
     shell.rm("-rf", sourceFolder);
 
     console.log("Apply git changes...");
