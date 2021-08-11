@@ -9,6 +9,7 @@ declare global {
     }
 }
 
+// eslint-disable-next-line
 Array.prototype.sortByProp = function (prop: string) {
     var _self = this as Array<any>;
     try {
@@ -23,6 +24,7 @@ Array.prototype.sortByProp = function (prop: string) {
     }
 };
 
+// eslint-disable-next-line
 Object.prototype.deepcopy = function (): any {
     var _self = this;
     var copy;

@@ -4,18 +4,17 @@ import './api-page.scss';
 import { Page } from 'azure-devops-ui/Page';
 import { BaseMasterDetailsContext, MasterDetailsContext } from 'azure-devops-ui/MasterDetailsContext';
 import { DetailsPanel, MasterPanel } from 'azure-devops-ui/MasterDetails';
-import { DetailView, ListView, SampleData2 } from './api-page-settings';
+import { DetailView, ListView } from './api-page-settings';
 import { Header, TitleSize } from 'azure-devops-ui/Header';
-import { TextField, TextFieldStyle } from 'azure-devops-ui/TextField';
 import { ObservableValue } from 'azure-devops-ui/Core/Observable';
 import { IApi } from '../../model/api';
-import ApiPanel from '../../components/api-docs/api-panel';
 import { ZeroData, ZeroDataActionType } from 'azure-devops-ui/ZeroData';
 import { Services } from '../../services/services';
 import { ApiServiceId, IApiService } from '../../services/api';
-import ApiModal from '../../components/api-docs/api-modal';
 import { Spinner } from "azure-devops-ui/Spinner";
 
+import ApiModal from '../../components/api-docs/api-modal';
+import ApiPanel from '../../components/api-docs/api-panel';
 
 interface IApiState {
   showAdd: boolean;
@@ -23,7 +22,6 @@ interface IApiState {
   loading: boolean;
   apis: IApi[];
   seletectedApi?: IApi;
-
 }
 
 class Api extends React.Component<{}, IApiState>  {

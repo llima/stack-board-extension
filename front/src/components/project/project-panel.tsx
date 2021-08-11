@@ -43,7 +43,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     super(props);
     this.state = {
       currentProject: this.getStartValue(),
-      creating: false,
+      creating: true,
       nameIsValid: true,
       repoIsValid: true
     };
@@ -88,9 +88,9 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
 
     return (
       repoIsValid && nameIsValid &&
-      !!currentProject.name && currentProject.name.trim() !== "" &&
-      !!currentProject.template && currentProject.template.id.trim() !== "" &&
-      !!currentProject.repoName && currentProject.repoName.trim() !== ""
+      currentProject.name && currentProject.name.trim() !== "" &&
+      currentProject.template && currentProject.template.id.trim() !== "" &&
+      currentProject.repoName && currentProject.repoName.trim() !== ""
     );
   }
 
@@ -161,8 +161,9 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
                 placeholder="Select a template"
                 items={this.props.templates}
                 onSelect={(event, item) => {
-                  currentProject.template = item as ITemplate;
-                  this.setState({ currentProject: currentProject });
+                  this.setState(prevState => ({
+                    currentProject: {...prevState.currentProject, template: item as ITemplate}
+                  }));
                 }}
               />
             </div>
