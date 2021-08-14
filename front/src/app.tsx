@@ -6,6 +6,7 @@ import Radar from './pages/radar/radar';
 
 import { IHostNavigationService } from 'azure-devops-extension-api/Common/CommonServices';
 import Api from './pages/api-docs/api-page';
+import Sonar from './pages/sonar/sonar';
 
 interface IAppState {
   page: string;
@@ -34,6 +35,8 @@ class App extends React.Component<{}, IAppState>  {
     
     const { page } = this.state;
 
+    return (<Sonar />);
+
     switch (page) {
       case "elevenlabs.stack-board.stack-board-hub":
         return (<ProjectPage />);
@@ -41,6 +44,8 @@ class App extends React.Component<{}, IAppState>  {
         return (<Radar />);
       case "elevenlabs.stack-board.api-docs-hub":
         return (<Api />);
+      case "elevenlabs.stack-board.api-sonar":
+        return (<Sonar />);
       default:
         return null;
     }
