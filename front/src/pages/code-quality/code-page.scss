@@ -1,0 +1,70 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.code {
+  
+  &--number {
+    color: $black;
+    float: left;
+  }
+
+  &--status {
+    color: white;
+
+    position: absolute;
+    margin-top: -59px;
+    margin-left: 180px;
+    
+    &--passed {
+      background-color: green !important;
+    }
+    
+    &--fail {
+      background-color: red !important;
+    }
+
+  }
+
+  &--tag {
+
+    color: white;
+    width: 25px;
+    height: 25px;
+    margin-top: 20px;
+    margin-left: 10px;
+    float: left;
+  
+    &--A {
+      background-color: green !important;
+    }
+  
+    &--C {
+      background-color: orange !important;
+    }
+  
+    &--E {
+      background-color: red !important;
+    }
+  
+    &--S {
+      background-color: blue !important;
+    }
+  
+  }
+
+}
+

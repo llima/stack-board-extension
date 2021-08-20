@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.2.1",
+    "version": "1.2.4",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -93,7 +93,7 @@
             }
         },
         {
-            "id": "stack-board-sonar-feature",
+            "id": "stack-board-code-feature",
             "type": "ms.vss-web.feature",
             "description": "Enable/Disable Code Quality feature (Stack Board)",
             "targets": [
@@ -173,30 +173,6 @@
                     "name": "Feature",
                     "properties": {
                         "featureId": "elevenlabs.stack-board.stack-board-api-feature"
-                    }
-                }
-            ]
-        },
-        {
-            "id": "api-sonar",
-            "type": "ms.vss-web.hub",
-            "targets": [
-                "elevenlabs.stack-board.board-hub-group"
-            ],
-            "properties": {
-                "name": "Code Quality",
-                "order": 2,
-                "uri": "front/build/index.html",
-                "icon": {
-                    "light": "azure/sonar/icon-light.png",
-                    "dark": "azure/sonar/icon-dark.png"
-                }
-            },
-            "constraints": [
-                {
-                    "name": "Feature",
-                    "properties": {
-                        "featureId": "elevenlabs.stack-board.stack-board-sonar-feature"
                     }
                 }
             ]
