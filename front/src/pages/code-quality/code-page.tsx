@@ -4,6 +4,7 @@ import './code-page.scss';
 import {
   CustomHeader,
   HeaderDescription,
+  HeaderIcon,
   HeaderTitle,
   HeaderTitleArea,
   HeaderTitleRow,
@@ -20,13 +21,31 @@ import { Filter, FILTER_CHANGE_EVENT, FilterOperatorType } from "azure-devops-ui
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Card } from 'azure-devops-ui/Card';
 
-import { Tab, TabBar, TabSize } from "azure-devops-ui/Tabs";
 import { AiFillBug } from "react-icons/ai";
 import { FaRadiationAlt } from "react-icons/fa";
 import { GiPadlock, GiCheckedShield } from "react-icons/gi";
 import { Pill } from 'azure-devops-ui/Components/Pill/Pill';
 import { IColor } from 'azure-devops-extension-api';
+import { Status, Statuses } from 'azure-devops-ui/Components/Status/Status';
+import { StatusSize } from 'azure-devops-ui/Status';
+import { Link } from 'azure-devops-ui/Link';
+import { Icon } from 'azure-devops-ui/Icon';
+import { MenuButton, IMenuItem, MenuItemType } from "azure-devops-ui/Menu";
+
 import CodePanel from '../../components/code-quality/code-panel';
+import { Dropdown } from 'azure-devops-ui/Dropdown';
+import { Observer } from 'azure-devops-ui/Observer';
+import { IListBoxItem } from 'azure-devops-ui/ListBox';
+import { Tab, TabBar, TabSize } from 'azure-devops-ui/Tabs';
+
+const menuItems: IMenuItem[] = [
+  { id: "one", text: "MenuItem 1" },
+  { id: "two", text: "MenuItem 2" },
+  { id: "three", text: "MenuItem 3" },
+  { id: "separator", itemType: MenuItemType.Divider },
+  { id: "four", text: "MenuItem 4" },
+  { id: "five", text: "MenuItem 5" }
+];
 
 const items =
   [
@@ -207,6 +226,16 @@ class Code extends React.Component<{}, ICodeState>  {
     blue: 79
   };
 
+  private renderStatus = (className?: string) => {
+    return <Status {...Statuses.Success} className={className} size={StatusSize.l} />;
+  };
+
+  private selectedItem = new ObservableValue<string>("");
+
+  private onSelect = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
+    this.selectedItem.value = item.text || "";
+  };
+
   render() {
 
     const { settingsExpanded } = this.state;
@@ -222,7 +251,7 @@ class Code extends React.Component<{}, ICodeState>  {
               </HeaderTitle>
             </HeaderTitleRow>
             <HeaderDescription>
-              Integration with code review and analysis tools
+              Integration with code review and analysis tools (Sonarqube)
             </HeaderDescription>
           </HeaderTitleArea>
           <ButtonGroup>
@@ -232,23 +261,50 @@ class Code extends React.Component<{}, ICodeState>  {
           </ButtonGroup>
         </CustomHeader>
 
-        <div className="page-content page-content-top">
-
-          <TabBar
-            onSelectedTabChanged={this.onSelectedTabChanged}
-            selectedTabId={this.selectedTabId}
-            tabSize={TabSize.Tall}
-            renderAdditionalContent={this.onRenderFilterBar}>
-            <Tab name="Codeqube" id="tab1" iconProps={{ iconName: "Streaming" }} badgeCount={3} />
-            <Tab name="Checkmarx" id="tab2" iconProps={{ iconName: "CheckMark" }} badgeCount={1} />
-          </TabBar>
+        <div className="page-content">
 
           {items.map((project, index) => (
 
-            <div style={{ marginTop: "10px" }}>
-              <Card titleProps={{ text: project.Title, ariaLevel: 3 }} headerDescriptionProps={{ text: "Last analysis: 2 days ago" }}>
-                <Pill className={"code--status code--status--" + project.status}>{project.status}</Pill>
-                <div className="flex-row" style={{ flexWrap: "wrap" }}>
+            <div>
+
+              <CustomHeader className="bolt-header-with-commandbar code--title">
+                <HeaderIcon
+                  className="bolt-table-status-icon-large code--status"
+                  iconProps={{ render: this.renderStatus }}
+                  titleSize={TitleSize.Large}
+                />
+                <HeaderTitleArea>
+                  <HeaderTitleRow>
+                    <HeaderTitle ariaLevel={3} className="text-ellipsis" titleSize={TitleSize.Large}>
+                      #3: Add new header to sample site
+                    </HeaderTitle>
+                  </HeaderTitleRow>
+                  <HeaderDescription>
+
+                    <span className="fontSize secondary-text flex-row flex-center text-ellipsis">
+                      <span style={{ flexShrink: 10000 }}>
+                        Last analysis: 3 days ago
+                      </span>
+                      <div className="flex-row ">
+                        <TabBar
+                          onSelectedTabChanged={this.onSelectedTabChanged}
+                          selectedTabId={this.selectedTabId}
+                          tabSize={TabSize.Compact}
+                        >
+                          <Tab name="develop" id="tab1" iconProps={{ iconName: "OpenSource" }} />
+                          <Tab name="main" id="tab2" iconProps={{ iconName: "OpenSource" }} />
+                        </TabBar>
+                      </div>
+                    </span>
+
+                  </HeaderDescription>
+                </HeaderTitleArea>
+
+              </CustomHeader>
+
+              <Card>
+
+                <div className="flex-row" style={{ flexWrap: "wrap", marginTop: "20px" }}>
                   {project.Props.map((item, index) => (
                     <div className="flex-column" style={{ minWidth: "120px" }} key={index}>
                       <div className="body-m primary-text">{item.icon} {item.label}</div>

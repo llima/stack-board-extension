@@ -22,21 +22,12 @@ button, input, select, textarea {
     float: left;
   }
 
+  &--title {
+    margin: 20px 0 10px -15px;
+  }
+
   &--status {
-    color: white;
-
-    position: absolute;
-    margin-top: -59px;
-    margin-left: 180px;
-    
-    &--passed {
-      background-color: green !important;
-    }
-    
-    &--fail {
-      background-color: red !important;
-    }
-
+    margin-top: 5px !important;
   }
 
   &--tag {

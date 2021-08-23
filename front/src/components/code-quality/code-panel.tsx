@@ -97,7 +97,7 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
       hasLoadError: false 
     }));
 
-    that.sonarService.loadComponents(item.token, item.server)
+    that.sonarService.loadComponents(item.server, item.token)
       .then((items: ISonarComponent[]) => {
         that.setState({ components: items })
       })
@@ -155,11 +155,11 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
 
             <div className="code--group">
               <TextField
-                label="Server URL *"
+                label="Sonarqube URL *"
                 inputId="server"
                 value={currentCode.server}
                 onChange={(event, value) => this.onInputChange(event, value, this)}
-                placeholder="e.g. http://sonarqube.empresa.com.br"
+                placeholder="e.g. https://sonarqube.company.com"
               />
             </div>
 

@@ -10,4 +10,12 @@ export interface ISonarComponent {
     analysisDate: Date;
 }
 
+export interface ISonarBranch {
+    name: string;
+    isMain: boolean;
+    type: string;
+    analysisDate: Date;
+    status: any;
+}
+
  
