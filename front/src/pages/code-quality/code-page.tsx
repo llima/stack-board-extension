@@ -14,235 +14,113 @@ import {
 import { Button } from 'azure-devops-ui/Button';
 import { ButtonGroup } from 'azure-devops-ui/ButtonGroup';
 import { Page } from 'azure-devops-ui/Page';
-
-import { InlineKeywordFilterBarItem } from "azure-devops-ui/TextFilterBarItem";
-import { Filter, FILTER_CHANGE_EVENT, FilterOperatorType } from "azure-devops-ui/Utilities/Filter";
-
 import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Card } from 'azure-devops-ui/Card';
-
-import { AiFillBug } from "react-icons/ai";
-import { FaRadiationAlt } from "react-icons/fa";
-import { GiPadlock, GiCheckedShield } from "react-icons/gi";
 import { Pill } from 'azure-devops-ui/Components/Pill/Pill';
-import { IColor } from 'azure-devops-extension-api';
-import { Status, Statuses } from 'azure-devops-ui/Components/Status/Status';
-import { StatusSize } from 'azure-devops-ui/Status';
-import { Link } from 'azure-devops-ui/Link';
-import { Icon } from 'azure-devops-ui/Icon';
-import { MenuButton, IMenuItem, MenuItemType } from "azure-devops-ui/Menu";
+
+import { Tab, TabBar, TabSize } from 'azure-devops-ui/Tabs';
+import { Services } from '../../services/services';
+import { ISonarService, SonarServiceId } from '../../services/sonar';
+import { ISonarBranch, ISonarComponent } from '../../model/sonar';
+import { Duration } from 'azure-devops-ui/Duration';
+import { MessageCard, MessageCardSeverity } from 'azure-devops-ui/MessageCard';
+import { configureMeasure, renderBranchStatus, } from './code-page-settings';
 
 import CodePanel from '../../components/code-quality/code-panel';
-import { Dropdown } from 'azure-devops-ui/Dropdown';
-import { Observer } from 'azure-devops-ui/Observer';
-import { IListBoxItem } from 'azure-devops-ui/ListBox';
-import { Tab, TabBar, TabSize } from 'azure-devops-ui/Tabs';
-
-const menuItems: IMenuItem[] = [
-  { id: "one", text: "MenuItem 1" },
-  { id: "two", text: "MenuItem 2" },
-  { id: "three", text: "MenuItem 3" },
-  { id: "separator", itemType: MenuItemType.Divider },
-  { id: "four", text: "MenuItem 4" },
-  { id: "five", text: "MenuItem 5" }
-];
-
-const items =
-  [
-    {
-      Title: "Eleven.Service.Mail",
-      status: "passed",
-      Props: [
-        {
-          label: "Bugs",
-          value: 1,
-          status: "C",
-          icon: <AiFillBug className="icon-tools" />
-
-        },
-        {
-          label: "Vulnerabilities",
-          value: 0,
-          status: "A",
-          icon: <GiPadlock className="icon-tools" />
-        },
-        {
-          label: "Hotspots",
-          value: "0.0%",
-          status: "E",
-          icon: <GiCheckedShield className="icon-tools" />
-        },
-        {
-          label: "Code Smells",
-          value: 14,
-          status: "A",
-          icon: <FaRadiationAlt className="icon-tools" />
-        },
-        {
-          label: "Coverage",
-          value: "0.0%"
-        },
-        {
-          label: "Duplications",
-          value: "2.7%"
-        },
-        {
-          label: "Lines",
-          value: "1.1k",
-          status: "S"
-        }
-      ]
-    },
-    {
-      Title: "Eleven.Service.Push",
-      status: "fail",
-      Props: [
-        {
-          label: "Bugs",
-          value: 9,
-          status: "E",
-          icon: <AiFillBug className="icon-tools" />
-
-        },
-        {
-          label: "Vulnerabilities",
-          value: 0,
-          status: "A",
-          icon: <GiPadlock className="icon-tools" />
-        },
-        {
-          label: "Hotspots",
-          value: "0.0%",
-          status: "E",
-          icon: <GiCheckedShield className="icon-tools" />
-        },
-        {
-          label: "Code Smells",
-          value: 126,
-          status: "C",
-          icon: <FaRadiationAlt className="icon-tools" />
-        },
-        {
-          label: "Coverage",
-          value: "0.0%"
-        },
-        {
-          label: "Duplications",
-          value: "3%"
-        },
-        {
-          label: "Lines",
-          value: "2.05k",
-          status: "S"
-        }
-      ]
-    },
-    {
-      Title: "Eleven.Service.Report",
-      status: "fail",
-      Props: [
-        {
-          label: "Bugs",
-          value: 0,
-          status: "A",
-          icon: <AiFillBug className="icon-tools" />
-
-        },
-        {
-          label: "Vulnerabilities",
-          value: 2,
-          status: "E",
-          icon: <GiPadlock className="icon-tools" />
-        },
-        {
-          label: "Hotspots",
-          value: "0.0%",
-          status: "E",
-          icon: <GiCheckedShield className="icon-tools" />
-        },
-        {
-          label: "Code Smells",
-          value: "4.2K",
-          status: "E",
-          icon: <FaRadiationAlt className="icon-tools" />
-        },
-        {
-          label: "Coverage",
-          value: "0.0%"
-        },
-        {
-          label: "Duplications",
-          value: "1.2%"
-        },
-        {
-          label: "Lines",
-          value: "6.1k",
-          status: "S"
-        }
-      ]
-    }
-  ]
+import { Spinner } from '@fluentui/react';
+import { ZeroData, ZeroDataActionType } from 'azure-devops-ui/ZeroData';
+import { CodeServiceId, ICodeService } from '../../services/code';
 
 interface ICodeState {
   settingsExpanded: boolean;
   loading: boolean;
+  components: ISonarComponent[];
+  selectedTabs: string[];
 }
 
 class Code extends React.Component<{}, ICodeState>  {
 
-  private filter: Filter;
-  private currentState = new ObservableValue("");
-  private selectedTabId = new ObservableValue("tab1");
+  sonarService = Services.getService<ISonarService>(SonarServiceId);
+  codeService = Services.getService<ICodeService>(CodeServiceId);
 
   constructor(props: {}) {
     super(props);
 
     this.state = {
       settingsExpanded: false,
-      loading: false
+      loading: true,
+      components: [],
+      selectedTabs: []
     };
 
-    this.filter = new Filter();
-    this.filter.setFilterItemState("listMulti", {
-      value: [],
-      operator: FilterOperatorType.and
-    });
-    this.filter.subscribe(() => {
-      this.currentState.value = JSON.stringify(this.filter.getState(), null, 4);
-    }, FILTER_CHANGE_EVENT);
+    this.loadComponents();
+
   }
 
-  private onSelectedTabChanged = (newTabId: string) => {
-    this.selectedTabId.value = newTabId;
+  async loadComponents() {
+
+    var selectedTabs: string[] = [];
+
+    try {
+
+      var configs = await this.codeService.getCode();
+
+      if (configs.length > 0) {
+        var config = configs[0];
+
+        var components = await this.sonarService.loadComponents(config.server, config.token);
+
+        for (let c = 0; c < components.length; c++) {
+          const component = components[c];
+          var branches = (await this.sonarService.loadBranches(config.server, config.token, component.key)).filter(b => b.analysisDate);
+
+          for (let b = 0; b < branches.length; b++) {
+            const branch = branches[b];
+
+            if (b === 0)
+              selectedTabs.push(component.key + "_" + branch.name)
+
+            branch.measures = await this.sonarService.loadMeasures(config.server, config.token, component.key, branch.name);
+          }
+          component.branches = branches;
+        }
+        this.setState({ components: components, selectedTabs: selectedTabs, loading: false });
+      }
+      else {
+        this.setState({ loading: false });
+      }
+
+    } catch (e) {
+      console.log(e);
+      this.setState({ loading: false });
+    }
+  }
+
+  onSelectedTabChanged = (newTabId: string, componentKey: string) => {
+
+    var selectedTabs = this.state.selectedTabs.filter(t => !t.startsWith(componentKey))
+    selectedTabs.push(newTabId);
+
+    this.setState({ selectedTabs: selectedTabs });
   };
 
-  private onRenderFilterBar = () => {
-    return <InlineKeywordFilterBarItem filter={this.filter} filterItemKey="keyword" />;
-  };
+  getCurrentBranch = (component: ISonarComponent): ISonarBranch => {
 
-  private darkColor: IColor = {
-    red: 151,
-    green: 30,
-    blue: 79
-  };
-
-  private renderStatus = (className?: string) => {
-    return <Status {...Statuses.Success} className={className} size={StatusSize.l} />;
-  };
-
-  private selectedItem = new ObservableValue<string>("");
-
-  private onSelect = (event: React.SyntheticEvent<HTMLElement>, item: IListBoxItem<{}>) => {
-    this.selectedItem.value = item.text || "";
+    var selectedTab = this.state.selectedTabs.filter(t => t.startsWith(component.key))[0]
+    if (selectedTab) {
+      var branchName = selectedTab.replace(component.key + "_", "");
+      return component.branches.filter(b => b.name == branchName)[0];
+    }
+    return component.branches[0];
   };
 
   render() {
 
-    const { settingsExpanded } = this.state;
-
+    const { settingsExpanded, components, selectedTabs, loading } = this.state;
 
     return (
       <Page className="flex-grow">
+
         <CustomHeader className="bolt-header-with-commandbar">
           <HeaderTitleArea>
             <HeaderTitleRow>
@@ -263,62 +141,114 @@ class Code extends React.Component<{}, ICodeState>  {
 
         <div className="page-content">
 
-          {items.map((project, index) => (
+          {!loading && components.length === 0 && <ZeroData
+            primaryText="Register your first tool"
+            secondaryText={
+              <span>
+                Integrate with code review and analysis tools (Sonarqube).
+              </span>
+            }
+            imageAltText="Bars"
+            imagePath={"https://cdn.vsassets.io/ext/ms.vss-code-web/import-content/repoNotFound.bVoHtlP2mhhyPo5t.svg"}
+            actionText="Register"
+            actionType={ZeroDataActionType.ctaButton}
+            onActionClick={(event, item) =>
+              this.setState({ settingsExpanded: true })
+            } />
+          }
+
+          {loading && <div className="api-page--loading">
+            <Spinner label="loading" />
+          </div>}
+
+          {components.map((component, index) => (
 
             <div>
 
               <CustomHeader className="bolt-header-with-commandbar code--title">
                 <HeaderIcon
                   className="bolt-table-status-icon-large code--status"
-                  iconProps={{ render: this.renderStatus }}
+                  iconProps={{
+                    render: (className?: string) => {
+                      return renderBranchStatus(this.getCurrentBranch(component), className);
+                    }
+                  }}
                   titleSize={TitleSize.Large}
                 />
                 <HeaderTitleArea>
                   <HeaderTitleRow>
                     <HeaderTitle ariaLevel={3} className="text-ellipsis" titleSize={TitleSize.Large}>
-                      #3: Add new header to sample site
+                      {component.name}
                     </HeaderTitle>
                   </HeaderTitleRow>
                   <HeaderDescription>
 
-                    <span className="fontSize secondary-text flex-row flex-center text-ellipsis">
-                      <span style={{ flexShrink: 10000 }}>
-                        Last analysis: 3 days ago
+                    {component.branches.length > 0 &&
+                      <span className="fontSize secondary-text flex-row flex-center text-ellipsis">
+                        <span style={{ flexShrink: 10000 }}>
+                          Last analysis:
+                          <Duration
+                            startDate={new Date(this.getCurrentBranch(component).analysisDate)}
+                            endDate={new Date()}
+                          /> ago
+                        </span>
+                        <div className="flex-row ">
+                          <TabBar
+                            onSelectedTabChanged={(newTabId: string) => { this.onSelectedTabChanged(newTabId, component.key) }}
+                            selectedTabId={selectedTabs.filter(t => t.startsWith(component.key))[0]}
+                            tabSize={TabSize.Compact}
+                          >
+                            {component.branches.map((branch, index) => (
+                              <Tab name={branch.name} id={component.key + "_" + branch.name} iconProps={{ iconName: "OpenSource" }} />
+                            ))}
+
+                          </TabBar>
+                        </div>
                       </span>
-                      <div className="flex-row ">
-                        <TabBar
-                          onSelectedTabChanged={this.onSelectedTabChanged}
-                          selectedTabId={this.selectedTabId}
-                          tabSize={TabSize.Compact}
-                        >
-                          <Tab name="develop" id="tab1" iconProps={{ iconName: "OpenSource" }} />
-                          <Tab name="main" id="tab2" iconProps={{ iconName: "OpenSource" }} />
-                        </TabBar>
-                      </div>
-                    </span>
+                    }
+
+                    {component.branches.length === 0 &&
+                      <span style={{ flexShrink: 10000 }}>
+                        No analysis was performed
+                      </span>
+                    }
 
                   </HeaderDescription>
                 </HeaderTitleArea>
 
               </CustomHeader>
 
-              <Card>
+              {component.branches.length === 0 &&
+                <MessageCard
+                  className="flex-self-stretch"
+                  severity={MessageCardSeverity.Info}
+                >
+                  There is no branch configured for this project
+                </MessageCard>
+              }
 
-                <div className="flex-row" style={{ flexWrap: "wrap", marginTop: "20px" }}>
-                  {project.Props.map((item, index) => (
-                    <div className="flex-column" style={{ minWidth: "120px" }} key={index}>
-                      <div className="body-m primary-text">{item.icon} {item.label}</div>
-                      <div className="body-m primary-text">
-                        <h2 className="code--number">
-                          {item.value}
-                        </h2>
-                        {item.status && <Pill className={"code--tag code--tag--" + item.status}>{item.status}</Pill>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+              {component.branches.map((branch, index) => {
+                return (selectedTabs.filter(t => t.startsWith(component.key + "_" + branch.name)).length > 0 && <Card>
+                  <div className="flex-row" style={{ flexWrap: "wrap", marginTop: "20px" }}>
+                    {branch.measures.sortByProp("metric").map((measure, index) => {
+                      var item = configureMeasure(measure);
+                      return (item != null &&
+                        <div className="flex-column" style={{ minWidth: "120px" }} key={index}>
+                          <div className="body-m primary-text">{item.icon} {item.label}</div>
+                          <div className="body-m primary-text">
+                            <h2 className="code--number">
+                              {item.value}
+                            </h2>
+                            {item.status && <Pill className={"code--tag code--tag--" + item.status}>{item.status}</Pill>}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </Card>)
+              })}
             </div>
+
 
           ))}
         </div>

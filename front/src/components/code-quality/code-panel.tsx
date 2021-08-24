@@ -30,13 +30,8 @@ interface ICodePanelState {
 
 class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
 
-  storageService = Services.getService<ICodeService>(
-    CodeServiceId
-  );
-
-  sonarService = Services.getService<ISonarService>(
-    SonarServiceId
-  );
+  storageService = Services.getService<ICodeService>(CodeServiceId);
+  sonarService = Services.getService<ISonarService>(SonarServiceId);
 
   constructor(props: ICodePanelProps) {
     super(props);
@@ -102,6 +97,7 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
         that.setState({ components: items })
       })
       .catch(function (error) {
+        console.log(error);
         that.setState({ hasLoadError: true });
       });;
   }

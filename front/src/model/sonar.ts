@@ -1,13 +1,7 @@
-export interface ISonarProject {
-    components: ISonarComponent[];
-}
-
 export interface ISonarComponent {
     key: string;
     name: string;
-    qualifier: string;
-    isFavorite: boolean;
-    analysisDate: Date;
+    branches: ISonarBranch[];
 }
 
 export interface ISonarBranch {
@@ -16,6 +10,15 @@ export interface ISonarBranch {
     type: string;
     analysisDate: Date;
     status: any;
+    measures: ISonarMeasure[]
+    isShow: boolean;
 }
+
+export interface ISonarMeasure {
+    metric: string;
+    value: string;
+}
+
+
 
  

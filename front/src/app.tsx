@@ -35,8 +35,6 @@ class App extends React.Component<{}, IAppState>  {
     
     const { page } = this.state;
 
-    return (<Code />);
-
     switch (page) {
       case "elevenlabs.stack-board.stack-board-hub":
         return (<ProjectPage />);
