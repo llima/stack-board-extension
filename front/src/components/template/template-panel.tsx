@@ -103,22 +103,21 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
 
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
-    that.state.currentTemplate[prop] = value;
-    this.setState({ currentTemplate: that.state.currentTemplate });
+    that.setState(prevState => ({
+      currentTemplate: {...prevState.currentTemplate, [prop]: value}
+    }));
   }
 
   isValid(): boolean {
     const { currentTemplate, showAuthentication } = this.state;
 
     return (
-      !!currentTemplate.text && currentTemplate.text.trim() !== "" &&
-      !!currentTemplate.description && currentTemplate.description.trim() !== "" &&
-      !!currentTemplate.gitUrl && currentTemplate.gitUrl.trim() !== "" &&
-      !!currentTemplate.replaceKey && currentTemplate.replaceKey.trim() !== "" &&
-      !!currentTemplate.tags && currentTemplate.tags.length > 0 &&
-      (!showAuthentication ||
-        currentTemplate.pass && currentTemplate.pass.trim() !== ""
-      )
+      currentTemplate.text && currentTemplate.text.trim() !== "" &&
+      currentTemplate.description && currentTemplate.description.trim() !== "" &&
+      currentTemplate.gitUrl && currentTemplate.gitUrl.trim() !== "" &&
+      currentTemplate.replaceKey && currentTemplate.replaceKey.trim() !== "" &&
+      currentTemplate.tags && currentTemplate.tags.length > 0 &&
+      (showAuthentication ? currentTemplate.pass && currentTemplate.pass.trim() !== "" : true )
     );
   }
 

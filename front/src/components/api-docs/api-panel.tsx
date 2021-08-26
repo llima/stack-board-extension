@@ -48,17 +48,17 @@ class ApiPanel extends React.Component<IApiPanelProps, IApiPanelState>  {
 
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
-    that.state.currentApi[prop] = value;
-
-    this.setState({ currentApi: that.state.currentApi });
+    that.setState(prevState => ({
+      currentApi: {...prevState.currentApi, [prop]: value}
+    }));
   }
 
   isValid(): boolean {
     const { currentApi } = this.state;
 
     return (
-      !!currentApi.name && currentApi.name.trim() !== "" &&
-      !!currentApi.url && currentApi.url.trim() !== ""
+      currentApi.name && currentApi.name.trim() !== "" &&
+      currentApi.url && currentApi.url.trim() !== ""
     );
   }
 

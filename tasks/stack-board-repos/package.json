@@ -1,6 +1,6 @@
 {
   "name": "stack-board-repos",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Stack Board Repos Extension for Azure DevOps",
   "main": "stackboardrepos.js",
   "repository": {
@@ -13,7 +13,7 @@
     "url": "https://github.com/eleven-financial/stack-board-extension/issues"
   },
   "scripts": {
-    "build": "npm run clear && npm run package-release",
+    "build": "npm run package-release",
     "clear": "(if exist build rd /q /s build)",
     "package-release": "tsc -p . && npm prune -production && npm run copy-files",
     "copy-files": "copy task.json build && Xcopy node_modules build\\node_modules /E/H/C/I"

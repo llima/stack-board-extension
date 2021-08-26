@@ -18,9 +18,6 @@ interface IRadarState {
 
 class Radar extends React.Component<{}, IRadarState>  {
 
-  constructor(props: {}) {
-    super(props);
-  }
 
   render() {
     return (

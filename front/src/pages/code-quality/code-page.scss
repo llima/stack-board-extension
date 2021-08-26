@@ -1,0 +1,100 @@
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, select, textarea {
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.code {
+  
+  &--number {
+    color: $black;
+    float: left;
+  }
+
+  &--title {
+    margin: 20px 0 10px -15px;
+  }
+
+  &--status {
+    margin-top: 5px !important;
+  }
+
+  &--tag {
+
+    color: white;
+    width: 25px;
+    height: 25px;
+    margin-top: 20px;
+    margin-left: 10px;
+    float: left;
+  
+    &--1 {
+      background-color: green !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'A';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+  
+    &--2 {
+      background-color: #b0d513 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'B';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+  
+    &--3 {
+      background-color: #eabe06 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'C';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+  
+    &--4 {
+      background-color: #ed7d20 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'D';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+
+    &--5 {
+      background-color: red !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'E';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+  
+  }
+
+}
+

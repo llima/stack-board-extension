@@ -16,10 +16,8 @@ import { Card } from "azure-devops-ui/Card";
 import { Page } from "azure-devops-ui/Page";
 import { Button } from "azure-devops-ui/Button";
 import { ButtonGroup } from "azure-devops-ui/ButtonGroup";
-import TemplatePanel from '../../components/template/template-panel';
 
 import { ColumnMore, Table } from "azure-devops-ui/Table";
-
 import { ArrayItemProvider } from "azure-devops-ui/Utilities/Provider";
 import { ObservableArray, ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Observer } from "azure-devops-ui/Observer";
@@ -29,10 +27,13 @@ import { ITemplate } from '../../model/template';
 import { IProjectService, ProjectServiceId } from '../../services/project';
 import { IProject, ProjectStatus } from '../../model/project';
 import { ZeroData, ZeroDataActionType } from "azure-devops-ui/ZeroData";
-import ProjectPanel from '../../components/project/project-panel';
-import { columns, projectsMock } from './projects-page-settings';
-import ProjectModal from '../../components/project/project-modal';
+import { columns } from './projects-page-settings';
 import { DeletePipelineAsync, GetBuildStatusAsync } from '../../services/pipeline';
+
+import ProjectPanel from '../../components/project/project-panel';
+import TemplatePanel from '../../components/template/template-panel';
+import ProjectModal from '../../components/project/project-modal';
+
 
 interface IProjectsState {
   templateExpanded: boolean;
