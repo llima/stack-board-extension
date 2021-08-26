@@ -14,7 +14,6 @@ import {
 import { Button } from 'azure-devops-ui/Button';
 import { ButtonGroup } from 'azure-devops-ui/ButtonGroup';
 import { Page } from 'azure-devops-ui/Page';
-import { ObservableValue } from "azure-devops-ui/Core/Observable";
 import { Card } from 'azure-devops-ui/Card';
 import { Pill } from 'azure-devops-ui/Components/Pill/Pill';
 
@@ -27,7 +26,7 @@ import { MessageCard, MessageCardSeverity } from 'azure-devops-ui/MessageCard';
 import { configureMeasure, renderBranchStatus, } from './code-page-settings';
 
 import CodePanel from '../../components/code-quality/code-panel';
-import { Spinner } from '@fluentui/react';
+import { Link, Spinner } from '@fluentui/react';
 import { ZeroData, ZeroDataActionType } from 'azure-devops-ui/ZeroData';
 import { CodeServiceId, ICodeService } from '../../services/code';
 
@@ -59,20 +58,31 @@ class Code extends React.Component<{}, ICodeState>  {
 
   async loadComponents() {
 
+    this.setState({ components: [], loading: true, settingsExpanded: false });
+
     var selectedTabs: string[] = [];
+    var server: string = "";
+    var token: string = "";
+    var projects: string[] = [];
 
     try {
 
       var configs = await this.codeService.getCode();
 
       if (configs.length > 0) {
-        var config = configs[0];
+        var config  = configs[configs.length-1];
+        server      = config.server;
+        token       = config.token;
+        projects    = config.components;
+      }
+      
+      if (projects.length > 0) {
 
-        var components = await this.sonarService.loadComponents(config.server, config.token);
+        var components = await this.sonarService.loadProjects(server, token, projects);
 
         for (let c = 0; c < components.length; c++) {
           const component = components[c];
-          var branches = (await this.sonarService.loadBranches(config.server, config.token, component.key)).filter(b => b.analysisDate);
+          var branches = (await this.sonarService.loadBranches(server, token, component.key)).filter(b => b.analysisDate);
 
           for (let b = 0; b < branches.length; b++) {
             const branch = branches[b];
@@ -80,7 +90,8 @@ class Code extends React.Component<{}, ICodeState>  {
             if (b === 0)
               selectedTabs.push(component.key + "_" + branch.name)
 
-            branch.measures = await this.sonarService.loadMeasures(config.server, config.token, component.key, branch.name);
+            branch.measures = await this.sonarService.loadMeasures(server, token, component.key, branch.name);
+            branch.link = server + "/dashboard?branch=" + branch.name + "&id=" + component.key;
           }
           component.branches = branches;
         }
@@ -109,7 +120,7 @@ class Code extends React.Component<{}, ICodeState>  {
     var selectedTab = this.state.selectedTabs.filter(t => t.startsWith(component.key))[0]
     if (selectedTab) {
       var branchName = selectedTab.replace(component.key + "_", "");
-      return component.branches.filter(b => b.name == branchName)[0];
+      return component.branches.filter(b => b.name === branchName)[0];
     }
     return component.branches[0];
   };
@@ -161,16 +172,18 @@ class Code extends React.Component<{}, ICodeState>  {
             <Spinner label="loading" />
           </div>}
 
-          {components.map((component, index) => (
+          {components.map((component, index) => {
 
-            <div>
+            var currentBranch = this.getCurrentBranch(component);
+            
+            return (<div>
 
               <CustomHeader className="bolt-header-with-commandbar code--title">
                 <HeaderIcon
                   className="bolt-table-status-icon-large code--status"
                   iconProps={{
                     render: (className?: string) => {
-                      return renderBranchStatus(this.getCurrentBranch(component), className);
+                      return renderBranchStatus(currentBranch, className);
                     }
                   }}
                   titleSize={TitleSize.Large}
@@ -178,7 +191,13 @@ class Code extends React.Component<{}, ICodeState>  {
                 <HeaderTitleArea>
                   <HeaderTitleRow>
                     <HeaderTitle ariaLevel={3} className="text-ellipsis" titleSize={TitleSize.Large}>
-                      {component.name}
+                      <Link
+                        excludeTabStop
+                        target="_blank"
+                        href={currentBranch.link}>
+                        {component.name}
+                      </Link>
+
                     </HeaderTitle>
                   </HeaderTitleRow>
                   <HeaderDescription>
@@ -188,7 +207,7 @@ class Code extends React.Component<{}, ICodeState>  {
                         <span style={{ flexShrink: 10000 }}>
                           Last analysis:
                           <Duration
-                            startDate={new Date(this.getCurrentBranch(component).analysisDate)}
+                            startDate={new Date(currentBranch.analysisDate)}
                             endDate={new Date()}
                           /> ago
                         </span>
@@ -231,7 +250,8 @@ class Code extends React.Component<{}, ICodeState>  {
                 return (selectedTabs.filter(t => t.startsWith(component.key + "_" + branch.name)).length > 0 && <Card>
                   <div className="flex-row" style={{ flexWrap: "wrap", marginTop: "20px" }}>
                     {branch.measures.sortByProp("metric").map((measure, index) => {
-                      var item = configureMeasure(measure);
+                      var item = configureMeasure(measure, branch.measures);
+                      console.log(item);
                       return (item != null &&
                         <div className="flex-column" style={{ minWidth: "120px" }} key={index}>
                           <div className="body-m primary-text">{item.icon} {item.label}</div>
@@ -239,7 +259,7 @@ class Code extends React.Component<{}, ICodeState>  {
                             <h2 className="code--number">
                               {item.value}
                             </h2>
-                            {item.status && <Pill className={"code--tag code--tag--" + item.status}>{item.status}</Pill>}
+                            {item.status && <Pill className={"code--tag code--tag--" + item.status}></Pill>}
                           </div>
                         </div>
                       )
@@ -247,13 +267,14 @@ class Code extends React.Component<{}, ICodeState>  {
                   </div>
                 </Card>)
               })}
-            </div>
 
+            </div>)
 
-          ))}
+          
+          })}
         </div>
 
-        <CodePanel show={settingsExpanded} onDismiss={() => { this.setState({ settingsExpanded: false, loading: true }); }} />
+        <CodePanel show={settingsExpanded} onDismiss={() => { this.loadComponents() }} />
       </Page>
     );
   }

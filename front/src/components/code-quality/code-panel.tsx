@@ -74,9 +74,9 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
     var items = that.state.currentCode.components;
 
     if (checked)
-      items.push(component)
+      items.push(component.key)
     else
-      items = items.filter(d => d.key !== component.key);
+      items = items.filter(d => d !== component.key);
 
     that.setState(prevState => ({
       currentCode: { ...prevState.currentCode, components: items }
@@ -194,7 +194,7 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
                   {components.map(item => (
                     <Checkbox
                       onChange={(event, checked) => (this.addComponent(item, checked, this))}
-                      checked={currentCode.components.filter(d => d.key === item.key).length > 0}
+                      checked={currentCode.components.filter(d => d === item.key).length > 0}
                       label={item.key}
                     />
                   ))}

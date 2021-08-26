@@ -5,7 +5,7 @@ export interface ICode {
     type: string;
     server: string;
     token: string;
-    components?: ISonarComponent[];
+    components?: string[];
 }
 
 

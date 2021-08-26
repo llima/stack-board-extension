@@ -39,20 +39,59 @@ button, input, select, textarea {
     margin-left: 10px;
     float: left;
   
-    &--A {
+    &--1 {
       background-color: green !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'A';  
+        position: absolute;
+        left: 8px;
+      }
     }
   
-    &--C {
-      background-color: orange !important;
+    &--2 {
+      background-color: #b0d513 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'B';  
+        position: absolute;
+        left: 8px;
+      }
     }
   
-    &--E {
+    &--3 {
+      background-color: #eabe06 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'C';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+  
+    &--4 {
+      background-color: #ed7d20 !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'D';  
+        position: absolute;
+        left: 8px;
+      }
+    }
+
+    &--5 {
       background-color: red !important;
-    }
-  
-    &--S {
-      background-color: blue !important;
+      position: relative;
+      &::after {
+        display: block;
+        content: 'E';  
+        position: absolute;
+        left: 8px;
+      }
     }
   
   }

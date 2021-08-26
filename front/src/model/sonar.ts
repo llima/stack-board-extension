@@ -12,6 +12,7 @@ export interface ISonarBranch {
     status: any;
     measures: ISonarMeasure[]
     isShow: boolean;
+    link: string;
 }
 
 export interface ISonarMeasure {

@@ -21,7 +21,7 @@ export const StackValues: IStack[] = [
     },
     {
         id: 4,
-        text: "SQLServer"
+        text: "Type Script"
     }
 ];
 

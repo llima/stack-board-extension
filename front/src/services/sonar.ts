@@ -5,11 +5,39 @@ export interface ISonarService extends IService {
     loadComponents(token: string, serverUrl: string): Promise<ISonarComponent[]>;
     loadBranches(serverUrl: string, token: string, project: string): Promise<ISonarBranch[]>;
     loadMeasures(serverUrl: string, token: string, component: string, branch: string): Promise<ISonarMeasure[]>;
+    loadProjects(serverUrl: string, token: string, projects: string[]): Promise<ISonarComponent[]>;
 }
 
 export const SonarServiceId = "SonarService";
 
 export class SonarService implements ISonarService {
+
+
+    async loadProjects(serverUrl: string, token: string, projects: string[]): Promise<ISonarComponent[]> {
+
+        let base64 = require('base-64');
+        var projectsString = projects.join(","); 
+
+        return new Promise<ISonarComponent[]>((resolve: (results: ISonarComponent[]) => void, reject: (error: any) => void): void => {
+
+            fetch(serverUrl + "/api/projects/search?ps=100&projects=" + projectsString, {
+                method: "GET",
+                mode: 'cors',
+                headers: {
+                    "Authorization": "Basic " + base64.encode(token + ":")
+                }
+            })
+            .then(res => res.json())
+            .then((data: any) => {
+                resolve(data.components);
+            })
+            .catch(function (error) {
+                reject(error);
+            });
+
+        });
+
+    }
 
     async loadComponents(serverUrl: string, token: string): Promise<ISonarComponent[]> {
 
