@@ -43,7 +43,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     super(props);
     this.state = {
       currentProject: this.getStartValue(),
-      creating: true,
+      creating: false,
       nameIsValid: true,
       repoIsValid: true
     };
