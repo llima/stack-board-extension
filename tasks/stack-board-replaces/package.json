@@ -16,7 +16,7 @@
     "build": "npm run package-release",
     "clear": "(if exist build rd /q /s build)",
     "package-release": "tsc -p . && npm prune -production && npm run copy-files",
-    "copy-files": "copy task.json build && Xcopy node_modules build\\node_modules /E/H/C/I"
+    "copy-files": "copy icon.png build && copy task.json build && Xcopy node_modules build\\node_modules /E/H/C/I"
   },
   "homepage": "./",
   "dependencies": {
