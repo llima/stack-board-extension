@@ -62,7 +62,7 @@
       "name": "keyVaultVariables",
       "type": "multiLine",
       "label": "Key Vault variables",
-      "helpMarkDown": "Provide new line separated list of Key Vault variables to substitute the values",
+      "helpMarkDown": "Provide new line separated list of Key Vault variables to substitute the values. e.g. StackBoard--Secret--Connection",
       "required": false,      
       "defaultValue": "",      
       "visibleRule": "useKeyVault == true"

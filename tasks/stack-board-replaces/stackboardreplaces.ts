@@ -71,17 +71,31 @@ function setFirstNode(obj: any, path: string, value: any): any {
 
 async function main(): Promise<void> {
   try {
-    tl.setResourcePath(path.join(__dirname, "task.json"));
+    tl.setResourcePath(path.join(__dirname, "task.json"));    
 
     const folderPath = tl.getPathInput("folderPath", true) ?? "";
     const fileType = tl.getPathInput("fileType", true) ?? "yaml";
-    const targetFiles = tl.getPathInput("targetFiles", true) ?? "";
+    const targetFiles = tl.getDelimitedInput("targetFiles", "\n", false);
     
-    //const workingDirectory = tl.getVariable("System.DefaultWorkingDirectory");
+    const useKeyVault = tl.getBoolInput("useKeyVault", false);
+    const keyVaultVariables = tl.getDelimitedInput("keyVaultVariables", "\n", false);
+
+    let variables: any[] = [];
+
+    const pipelineVariables = tl.getVariables();
+    for (let pipelineVariable of pipelineVariables) {
+      variables.push({ key: pipelineVariable.name, value: pipelineVariable.value })
+    }
+
+    if (useKeyVault) {
+      console.log("Use Key Vault...", keyVaultVariables);
+
+      for (let keyVaultVariable of keyVaultVariables) {
+        let secret = tl.getVariable(keyVaultVariable);
+        variables.push({ key: keyVaultVariable.replace("--", "."), value: secret })
+      }
+    }
     
-    const variables = [
-      { key: "", value: "" },      
-    ];
     const keys = variables.map((k) => k.key);
     const values = variables.map((k) => k.value);
     
@@ -103,12 +117,12 @@ async function main(): Promise<void> {
         let jsonfy = JSON.stringify(content.replace(/(?:\r\n|\r|\n|\s)/g, ""));        
 
         for (let variable of variables) {
-          const nodeTo = setFirstNode(app, variable.key, variable.value);
-          const nodeFrom = getFirstNode(app, variable.key);
+          const valueNode = setFirstNode(app, variable.key, variable.value);
+          const currentNode = getFirstNode(app, variable.key);
           
-          if (nodeTo != undefined && nodeFrom != undefined) {
-            const from = JSON.stringify(nodeTo).replace(/(^\"+|\"+$)/gm, "");
-            const to = JSON.stringify(nodeFrom).replace(/(^\"+|\"+$)/gm, "");
+          if (valueNode != undefined && currentNode != undefined) {
+            const from = JSON.stringify(valueNode).replace(/(^\"+|\"+$)/gm, "");
+            const to = JSON.stringify(currentNode).replace(/(^\"+|\"+$)/gm, "");
   
             jsonfy = jsonfy.replace(from, to);
           }
@@ -119,7 +133,7 @@ async function main(): Promise<void> {
     }
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
-  } catch (err) {
+  } catch (err: any) {
     tl.setResult(tl.TaskResult.Failed, err);
   }
 }
