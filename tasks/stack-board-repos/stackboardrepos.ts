@@ -123,15 +123,7 @@ async function main(): Promise<void> {
     shell.rm("-rf", `${sourceFolder}/.git`);
 
     shell.mv(`${sourceFolder}/*`, `${workingDirectory}`);
-    const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
-    if (gitIgnore.length > 0) {
-      shell.mv(`${sourceFolder}/.gitignore`, `${workingDirectory}`);
-    }
-    const gitattributes = shell.find(`${sourceFolder}/.gitattributes`);
-    if (gitattributes.length > 0) {
-      shell.mv(`${sourceFolder}/.gitattributes`, `${workingDirectory}`);
-    }
-
+    shell.mv(`${sourceFolder}/.*`, `${workingDirectory}`);
     shell.rm("-rf", sourceFolder);
 
     console.log("Apply git changes...");
@@ -145,7 +137,7 @@ async function main(): Promise<void> {
     shell.exec("git push origin develop --force");
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
-  } catch (err) {
+  } catch (err: any) {
     tl.setResult(tl.TaskResult.Failed, err);
   }
 }
