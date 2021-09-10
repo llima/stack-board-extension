@@ -95,7 +95,7 @@ export class SonarService implements ISonarService {
 
         return new Promise<ISonarMeasure[]>((resolve: (results: ISonarMeasure[]) => void, reject: (error: any) => void): void => {
 
-            var url = serverUrl + "/api/measures/component?component=" + component + "&metricKeys=alert_status%2Cbugs%2Creliability_rating%2Cvulnerabilities%2Csecurity_rating%2Csecurity_hotspots_reviewed%2Csecurity_review_rating%2Ccode_smells%2Csqale_rating%2Cduplicated_lines_density%2Ccoverage%2Cncloc%2Cncloc_language_distribution%2Cprojects&branch=" + branch;
+            var url = serverUrl + "/api/measures/component?component=" + component + "&metricKeys=alert_status%2Cbugs%2Creliability_rating%2Cvulnerabilities%2Csecurity_rating%2Csecurity_hotspots_reviewed%2Csecurity_review_rating%2Ccode_smells%2Csqale_rating%2Cduplicated_lines_density%2Ccoverage%2Cncloc%2Cncloc_language_distribution%2Cprojects&branch=" + encodeURIComponent(branch);
             fetch(url, {
                 method: "GET",
                 mode: 'cors',
