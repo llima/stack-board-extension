@@ -1,0 +1,76 @@
+{
+  "id": "B843DF90-AB2A-46F7-B422-0510BAB3E5EF",
+  "name": "stack-board-replaces",
+  "friendlyName": "Stack Board Replaces",
+  "description": "Stack Board Repos Extension for Azure DevOps",
+  "author": "11Labs - Eleven Financial",
+  "helpUrl": "https://github.com/eleven-financial/stack-board-extension",
+  "helpMarkDown": "[Learn more about this task](https://github.com/eleven-financial/stack-board-extension/blob/develop/README.md)",
+  "category": "Utility",
+  "visibility": ["Build", "Release"],
+  "demands": [],
+  "version": {
+    "Major": "0",
+    "Minor": "0",
+    "Patch": "1"
+  },
+  "minimumAgentVersion": "0.0.1",
+  "instanceNameFormat": "Stack Board Replaces",
+  "inputs": [
+    {
+      "name": "folderPath",
+      "type": "filePath",
+      "label": "Folder",
+      "helpMarkDown": "File path to the folder",
+      "defaultValue": "$(System.DefaultWorkingDirectory)/**/folder",
+      "required": true      
+    },
+    {
+      "name": "fileType",
+      "type": "pickList",
+      "label": "File format",
+      "helpMarkDown": "Provide file format on which substitution has to be perfformed",
+      "defaultValue": "yaml",
+      "required": true,
+      "options": {
+          "yaml": "YAML",
+          "json": "JSON"
+      },
+      "properties": {
+          "EditableOptions": "False"
+      }
+    },
+    {
+      "name": "targetFiles",
+      "type": "multiLine",
+      "label": "Target files",
+      "helpMarkDown": "Provide new line separated list of files to substitute the variable values",
+      "required": false,      
+      "defaultValue": "",      
+      "visibleRule": "fileType = yaml || fileType = json"
+    },
+    {
+      "name": "useKeyVault",
+      "type": "boolean",
+      "label": "Use Key Vault",
+      "helpMarkDown": "Use Variables from Key Vault.",
+      "required": false,
+      "defaultValue": false,
+      "visibleRule": "fileType = json"
+    },
+    {
+      "name": "keyVaultVariables",
+      "type": "multiLine",
+      "label": "Key Vault variables",
+      "helpMarkDown": "Provide new line separated list of Key Vault variables to substitute the values. e.g. StackBoard--Secret--Connection",
+      "required": false,      
+      "defaultValue": "",      
+      "visibleRule": "useKeyVault == true"
+    }
+  ],
+  "execution": {
+    "Node10": {
+        "target": "stackboardreplaces.js"
+    }
+  }
+}
