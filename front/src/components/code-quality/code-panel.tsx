@@ -103,11 +103,11 @@ class CodePanel extends React.Component<ICodePanelProps, ICodePanelState>  {
   }
 
   save(that: this) {
-
     that.setState({ creating: true });
     var item = that.state.currentCode;
     item.id = Guid.create().toString();
-
+    
+    that.storageService.removeAll().then(() => { });
     that.storageService.saveCode(item).then(item => {
       that.close(that);
     });

@@ -251,7 +251,7 @@ class Code extends React.Component<{}, ICodeState>  {
                   <div className="flex-row" style={{ flexWrap: "wrap", marginTop: "20px" }}>
                     {branch.measures.sortByProp("metric").map((measure, index) => {
                       var item = configureMeasure(measure, branch.measures);
-                      console.log(item);
+                      
                       return (item != null &&
                         <div className="flex-column" style={{ minWidth: "120px" }} key={index}>
                           <div className="body-m primary-text">{item.icon} {item.label}</div>

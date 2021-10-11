@@ -97,6 +97,7 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
 
     var that = this;
     var projects = that.state.projects;
+
     await that.verifyProjectStatus(projects, that);
 
     if (projects.filter(d => d.status === ProjectStatus.Running).length > 0) {
@@ -111,8 +112,10 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
       const element = projects[index];
       if (element.status === ProjectStatus.Running) {
         element.status = await GetBuildStatusAsync(element.runBuildId)
-        if (element.status === ProjectStatus.Succeeded)
+        if (element.status === ProjectStatus.Succeeded) {
           await DeletePipelineAsync(element.buildDefinitionId);
+          await this.projectService.updateProject(element);
+        }          
       }
     }
     if (projects.filter(d => d.status === ProjectStatus.Running).length === 0) {
