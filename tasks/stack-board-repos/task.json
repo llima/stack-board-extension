@@ -7,12 +7,14 @@
   "helpUrl": "https://github.com/eleven-financial/stack-board-extension",
   "helpMarkDown": "[Learn more about this task](https://github.com/eleven-financial/stack-board-extension/blob/develop/README.md)",
   "category": "Utility",
-  "visibility": ["Build"],
+  "visibility": [
+    "Build"
+  ],
   "demands": [],
   "version": {
     "Major": "0",
     "Minor": "0",
-    "Patch": "22"
+    "Patch": "23"
   },
   "minimumAgentVersion": "0.0.22",
   "instanceNameFormat": "Stack Board Repos",
@@ -20,15 +22,23 @@
     {
       "name": "sourceRepository",
       "type": "string",
-      "label": "Source Repository",      
+      "label": "Source Repository",
       "helpMarkDown": "Enter the source repository. e.g. https://github.com/Microsoft/vscode.git",
       "defaultValue": "",
       "required": true
     },
     {
+      "name": "branch",
+      "type": "string",
+      "label": "Branch",
+      "helpMarkDown": "Enter the name of the branch.",
+      "defaultValue": "develop",
+      "required": true
+    },
+    {
       "name": "replaceFrom",
       "type": "string",
-      "label": "Replace From",      
+      "label": "Replace From",
       "helpMarkDown": "Enter the keyword to be replaced",
       "defaultValue": "",
       "required": true
@@ -36,7 +46,7 @@
     {
       "name": "replaceTo",
       "type": "string",
-      "label": "Replace To",      
+      "label": "Replace To",
       "helpMarkDown": "Enter the value to be replaced",
       "defaultValue": "",
       "required": true
@@ -44,7 +54,7 @@
   ],
   "execution": {
     "Node10": {
-        "target": "stackboardrepos.js"
+      "target": "stackboardrepos.js"
     }
   }
 }

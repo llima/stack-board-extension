@@ -64,6 +64,7 @@ export async function CreateBuildDefinitionAsync(
   step.enabled = true;
   step.inputs = {
     sourceRepository: options.template.gitUrl,
+    branch: options.template.branch,
     replaceFrom: options.template.replaceKey,
     replaceTo: options.name,
   };
