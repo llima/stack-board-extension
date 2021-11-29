@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "stack-board",
     "publisher": "elevenlabs",
-    "version": "1.2.26",
+    "version": "1.2.25",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
