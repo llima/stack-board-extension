@@ -42,6 +42,7 @@ class Api extends React.Component<{}, IApiState>  {
 
   loadApis() {
     this.apiService.getApi().then(apis => {
+      apis.sortByProp("name");
       this.setState({ apis: apis, loading: false });
     }).catch(e => {
       this.setState({ loading: false });
@@ -126,7 +127,7 @@ class Api extends React.Component<{}, IApiState>  {
   }
 
 
-  
+
 }
 
 

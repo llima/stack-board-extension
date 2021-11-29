@@ -77,6 +77,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
       gitUrl: "",
       user: "",
       pass: "",
+      branch: "",
       tags: []
     };
   }
@@ -104,7 +105,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
   onInputChange(event: React.ChangeEvent, value: string, that: this) {
     var prop = event.target.id.replace("__bolt-", "");
     that.setState(prevState => ({
-      currentTemplate: {...prevState.currentTemplate, [prop]: value}
+      currentTemplate: { ...prevState.currentTemplate, [prop]: value }
     }));
   }
 
@@ -116,8 +117,9 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
       currentTemplate.description && currentTemplate.description.trim() !== "" &&
       currentTemplate.gitUrl && currentTemplate.gitUrl.trim() !== "" &&
       currentTemplate.replaceKey && currentTemplate.replaceKey.trim() !== "" &&
+      currentTemplate.branch && currentTemplate.branch.trim() !== "" &&
       currentTemplate.tags && currentTemplate.tags.length > 0 &&
-      (showAuthentication ? currentTemplate.pass && currentTemplate.pass.trim() !== "" : true )
+      (showAuthentication ? currentTemplate.pass && currentTemplate.pass.trim() !== "" : true)
     );
   }
 
@@ -174,12 +176,22 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
             </div>
             <div className="template--group">
               <TextField
+                inputId="branch"
+                label="Branch *"
+                value={currentTemplate.branch}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
+                required={true}
+                placeholder="Name of the branch. e.g. develop, main"
+              />
+            </div>
+            <div className="template--group">
+              <TextField
                 inputId="replaceKey"
                 label="Replace key *"
                 value={currentTemplate.replaceKey}
                 onChange={(event, value) => this.onInputChange(event, value, this)}
                 required={true}
-                placeholder=""
+                placeholder="Replaces every instance of 'replaceKey' with project name"
               />
             </div>
             <div className="template--group">
@@ -293,7 +305,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                     danger={true}
                     onClick={() => {
                       this.service.removeTemplate(currentTemplate.id);
-                      this.setState({templates: templates.filter(d => d.id !== currentTemplate.id).sortByProp("text")})
+                      this.setState({ templates: templates.filter(d => d.id !== currentTemplate.id).sortByProp("text") })
                       this.reset(this);
                     }} />
                   <Button
@@ -304,7 +316,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                       let items = templates.filter(d => d.id !== currentTemplate.id);
                       items.push(currentTemplate);
                       this.service.saveTemplate(currentTemplate);
-                      this.setState({templates: items.sortByProp("text")})
+                      this.setState({ templates: items.sortByProp("text") })
                       this.reset(this);
                     }} />
                 </ButtonGroup>
