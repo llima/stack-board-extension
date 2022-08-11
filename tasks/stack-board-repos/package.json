@@ -5,12 +5,12 @@
   "main": "stackboardrepos.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eleven-financial/stack-board-extension.git"
+    "url": "git+https://github.com/llima/stack-board-extension.git"
   },
   "author": "IT Team",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/eleven-financial/stack-board-extension/issues"
+    "url": "https://github.com/llima/stack-board-extension/issues"
   },
   "scripts": {
     "build": "npm run package-release",

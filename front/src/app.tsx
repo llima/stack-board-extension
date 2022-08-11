@@ -36,13 +36,13 @@ class App extends React.Component<{}, IAppState>  {
     const { page } = this.state;
 
     switch (page) {
-      case "elevenlabs.stack-board.stack-board-hub":
+      case "llima.stack-board.stack-board-hub":
         return (<ProjectPage />);
-      case "elevenlabs.stack-board.tech-radar-hub":
+      case "llima.stack-board.tech-radar-hub":
         return (<Radar />);
-      case "elevenlabs.stack-board.api-docs-hub":
+      case "llima.stack-board.api-docs-hub":
         return (<Api />);
-      case "elevenlabs.stack-board.code-quality-hub":
+      case "llima.stack-board.code-quality-hub":
         return (<Code />);
       default:
         return null;

@@ -1,8 +1,8 @@
 {
     "manifestVersion": 1,
     "id": "stack-board",
-    "publisher": "elevenlabs",
-    "version": "1.2.25",
+    "publisher": "llima",
+    "version": "1.0.0",
     "name": "Stack Board",
     "description": "Stack board extension for Azure DevOps",
     "public": true,
@@ -28,11 +28,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/eleven-financial/stack-board-extension"
+        "url": "https://github.com/llima/stack-board-extension"
     },
     "links": {
         "support": {
-            "url": "mailto:luiz.lima@elevenfinancial.com"
+            "url": "mailto:luiz.lima@live.com"
         }
     },
     "scopes": [
@@ -132,7 +132,7 @@
                 {
                     "name": "Feature",
                     "properties": {
-                        "featureId": "elevenlabs.stack-board.stack-board-feature"
+                        "featureId": "llima.stack-board.stack-board-feature"
                     }
                 }
             ]
@@ -141,7 +141,7 @@
             "id": "stack-board-hub",
             "type": "ms.vss-web.hub",
             "targets": [
-                "elevenlabs.stack-board.board-hub-group"
+                "llima.stack-board.board-hub-group"
             ],
             "properties": {
                 "name": "Projects",
@@ -156,7 +156,7 @@
                 {
                     "name": "Feature",
                     "properties": {
-                        "featureId": "elevenlabs.stack-board.stack-board-project-feature"
+                        "featureId": "llima.stack-board.stack-board-project-feature"
                     }
                 }
             ]
@@ -165,7 +165,7 @@
             "id": "api-docs-hub",
             "type": "ms.vss-web.hub",
             "targets": [
-                "elevenlabs.stack-board.board-hub-group"
+                "llima.stack-board.board-hub-group"
             ],
             "properties": {
                 "name": "API Docs",
@@ -180,7 +180,7 @@
                 {
                     "name": "Feature",
                     "properties": {
-                        "featureId": "elevenlabs.stack-board.stack-board-api-feature"
+                        "featureId": "llima.stack-board.stack-board-api-feature"
                     }
                 }
             ]
@@ -189,7 +189,7 @@
             "id": "code-quality-hub",
             "type": "ms.vss-web.hub",
             "targets": [
-                "elevenlabs.stack-board.board-hub-group"
+                "llima.stack-board.board-hub-group"
             ],
             "properties": {
                 "name": "Code Quality",
@@ -204,7 +204,7 @@
                 {
                     "name": "Feature",
                     "properties": {
-                        "featureId": "elevenlabs.stack-board.stack-board-code-feature"
+                        "featureId": "llima.stack-board.stack-board-code-feature"
                     }
                 }
             ]

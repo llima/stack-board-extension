@@ -54,7 +54,7 @@ export async function CreateBuildDefinitionAsync(
   phaseTarget.allowScriptsAuthAccessOption = true;
 
   const task = {} as TaskDefinitionReference;
-  task.id = "4c770a38-2b38-4144-aae5-32d81b7a5c0c";
+  task.id = "3d60564b-919d-40f0-aef7-b1703706b8ef";
   task.versionSpec = "0.*";
   task.definitionType = "task";
 
