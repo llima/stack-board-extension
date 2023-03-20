@@ -14,7 +14,8 @@ import { IService } from "./services";
 export interface IProjectService extends IService {
     getProject(): Promise<IProject[]>;
     saveProject(project: IProject): Promise<IProject>;
-    removeProject(id: string): Promise<void>;
+    updateProject(project: IProject): Promise<void>;
+    removeProject(id: string): Promise<void>;    
 }
 
 export const ProjectServiceId = "ProjectService";
@@ -42,6 +43,15 @@ export class ProjectService implements IProjectService {
         const manager = await this.getManager();
         await manager.setDocument(await this._getCollection(), project);
         return project;
+    }
+
+    async updateProject(project: IProject): Promise<void> {
+        const manager = await this.getManager();
+        try {
+            await manager.updateDocument(await this._getCollection(), project);
+        } catch {
+            // Ignore
+        }
     }
 
     async removeProject(id: string): Promise<void> {

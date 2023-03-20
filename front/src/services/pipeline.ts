@@ -54,7 +54,7 @@ export async function CreateBuildDefinitionAsync(
   phaseTarget.allowScriptsAuthAccessOption = true;
 
   const task = {} as TaskDefinitionReference;
-  task.id = "4c770a38-2b38-4144-aae5-32d81b7a5c0c";
+  task.id = "3d60564b-919d-40f0-aef7-b1703706b8ef";
   task.versionSpec = "0.*";
   task.definitionType = "task";
 
@@ -64,6 +64,7 @@ export async function CreateBuildDefinitionAsync(
   step.enabled = true;
   step.inputs = {
     sourceRepository: options.template.gitUrl,
+    branch: options.template.branch,
     replaceFrom: options.template.replaceKey,
     replaceTo: options.name,
   };
@@ -150,26 +151,34 @@ export async function DeletePipelineAsync(
 export async function GetBuildStatusAsync(
   buildId: number
 ): Promise<ProjectStatus> {
-  const projectService = await DevOps.getService<IProjectPageService>(
-    "ms.vss-tfs-web.tfs-page-data-service"
-  );
+  try {
+    const projectService = await DevOps.getService<IProjectPageService>(
+      "ms.vss-tfs-web.tfs-page-data-service"
+    );
 
-  const currentProject = await projectService.getProject();
-  const build = await client.getBuild(currentProject.name, buildId);
+    const currentProject = await projectService.getProject();
+    const build = await client.getBuild(currentProject.name, buildId);
 
-  switch (build.status) {
-    case BuildStatus.None:
-    case BuildStatus.InProgress:
-    case BuildStatus.NotStarted:
-      return ProjectStatus.Running;
-    case BuildStatus.Cancelling:
-      return ProjectStatus.Failed;
-    case BuildStatus.Completed: {
-      return build.result === BuildResult.Succeeded
-        ? ProjectStatus.Succeeded
-        : ProjectStatus.Failed;
+    if (build == null) {
+      return ProjectStatus.Succeeded;
     }
-    default:
-      return ProjectStatus.Running;
+
+    switch (build.status) {
+      case BuildStatus.None:
+      case BuildStatus.InProgress:
+      case BuildStatus.NotStarted:
+        return ProjectStatus.Running;
+      case BuildStatus.Cancelling:
+        return ProjectStatus.Failed;
+      case BuildStatus.Completed: {
+        return build.result === BuildResult.Succeeded
+          ? ProjectStatus.Succeeded
+          : ProjectStatus.Failed;
+      }
+      default:
+        return ProjectStatus.Running;
+    }
+  } catch (error) {
+    return ProjectStatus.Succeeded;
   }
 }

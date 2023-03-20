@@ -98,6 +98,7 @@ async function main(): Promise<void> {
     const sourceRepository = tl.getPathInput("sourceRepository", true) ?? "";
     const replaceFrom = tl.getPathInput("replaceFrom", true) ?? "";
     const replaceTo = tl.getPathInput("replaceTo", true) ?? "";
+    const branch = tl.getPathInput("branch", true) ?? "develop";
 
     const userinfo = tl.getVariable("stackboard_userinfo") ?? "|";
     const username = tl.getVariable("stackboard_username") ?? "";
@@ -114,7 +115,7 @@ async function main(): Promise<void> {
       files: sourceFolder + "/**",
       from: transformToRegex(replaceFrom, true),
       to: transformTo(replaceTo, true),
-    };    
+    };
     await replaceContent(options);
 
     console.log("Rename files...");
@@ -123,15 +124,7 @@ async function main(): Promise<void> {
     shell.rm("-rf", `${sourceFolder}/.git`);
 
     shell.mv(`${sourceFolder}/*`, `${workingDirectory}`);
-    const gitIgnore = shell.find(`${sourceFolder}/.gitignore`);
-    if (gitIgnore.length > 0) {
-      shell.mv(`${sourceFolder}/.gitignore`, `${workingDirectory}`);
-    }
-    const gitattributes = shell.find(`${sourceFolder}/.gitattributes`);
-    if (gitattributes.length > 0) {
-      shell.mv(`${sourceFolder}/.gitattributes`, `${workingDirectory}`);
-    }
-
+    shell.mv(`${sourceFolder}/.*`, `${workingDirectory}`);
     shell.rm("-rf", sourceFolder);
 
     console.log("Apply git changes...");
@@ -139,13 +132,13 @@ async function main(): Promise<void> {
     shell.exec(`git config user.email \"${userinfo.split("|")[0]}\"`);
     shell.exec(`git config user.name \"${userinfo.split("|")[1]}\"`);
 
-    shell.exec("git checkout -b develop");
+    shell.exec(`git checkout -b ${branch}`);
     shell.exec("git add --all");
     shell.exec("git commit -m \"Initial template made with Stack Board Extensions!\"");
-    shell.exec("git push origin develop --force");
+    shell.exec(`git push origin ${branch} --force`);
 
     tl.setResult(tl.TaskResult.Succeeded, "Task completed!");
-  } catch (err) {
+  } catch (err: any) {
     tl.setResult(tl.TaskResult.Failed, err);
   }
 }

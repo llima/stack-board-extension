@@ -8,5 +8,6 @@ export interface ITemplate {
     gitUrl: string;
     user: string;
     pass: string;
+    branch: string;
     tags: IStack[]
 }

@@ -8,10 +8,10 @@
   "homepage": "./",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eleven-financial/stack-board-extension.git"
+    "url": "git+https://github.com/llima/stack-board-extension.git"
   },
   "bugs": {
-    "url": "https://github.com/eleven-financial/stack-board-extension/issues"
+    "url": "https://github.com/llima/stack-board-extension/issues"
   },
   "scripts": {
     "start": "react-scripts start",

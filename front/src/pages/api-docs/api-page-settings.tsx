@@ -26,17 +26,17 @@ import Api from "./api-page";
 export const SampleData2: IApi[] = [
     {
         id: "1",
-        name: "Eleven.Service.Push",
+        name: "Company.Service.Push",
         url: "https://petstore.swagger.io/v2/swagger.json",
     },
     {
         id: "2",
-        name: "Eleven.Service.User",
+        name: "Company.Service.User",
         url: "https://generator.swagger.io/api/swagger.json",
     },
     {
         id: "3",
-        name: "Eleven.Service.Report",
+        name: "Company.Service.Report",
         url: "https://petstore.swagger.io/v2/swagger.json",
     },
 ];
