@@ -72,6 +72,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
     return {
       id: "",
       replaceKey: "",
+      replaceTeamKey: "",
       text: "",
       description: "",
       gitUrl: "",
@@ -117,6 +118,7 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
       currentTemplate.description && currentTemplate.description.trim() !== "" &&
       currentTemplate.gitUrl && currentTemplate.gitUrl.trim() !== "" &&
       currentTemplate.replaceKey && currentTemplate.replaceKey.trim() !== "" &&
+      currentTemplate.replaceTeamKey && currentTemplate.replaceTeamKey.trim() !== "" &&
       currentTemplate.branch && currentTemplate.branch.trim() !== "" &&
       currentTemplate.tags && currentTemplate.tags.length > 0 &&
       (showAuthentication ? currentTemplate.pass && currentTemplate.pass.trim() !== "" : true)
@@ -192,6 +194,16 @@ class TemplatePanel extends React.Component<ITemplatePanelProps, ITemplatePanelS
                 onChange={(event, value) => this.onInputChange(event, value, this)}
                 required={true}
                 placeholder="Replaces every instance of 'replaceKey' with project name"
+              />
+            </div>
+            <div className="template--group">
+              <TextField
+                inputId="replaceTeamKey"
+                label="Replace Team Key *"
+                value={currentTemplate.replaceTeamKey}
+                onChange={(event, value) => this.onInputChange(event, value, this)}
+                required={true}
+                placeholder="Replaces every instance of 'replaceTeamKey' with project team Name"
               />
             </div>
             <div className="template--group">

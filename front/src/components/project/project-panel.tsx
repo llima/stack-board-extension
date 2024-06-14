@@ -53,6 +53,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     return {
       id: "",
       name: "",
+      team: "",
       repoName: "",
       status: ProjectStatus.Running,
       template: null,
@@ -104,6 +105,7 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
     var repository = await CreateRepositoryAsync(item.repoName);    
     var buildDef = await CreateBuildDefinitionAsync({
       name: item.name,
+      team: item.team,
       repositoryId: repository.id,
       template: item.template,
       user: user
@@ -186,6 +188,16 @@ class ProjectPanel extends React.Component<IProjectPanelProps, IProjectPanelStat
                   onChange={(event, value) => this.onInputChange(event, value, this)}
                 />
               </FormItem>
+            </div>
+
+            <div className="project--group">
+                <TextField
+                  inputId="team"
+                  label="Team *"
+                  value={currentProject.team}
+                  placeholder="Name your team name or acronym"
+                  onChange={(event, value) => this.onInputChange(event, value, this)}
+                />
             </div>
 
             <div className="project--group">

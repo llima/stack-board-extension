@@ -4,6 +4,7 @@ export interface ITemplate {
     id: string;
     text: string;
     replaceKey: string;
+    replaceTeamKey: string;
     description: string;
     gitUrl: string;
     user: string;

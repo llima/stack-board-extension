@@ -14,7 +14,7 @@
   "version": {
     "Major": "0",
     "Minor": "0",
-    "Patch": "23"
+    "Patch": "24"
   },
   "minimumAgentVersion": "0.0.22",
   "instanceNameFormat": "Stack Board Repos",
@@ -47,6 +47,22 @@
       "name": "replaceTo",
       "type": "string",
       "label": "Replace To",
+      "helpMarkDown": "Enter the value to be replaced",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceTeamFrom",
+      "type": "string",
+      "label": "Replace Team From",
+      "helpMarkDown": "Enter the keyword to be replaced",
+      "defaultValue": "",
+      "required": true
+    },
+    {
+      "name": "replaceTeanTo",
+      "type": "string",
+      "label": "Replace Tean To",
       "helpMarkDown": "Enter the value to be replaced",
       "defaultValue": "",
       "required": true
