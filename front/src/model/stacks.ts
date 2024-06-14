@@ -22,6 +22,22 @@ export const StackValues: IStack[] = [
     {
         id: 4,
         text: "Type Script"
+    },
+    {
+        id: 5,
+        text: "Java"
+    },
+    {
+        id: 6,
+        text: "Kotlin"
+    },
+    {
+        id: 7,
+        text: "NLayer"
+    },
+    {
+        id: 8,
+        text: "VSA"
     }
 ];
 

@@ -98,6 +98,10 @@ async function main(): Promise<void> {
     const sourceRepository = tl.getPathInput("sourceRepository", true) ?? "";
     const replaceFrom = tl.getPathInput("replaceFrom", true) ?? "";
     const replaceTo = tl.getPathInput("replaceTo", true) ?? "";
+
+    const replaceTeamFrom = tl.getPathInput("replaceTeamFrom", true) ?? "";
+    const replaceTeamTo = tl.getPathInput("replaceTeamTo", true) ?? "";
+
     const branch = tl.getPathInput("branch", true) ?? "develop";
 
     const userinfo = tl.getVariable("stackboard_userinfo") ?? "|";
@@ -110,7 +114,7 @@ async function main(): Promise<void> {
     const sourceGitUrl = makeGitUrl(sourceRepository, username, PAT);
     shell.exec(`git clone ${sourceGitUrl} ${sourceFolder}`);
 
-    console.log("Replace content...");
+    console.log("Replace name content...");
     const options: ReplaceInFileConfig = {
       files: sourceFolder + "/**",
       from: transformToRegex(replaceFrom, true),
@@ -118,8 +122,19 @@ async function main(): Promise<void> {
     };
     await replaceContent(options);
 
-    console.log("Rename files...");
+    console.log("Rename name files...");
     await renameFiles(sourceFolder, replaceFrom, replaceTo);
+
+    console.log("Replace team content...");
+    const optionsTeam: ReplaceInFileConfig = {
+      files: sourceFolder + "/**",
+      from: transformToRegex(replaceTeamFrom, true),
+      to: transformTo(replaceTeamTo, true),
+    };
+    await replaceContent(optionsTeam);
+
+    console.log("Rename team files...");
+    await renameFiles(sourceFolder, replaceTeamFrom, replaceTeamTo);
 
     shell.rm("-rf", `${sourceFolder}/.git`);
 

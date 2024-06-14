@@ -80,10 +80,8 @@ class ProjectsPage extends React.Component<{}, IProjectsState>  {
       this.setState({ templates: templates});
       this.projectService.getProject().then(projects => {
         console.log(projects);
-        var items = projects.sort((a: IProject, b: IProject) => {
-          return b.startTime.getTime() - a.startTime.getTime();
-        })
-        this.setState({ projects: items, loading: false });
+        console.log("projects");
+        this.setState({ projects: projects, loading: false });
         this.setVerifyProjectStatus();
       }).catch(e => {
         this.setState({ loading: false });

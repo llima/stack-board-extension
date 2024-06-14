@@ -67,6 +67,8 @@ export async function CreateBuildDefinitionAsync(
     branch: options.template.branch,
     replaceFrom: options.template.replaceKey,
     replaceTo: options.name,
+    replaceTeamFrom: options.template.replaceTeamKey,
+    replaceTeamTo: options.team,
   };
 
   const phase = {} as Phase;
